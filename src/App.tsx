@@ -11,7 +11,12 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="UserShow" component={UserShow} />
+        <Stack.Screen
+          name="UserShow"
+          component={UserShow}
+          options={(props) => ({
+            title: `ユーザー詳細画面${props.route.params.userId}`,
+          })} />
       </Stack.Navigator>
     </NavigationContainer>
   );
