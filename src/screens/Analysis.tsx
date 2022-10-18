@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text } from 'react-native';
 
-export const UserShow = (props: any) => {
+export const Analysis = (props: any) => {
   console.log("route", props.route);
   useEffect(() => {
     console.log('Home Mount');
@@ -11,7 +11,7 @@ export const UserShow = (props: any) => {
   }, []);
   return (
     <View>
-      <Text>ユーザー画面</Text>
+      <Text>分析</Text>
     </View>
   );
 };
