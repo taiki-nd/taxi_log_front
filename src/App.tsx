@@ -1,22 +1,23 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeScreen } from './screens/HomeScreens';
 import { UserShow } from './screens/users/UserShow';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { DisabledColor, AccentColor } from './styles/common/color';
+import { BasicColor, DisabledColor, AccentColor } from './styles/common/color';
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer
-    >
+    <NavigationContainer>
       <Tab.Navigator 
         screenOptions={() => ({
           tabBarActiveTintColor: AccentColor,
           tabBarInactiveTintColor: DisabledColor,
+          tabBarStyle: {
+            backgroundColor: BasicColor,
+          },
         })}
       >
         <Tab.Screen 
