@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { BackColor } from '../styles/common/color';
 
 export const Setting = (props: any) => {
   console.log("route", props.route);
@@ -10,8 +11,15 @@ export const Setting = (props: any) => {
     };
   }, []);
   return (
-    <View>
+    <View style={styles.background}>
       <Text>設定</Text>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    backgroundColor: BackColor
+  }
+});

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { BackColor } from '../styles/common/color';
 
 export const Analysis = (props: any) => {
   console.log("route", props.route);
@@ -10,8 +11,15 @@ export const Analysis = (props: any) => {
     };
   }, []);
   return (
-    <View>
+    <View style={styles.background}>
       <Text>分析</Text>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    backgroundColor: BackColor
+  }
+});

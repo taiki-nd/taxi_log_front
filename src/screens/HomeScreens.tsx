@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, StyleSheet } from 'react-native';
+import { BackColor } from '../styles/common/color';
 
 export const HomeScreen = (props: any) => {
   useEffect(() => {
@@ -9,7 +10,7 @@ export const HomeScreen = (props: any) => {
     };
   }, []);
   return (
-    <View>
+    <View style={styles.background}>
       <Text>ホーム画面</Text>
       <Button
         title="ユーザー"
@@ -17,3 +18,10 @@ export const HomeScreen = (props: any) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    backgroundColor: BackColor
+  }
+});
