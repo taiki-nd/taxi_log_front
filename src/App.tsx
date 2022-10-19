@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { BasicColor, DisabledColor, AccentColor } from './styles/common/color';
+import { BasicColor, DisabledColor, AccentColor, BackColor } from './styles/common/color';
 import { HomeScreen } from './screens/HomeScreens';
 import { RecordsIndex } from './screens/RecordsIndex';
 import { RecordsCreate } from './screens/RecordsCreate';
@@ -28,6 +28,12 @@ export default function App() {
           component={HomeScreen}
           options={{
             title: 'HOME',
+            headerStyle: {
+              backgroundColor: BackColor,
+            },
+            headerTitleStyle: {
+              color: BasicColor,
+            },
             tabBarIcon: ({ color, size }) => (
               <Icon name="home" size={size} color={color} />
             ),
@@ -38,6 +44,12 @@ export default function App() {
           component={RecordsCreate}
           options={{
             title: "Add Record",
+            headerStyle: {
+              backgroundColor: BackColor,
+            },
+            headerTitleStyle: {
+              color: BasicColor,
+            },
             tabBarIcon: ({ color, size}) => (
               <Icon name="pluscircle" size={size} color={color} />
             )
@@ -48,6 +60,12 @@ export default function App() {
           component={RecordsIndex}
           options={{
             title: "Records",
+            headerStyle: {
+              backgroundColor: BackColor,
+            },
+            headerTitleStyle: {
+              color: BasicColor,
+            },
             tabBarIcon: ({ color, size}) => (
               <Icon name="bars" size={size} color={color} />
             )
@@ -58,6 +76,12 @@ export default function App() {
           component={Analysis}
           options={{
             title: "Analysis",
+            headerStyle: {
+              backgroundColor: BackColor,
+            },
+            headerTitleStyle: {
+              color: BasicColor,
+            },
             tabBarIcon: ({ color, size}) => (
               <Icon name="areachart" size={size} color={color} />
             )
@@ -68,6 +92,12 @@ export default function App() {
           component={Setting}
           options={{
             title: "Setting",
+            headerStyle: {
+              backgroundColor: BackColor,
+            },
+            headerTitleStyle: {
+              color: BasicColor,
+            },
             tabBarIcon: ({ color, size}) => (
               <Icon name="setting" size={size} color={color} />
             )
