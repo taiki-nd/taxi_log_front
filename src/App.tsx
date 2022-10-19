@@ -1,7 +1,6 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { BasicColor, DisabledColor, AccentColor, BackColor } from './styles/common/color';
 import { HomeScreen } from './screens/HomeScreen';
@@ -12,7 +11,6 @@ import { Setting } from './screens/Setting';
 import { RecordsUpdate } from './components/records/RecordsUpdate';
 
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
