@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { TransitionButton } from '../components/parts/TransitionButton';
 import { AccentColor, BackColor, BasicColor } from '../styles/common/color';
 
 export const RecordsIndex = (props: any) => {
@@ -13,12 +14,7 @@ export const RecordsIndex = (props: any) => {
   return (
     <View style={styles.background}>
       <Text>レコード一覧</Text>
-      <Text
-        onPress={() => props.navigation.navigate('RecordsUpdate', {userId: 1})}
-        style={styles.button_standard}
-      >
-        Edit
-      </Text>
+      <TransitionButton display={"Edit"} navigation={props.navigation} postInfo={{recordId: 1}} screen={'RecordsUpdate'}/>
     </View>
   );
 };
