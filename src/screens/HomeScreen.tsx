@@ -13,9 +13,6 @@ export const HomeScreen = ({ navigation }: any) => {
   return (
     <View style={styles.background}>
       <Text>ホーム画面</Text>
-      <Button
-        title="レコード一覧"
-        onPress={() => navigation.navigate('Records')}/>
     </View>
   );
 };
