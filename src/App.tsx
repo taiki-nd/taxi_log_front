@@ -1,15 +1,18 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { BasicColor, DisabledColor, AccentColor, BackColor } from './styles/common/color';
-import { HomeScreen } from './screens/HomeScreens';
+import { HomeScreen } from './screens/HomeScreen';
 import { RecordsIndex } from './screens/RecordsIndex';
 import { RecordsCreate } from './screens/RecordsCreate';
 import { Analysis } from './screens/Analysis';
 import { Setting } from './screens/Setting';
+import { RecordsUpdate } from './components/records/RecordsUpdate';
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
@@ -23,6 +26,9 @@ export default function App() {
           },
         })}
       >
+        {/*
+        // HOME
+        */}
         <Tab.Screen 
           name="Home"
           component={HomeScreen}
@@ -39,6 +45,9 @@ export default function App() {
             ),
           }}
         />
+        {/*
+        // Add Record
+        */}
         <Tab.Screen
           name="Add"
           component={RecordsCreate}
@@ -55,6 +64,9 @@ export default function App() {
             )
           }}
         />
+        {/*
+        // Records
+        */}
         <Tab.Screen
           name="Records"
           component={RecordsIndex}
@@ -71,6 +83,9 @@ export default function App() {
             )
           }}
         />
+        {/*
+        // Analysis
+        */}
         <Tab.Screen
           name="Analysis"
           component={Analysis}
@@ -87,6 +102,9 @@ export default function App() {
             )
           }}
         />
+        {/*
+        // Setting
+        */}
         <Tab.Screen
           name="Setting"
           component={Setting}
@@ -101,6 +119,23 @@ export default function App() {
             tabBarIcon: ({ color, size}) => (
               <Icon name="setting" size={size} color={color} />
             )
+          }}
+        />
+        {/*
+        // RecordsUpdate
+        */}
+        <Tab.Screen
+          name="RecordsUpdate"
+          component={RecordsUpdate}
+          options={{
+            title: "RecordsUpdate",
+            headerStyle: {
+              backgroundColor: BackColor,
+            },
+            headerTitleStyle: {
+              color: BasicColor,
+            },
+            tabBarButton: () => null,
           }}
         />
       </Tab.Navigator>

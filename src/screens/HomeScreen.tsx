@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { BackColor } from '../styles/common/color';
 
-export const HomeScreen = (props: any) => {
+export const HomeScreen = ({ navigation }: any) => {
+  console.log("props", navigation)
   useEffect(() => {
     console.log('Home Mount');
     return () => {
@@ -13,8 +14,8 @@ export const HomeScreen = (props: any) => {
     <View style={styles.background}>
       <Text>ホーム画面</Text>
       <Button
-        title="ユーザー"
-        onPress={() => props.navigation.navigate('UserShow', {userId: 1})}/>
+        title="レコード一覧"
+        onPress={() => navigation.navigate('Records')}/>
     </View>
   );
 };
