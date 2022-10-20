@@ -48,8 +48,8 @@ export const Signin = (props: any) => {
           </TouchableOpacity>
           <Text
             style={styles.registerTextStyle}
-            onPress={() => props.navigation.navigate('RegisterScreen')}>
-            Signin here
+            onPress={() => props.navigation.navigate('Signup')}>
+            Signup here
           </Text>
         </KeyboardAvoidingView>
       </View>
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     textAlign: 'center',
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 16,
     alignSelf: 'center',
     padding: 10,
   },
