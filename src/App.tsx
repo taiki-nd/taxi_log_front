@@ -10,6 +10,7 @@ import { Analysis } from './screens/Analysis';
 import { Setting } from './screens/Setting';
 import { RecordsUpdate } from './components/records/RecordsUpdate';
 import { Signup } from './components/pages/users/Signup';
+import { Signin } from './components/pages/users/Signin';
 
 const Tab = createBottomTabNavigator();
 
@@ -123,13 +124,33 @@ export default function App() {
 
 
         {/*
-        // SignUp
+        // Signup
         */}
         <Tab.Screen
           name="Signup"
           component={Signup}
           options={{
             title: "Signup",
+            headerStyle: {
+              backgroundColor: BackColor,
+            },
+            headerTitleStyle: {
+              color: BasicColor,
+            },
+            tabBarButton: () => null,
+            tabBarStyle: {
+              display: 'none',
+            }
+          }}
+        />
+        {/*
+        // Signin
+        */}
+        <Tab.Screen
+          name="Signin"
+          component={Signin}
+          options={{
+            title: "Signin",
             headerStyle: {
               backgroundColor: BackColor,
             },

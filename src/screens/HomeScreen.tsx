@@ -15,6 +15,7 @@ export const HomeScreen = ({ navigation }: any) => {
     <View style={styles.background}>
       <Text>ホーム画面</Text>
       <TransitionButton display={"Signup"} navigation={navigation} screen={'Signup'}/>
+      <TransitionButton display={"Signin"} navigation={navigation} screen={'Signin'}/>
     </View>
   );
 };

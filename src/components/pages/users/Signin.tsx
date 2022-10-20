@@ -1,7 +1,7 @@
 import { StyleSheet, TextInput, View, Text, Keyboard, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { AccentColor, BackColor, BasicColor } from '../../../styles/common/color';
 
-export const Signup = (props: any) => {
+export const Signin = (props: any) => {
   return (
     <View style={styles.mainBody}>
       <View>
@@ -35,19 +35,6 @@ export const Signup = (props: any) => {
               returnKeyType="next"
             />
           </View>
-          <View style={styles.SectionStyle}>
-            <TextInput
-              style={styles.inputStyle}
-              placeholder="Confirm Password"
-              placeholderTextColor="#8b9cb5"
-              keyboardType="default"
-              onSubmitEditing={Keyboard.dismiss}
-              blurOnSubmit={false}
-              secureTextEntry={true}
-              underlineColorAndroid="#f000"
-              returnKeyType="next"
-            />
-          </View>
           {/*errortext != '' ? (
             <Text style={styles.errorTextStyle}>
               {errortext}
@@ -57,7 +44,7 @@ export const Signup = (props: any) => {
             style={styles.buttonStyle}
             activeOpacity={0.5}
             >
-            <Text style={styles.buttonTextStyle}>SIGNUP</Text>
+            <Text style={styles.buttonTextStyle}>SIGNIN</Text>
           </TouchableOpacity>
           <Text
             style={styles.registerTextStyle}
