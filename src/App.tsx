@@ -9,6 +9,7 @@ import { RecordsCreate } from './components/pages/records/RecordsCreate';
 import { Analysis } from './screens/Analysis';
 import { Setting } from './screens/Setting';
 import { RecordsUpdate } from './components/records/RecordsUpdate';
+import { Signup } from './components/pages/users/Signup';
 
 const Tab = createBottomTabNavigator();
 
@@ -117,6 +118,28 @@ export default function App() {
             tabBarIcon: ({ color, size}) => (
               <Icon name="setting" size={size} color={color} />
             )
+          }}
+        />
+
+
+        {/*
+        // SignUp
+        */}
+        <Tab.Screen
+          name="Signup"
+          component={Signup}
+          options={{
+            title: "Signup",
+            headerStyle: {
+              backgroundColor: BackColor,
+            },
+            headerTitleStyle: {
+              color: BasicColor,
+            },
+            tabBarButton: () => null,
+            tabBarStyle: {
+              display: 'none',
+            }
           }}
         />
         {/*
