@@ -1,5 +1,6 @@
 import { StyleSheet, TextInput, View, Text, Keyboard, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { AccentColor, BackColor, BasicColor } from '../../../styles/common/color';
+import { StandardButton } from '../../parts/StandardButton';
 
 export const Signin = (props: any) => {
   return (
@@ -40,12 +41,7 @@ export const Signin = (props: any) => {
               {errortext}
             </Text>
           ) : null*/}
-          <TouchableOpacity
-            style={styles.buttonStyle}
-            activeOpacity={0.5}
-            >
-            <Text style={styles.buttonTextStyle}>SIGNIN</Text>
-          </TouchableOpacity>
+          <StandardButton displayText={"SIGNIN"}/>
           <Text
             style={styles.registerTextStyle}
             onPress={() => props.navigation.navigate('Signup')}>
@@ -71,23 +67,6 @@ const styles = StyleSheet.create({
     marginLeft: 35,
     marginRight: 35,
     margin: 10,
-  },
-  buttonStyle: {
-    backgroundColor: BasicColor,
-    borderWidth: 1,
-    borderColor: AccentColor,
-    height: 40,
-    alignItems: 'center',
-    borderRadius: 30,
-    marginLeft: 35,
-    marginRight: 35,
-    marginTop: 20,
-    marginBottom: 25,
-  },
-  buttonTextStyle: {
-    color: AccentColor,
-    paddingVertical: 10,
-    fontSize: 16,
   },
   inputStyle: {
     flex: 1,
