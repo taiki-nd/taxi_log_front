@@ -1,6 +1,7 @@
 import { StyleSheet, TextInput, View, Text, Keyboard, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { AccentColor, BackColor, BasicColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
+import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
 
 export const Signup = (props: any) => {
@@ -15,55 +16,17 @@ export const Signup = (props: any) => {
           <View style={{alignItems: 'center'}}>
             {/* LOGO */}
           </View>
-            {/* Google */}
-          <View style={styles.SectionStyle}>
-            <TextInput
-              style={styles.inputStyle}
-              placeholder="abc@abc.com"
-              placeholderTextColor="#8b9cb5"
-              autoCapitalize="none"
-              keyboardType="email-address"
-              returnKeyType="next"
-              underlineColorAndroid="#f000"
-              blurOnSubmit={false}
-            />
-          </View>
-          <View style={styles.SectionStyle}>
-            <TextInput
-              style={styles.inputStyle}
-              placeholder="Enter Password"
-              placeholderTextColor="#8b9cb5"
-              keyboardType="default"
-              onSubmitEditing={Keyboard.dismiss}
-              blurOnSubmit={false}
-              secureTextEntry={true}
-              underlineColorAndroid="#f000"
-              returnKeyType="next"
-            />
-          </View>
-          <View style={styles.SectionStyle}>
-            <TextInput
-              style={styles.inputStyle}
-              placeholder="Confirm Password"
-              placeholderTextColor="#8b9cb5"
-              keyboardType="default"
-              onSubmitEditing={Keyboard.dismiss}
-              blurOnSubmit={false}
-              secureTextEntry={true}
-              underlineColorAndroid="#f000"
-              returnKeyType="next"
-            />
-          </View>
+          {/* Google */}
+          <StandardTextInput placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false}/>
+          <StandardTextInput placeholder="Enter password" keyboardType="default" secureTextEntry={true}/>
+          <StandardTextInput placeholder="Confirm password" keyboardType="default" secureTextEntry={true}/>
           {/*errortext != '' ? (
             <Text style={styles.errorTextStyle}>
               {errortext}
             </Text>
           ) : null*/}
           <StandardButton displayText={'SIGNUP'}/>
-          <StandardTextLink 
-            displayText="Signin here"
-            onPress={() => moveScreen("Signin")}
-          />
+          <StandardTextLink displayText="Signin here" onPress={() => moveScreen("Signin")}/>
         </KeyboardAvoidingView>
       </View>
     </View>

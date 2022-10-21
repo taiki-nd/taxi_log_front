@@ -1,6 +1,7 @@
 import { StyleSheet, TextInput, View, Text, Keyboard, TouchableOpacity, KeyboardAvoidingView, Button } from 'react-native';
 import { AccentColor, BackColor, BasicColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
+import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
 
 export const Signin = (props: any) => {
@@ -16,41 +17,16 @@ export const Signin = (props: any) => {
             {/* LOGO */}
           </View>
             {/* Google */}
-          <View style={styles.SectionStyle}>
-            <TextInput
-              style={styles.inputStyle}
-              placeholder="abc@abc.com"
-              placeholderTextColor="#8b9cb5"
-              autoCapitalize="none"
-              keyboardType="email-address"
-              returnKeyType="next"
-              underlineColorAndroid="#f000"
-              blurOnSubmit={false}
-            />
-          </View>
-          <View style={styles.SectionStyle}>
-            <TextInput
-              style={styles.inputStyle}
-              placeholder="Enter Password"
-              placeholderTextColor="#8b9cb5"
-              keyboardType="default"
-              onSubmitEditing={Keyboard.dismiss}
-              blurOnSubmit={false}
-              secureTextEntry={true}
-              underlineColorAndroid="#f000"
-              returnKeyType="next"
-            />
-          </View>
+
+          <StandardTextInput placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false}/>
+          <StandardTextInput placeholder="Enter password" keyboardType="default" secureTextEntry={true}/>
           {/*errortext != '' ? (
             <Text style={styles.errorTextStyle}>
               {errortext}
             </Text>
           ) : null*/}
           <StandardButton displayText={"SIGNIN"}/>
-          <StandardTextLink
-            displayText="Signup here"
-            onPress={() => moveScreen("Signup")}
-          />
+          <StandardTextLink displayText="Signup here" onPress={() => moveScreen("Signup")}/>
         </KeyboardAvoidingView>
       </View>
     </View>
