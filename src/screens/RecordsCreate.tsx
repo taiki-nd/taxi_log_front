@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { BackColor } from '../../../styles/common/color';
+import { BackColor } from '../styles/common/color';
 
 export const RecordsCreate = (props: any) => {
-  console.log("route", props.route);
   useEffect(() => {
     console.log('Home Mount');
     return () => {
