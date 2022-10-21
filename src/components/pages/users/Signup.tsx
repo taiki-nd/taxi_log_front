@@ -4,6 +4,10 @@ import { StandardButton } from '../../parts/StandardButton';
 import { StandardTextLink } from '../../parts/StandardTextLink';
 
 export const Signup = (props: any) => {
+  // 画面遷移
+  const moveScreen = (screen: any) => {
+    props.navigation.navigate(screen)
+  }
   return (
     <View style={styles.mainBody}>
       <View>
@@ -57,8 +61,8 @@ export const Signup = (props: any) => {
           ) : null*/}
           <StandardButton displayText={'SIGNUP'}/>
           <StandardTextLink 
-            displayName="Signin here"
-            onPress={() => props.navigation.navigate('Signin')}
+            displayText="Signin here"
+            onPress={() => moveScreen("Signin")}
           />
         </KeyboardAvoidingView>
       </View>

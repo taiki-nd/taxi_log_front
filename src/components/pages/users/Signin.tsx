@@ -1,8 +1,13 @@
-import { StyleSheet, TextInput, View, Text, Keyboard, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, TextInput, View, Text, Keyboard, TouchableOpacity, KeyboardAvoidingView, Button } from 'react-native';
 import { AccentColor, BackColor, BasicColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
+import { StandardTextLink } from '../../parts/StandardTextLink';
 
 export const Signin = (props: any) => {
+  // 画面遷移
+  const moveScreen = (screen: any) => {
+    props.navigation.navigate(screen)
+  }
   return (
     <View style={styles.mainBody}>
       <View>
@@ -42,11 +47,10 @@ export const Signin = (props: any) => {
             </Text>
           ) : null*/}
           <StandardButton displayText={"SIGNIN"}/>
-          <Text
-            style={styles.registerTextStyle}
-            onPress={() => props.navigation.navigate('Signup')}>
-            Signup here
-          </Text>
+          <StandardTextLink
+            displayText="Signup here"
+            onPress={() => moveScreen("Signup")}
+          />
         </KeyboardAvoidingView>
       </View>
     </View>
@@ -76,15 +80,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 30,
     borderColor: BasicColor,
-  },
-  registerTextStyle: {
-    color: BasicColor,
-    textDecorationLine: 'underline',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 16,
-    alignSelf: 'center',
-    padding: 10,
   },
   errorTextStyle: {
     color: 'red',
