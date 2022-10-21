@@ -2,12 +2,18 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { AccentColor, BasicColor } from '../../styles/common/color';
 
 export const StandardButton = (props: any) => {
+  const {displayText, onPress} = props;
   return (
     <TouchableOpacity
       style={styles.buttonStyle}
       activeOpacity={0.5}
+    >
+      <Text
+        style={styles.buttonTextStyle}
+        onPress={onPress}
       >
-      <Text style={styles.buttonTextStyle}>{props.displayText}</Text>
+        {displayText}
+      </Text>
     </TouchableOpacity>
   );
 }
