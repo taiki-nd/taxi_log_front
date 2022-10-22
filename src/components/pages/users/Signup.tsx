@@ -1,5 +1,5 @@
-import { StyleSheet, TextInput, View, Text, Keyboard, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
-import { AccentColor, BackColor, BasicColor } from '../../../styles/common/color';
+import { StyleSheet, View, KeyboardAvoidingView, Image } from 'react-native';
+import { BackColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
 import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
@@ -14,7 +14,7 @@ export const Signup = (props: any) => {
       <View>
         <KeyboardAvoidingView enabled>
           <View style={{alignItems: 'center'}}>
-            {/* LOGO */}
+            <Image source={require('../../../assets/logo.png')} style={styles.logo}></Image>
           </View>
           {/* Google */}
           <StandardTextInput placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false}/>
@@ -40,31 +40,10 @@ const styles = StyleSheet.create({
     backgroundColor: BackColor,
     alignContent: 'center',
   },
-  SectionStyle: {
-    flexDirection: 'row',
-    height: 40,
-    marginTop: 20,
-    marginLeft: 35,
-    marginRight: 35,
-    margin: 10,
-  },
-  inputStyle: {
-    flex: 1,
-    color: BasicColor,
-    paddingLeft: 15,
-    paddingRight: 15,
-    borderWidth: 1,
-    borderRadius: 30,
-    borderColor: BasicColor,
-  },
-  registerTextStyle: {
-    color: BasicColor,
-    textDecorationLine: 'underline',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 16,
-    alignSelf: 'center',
-    padding: 10,
+  logo: {
+    resizeMode: 'contain',
+    width: 300,
+    height: 200,
   },
   errorTextStyle: {
     color: 'red',
