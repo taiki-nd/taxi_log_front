@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "949629910263",
+    "project_id": "taxi-log-366114",
+    "storage_bucket": "taxi-log-366114.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:949629910263:android:e625ef3f1c514fe777a7f2",
+        "android_client_info": {
+          "package_name": "com.taxi_log_front"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "949629910263-0r7vmf6rt6nkg716vtpkhfsvgf3aqbq3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_U-cxubwx7YOIgr_PVQk2qhelVJ3zibo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "949629910263-0r7vmf6rt6nkg716vtpkhfsvgf3aqbq3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
