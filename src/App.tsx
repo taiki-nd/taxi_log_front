@@ -11,8 +11,10 @@ import { Setting } from './screens/Setting';
 import { RecordsUpdate } from './components/records/RecordsUpdate';
 import { Signup } from './components/pages/users/Signup';
 import { Signin } from './components/pages/users/Signin';
+import { app } from './auth/firebase';
 
 const Tab = createBottomTabNavigator();
+console.log(app)
 
 export default function App() {
   return (
