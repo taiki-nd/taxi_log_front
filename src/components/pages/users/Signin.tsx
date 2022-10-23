@@ -1,19 +1,31 @@
-import React, { SyntheticEvent, useCallback, useState } from 'react';
+import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { Text, StyleSheet, View, TouchableWithoutFeedback, Image, Keyboard } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import {  BackColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
 import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from '../../../auth/firebase';
 import { firebaseErrorTransition } from '../../../utils/const';
 
 export const Signin = (props: any) => {
+  // props
+  const { navigation } = props;
+
   // state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+
+  // signin状態の監視
+  useEffect(() => {
+    onAuthStateChanged(auth, (user: any) => {
+      if (user) {
+        navigation.navigate("Home");
+      }
+    });
+  }, []);
 
   /**
    * Signin処理
@@ -26,6 +38,7 @@ export const Signin = (props: any) => {
         const user = userCredential.user;
         const uid = user.uid;
         console.log(uid);
+        navigation.navigate("Home");
       })
       .catch((error) => {
         console.error('firebase error message:', firebaseErrorTransition(error));
