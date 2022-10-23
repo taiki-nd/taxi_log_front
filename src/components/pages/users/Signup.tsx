@@ -21,11 +21,13 @@ export const Signup = (props: any) => {
 
   // signin状態の監視
   useEffect(() => {
-    onAuthStateChanged(auth, (user: any) => {
-      if (user) {
-        navigation.navigate("Home");
-      }
+    const unsubscribe = onAuthStateChanged(auth, (user: any) => {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Home' }]
+      });
     });
+    return unsubscribe;
   }, []);
 
   /**

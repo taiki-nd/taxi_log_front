@@ -6,13 +6,8 @@ import { StandardButton } from '../components/parts/StandardButton';
 import { BackColor } from '../styles/common/color';
 
 export const Setting = (props: any) => {
-  console.log("route", props.route);
-  useEffect(() => {
-    console.log('Home Mount');
-    return () => {
-      console.log('Home Unmount');
-    };
-  }, []);
+  // props
+  const { navigation } = props;
 
   /**
    * funcSignout
@@ -21,6 +16,10 @@ export const Setting = (props: any) => {
   const funcSignout = () => {
     signOut(auth).then(() => {
       console.log('signout')
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Signin' }]
+      });
     }).catch((error: any) => {
       console.error('firebase error message:', error.code, error.message);
     });
