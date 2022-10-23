@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useCallback, useState } from 'react';
-import { StyleSheet, View, TouchableWithoutFeedback, Image, Keyboard } from 'react-native';
+import { Text, StyleSheet, View, TouchableWithoutFeedback, Image, Keyboard } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { BackColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
@@ -7,12 +7,14 @@ import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../../../auth/firebase';
+import { errorCode, firebaseErrorTransition } from '../../../utils/const';
 
 export const Signup = (props: any) => {
   // state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   /**
    * Signup処理
@@ -22,7 +24,8 @@ export const Signup = (props: any) => {
     console.log("signup start")
     // passwordの確認
     if (password !== confirmPassword) {
-      console.log("password not match");
+      console.error("password not match");
+      setErrorMessage(errorCode.passwordNotMatch);
     } else {
       // firebaseへのuser登録
       await createUserWithEmailAndPassword(auth, email, password)
@@ -32,8 +35,8 @@ export const Signup = (props: any) => {
           console.log("uid", uid);
         })
         .catch((error) => {
-          console.error('firebase error code:', error.code);
-          console.error('firebase error message:', error.message);
+          console.error('firebase error message:', firebaseErrorTransition(error));
+          setErrorMessage(firebaseErrorTransition(error));
         });
     }
   }, [email, password, confirmPassword]);
@@ -59,11 +62,11 @@ export const Signup = (props: any) => {
               <StandardTextInput placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false} onChangeText={(text: string) => setEmail(text)}/>
               <StandardTextInput placeholder="Enter password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
               <StandardTextInput placeholder="Confirm password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setConfirmPassword(text)}/>
-              {/*errortext != '' ? (
+              {errorMessage != '' ? (
                 <Text style={styles.errorTextStyle}>
-                  {errortext}
+                  {errorMessage}
                 </Text>
-              ) : null*/}
+              ) : null}
               <StandardButton displayText={'SIGNUP'} onPress={funcSignup}/>
               <StandardTextLink displayText="Signin here" onPress={() => moveScreen("Signin")}/>
             </View>
