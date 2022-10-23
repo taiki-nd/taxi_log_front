@@ -16,6 +16,7 @@ export const StandardTextInput = (props: any) => {
         secureTextEntry={secureTextEntry}
         blurOnSubmit={true}
         onChangeText={onChangeText}
+        scrollEnabled={false}
       />
     </View>
   );

@@ -1,4 +1,5 @@
-import { StyleSheet, View, KeyboardAvoidingView, Image } from 'react-native';
+import { StyleSheet, View, TouchableWithoutFeedback, Image, Keyboard } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import {  BackColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
 import { StandardTextInput } from '../../parts/StandardTextInput';
@@ -12,22 +13,26 @@ export const Signin = (props: any) => {
   return (
     <View style={styles.mainBody}>
       <View>
-        <KeyboardAvoidingView enabled>
-          <View style={{alignItems: 'center'}}>
-            <Image source={require('../../../assets/logo.png')} style={styles.logo}></Image>
-          </View>
-            {/* Google */}
+        <KeyboardAwareScrollView>
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <View>
+              <View style={{alignItems: 'center'}}>
+                <Image source={require('../../../assets/logo.png')} style={styles.logo}></Image>
+              </View>
+                {/* Google */}
 
-          <StandardTextInput placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false}/>
-          <StandardTextInput placeholder="Enter password" keyboardType="default" secureTextEntry={true}/>
-          {/*errortext != '' ? (
-            <Text style={styles.errorTextStyle}>
-              {errortext}
-            </Text>
-          ) : null*/}
-          <StandardButton displayText={"SIGNIN"}/>
-          <StandardTextLink displayText="Signup here" onPress={() => moveScreen("Signup")}/>
-        </KeyboardAvoidingView>
+              <StandardTextInput placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false}/>
+              <StandardTextInput placeholder="Enter password" keyboardType="default" secureTextEntry={true}/>
+              {/*errortext != '' ? (
+                <Text style={styles.errorTextStyle}>
+                  {errortext}
+                </Text>
+              ) : null*/}
+              <StandardButton displayText={"SIGNIN"}/>
+              <StandardTextLink displayText="Signup here" onPress={() => moveScreen("Signup")}/>
+            </View>
+          </TouchableWithoutFeedback>
+        </KeyboardAwareScrollView>
       </View>
     </View>
   );

@@ -1,10 +1,11 @@
 import React, { SyntheticEvent, useCallback, useState } from 'react';
-import { StyleSheet, View, KeyboardAvoidingView, Image, Platform } from 'react-native';
+import { StyleSheet, View, TouchableWithoutFeedback, Image, Keyboard } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { BackColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
 import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../../../auth/firebase';
 
 export const Signup = (props: any) => {
@@ -48,22 +49,26 @@ export const Signup = (props: any) => {
   return (
     <View style={styles.mainBody}>
       <View>
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} >
-          <View style={{alignItems: 'center'}}>
-            <Image source={require('../../../assets/logo.png')} style={styles.logo}></Image>
-          </View>
-          {/* Google */}
-          <StandardTextInput placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false} onChangeText={(text: string) => setEmail(text)}/>
-          <StandardTextInput placeholder="Enter password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
-          <StandardTextInput placeholder="Confirm password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setConfirmPassword(text)}/>
-          {/*errortext != '' ? (
-            <Text style={styles.errorTextStyle}>
-              {errortext}
-            </Text>
-          ) : null*/}
-          <StandardButton displayText={'SIGNUP'} onPress={funcSignup}/>
-          <StandardTextLink displayText="Signin here" onPress={() => moveScreen("Signin")}/>
-        </KeyboardAvoidingView>
+        <KeyboardAwareScrollView>
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <View>
+              <View style={{alignItems: 'center'}}>
+                <Image source={require('../../../assets/logo.png')} style={styles.logo}></Image>
+              </View>
+              {/* Google */}
+              <StandardTextInput placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false} onChangeText={(text: string) => setEmail(text)}/>
+              <StandardTextInput placeholder="Enter password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
+              <StandardTextInput placeholder="Confirm password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setConfirmPassword(text)}/>
+              {/*errortext != '' ? (
+                <Text style={styles.errorTextStyle}>
+                  {errortext}
+                </Text>
+              ) : null*/}
+              <StandardButton displayText={'SIGNUP'} onPress={funcSignup}/>
+              <StandardTextLink displayText="Signin here" onPress={() => moveScreen("Signin")}/>
+            </View>
+          </TouchableWithoutFeedback>
+        </KeyboardAwareScrollView>
       </View>
     </View>
   );
