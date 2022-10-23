@@ -2,7 +2,7 @@ import { StyleSheet, TextInput, View } from 'react-native';
 import { BasicColor } from '../../styles/common/color';
 
 export const StandardTextInput = (props: any) => {
-  const {placeholder, keyboardType, secureTextEntry} = props;
+  const {placeholder, keyboardType, secureTextEntry, onChangeText} = props;
   return (
     <View style={styles.SectionStyle}>
       <TextInput
@@ -14,7 +14,8 @@ export const StandardTextInput = (props: any) => {
         returnKeyType="next"
         underlineColorAndroid="#f000"
         secureTextEntry={secureTextEntry}
-        blurOnSubmit={false}
+        blurOnSubmit={true}
+        onChangeText={onChangeText}
       />
     </View>
   );
