@@ -21,7 +21,6 @@ export const Signup = (props: any) => {
    */
   const funcSignup = useCallback(async (e: SyntheticEvent) => {
     e.preventDefault();
-    console.log("signup start")
     // passwordの確認
     if (password !== confirmPassword) {
       console.error("password not match");
