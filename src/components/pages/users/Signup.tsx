@@ -50,7 +50,15 @@ export const Signup = (props: any) => {
           const user = userCredential.user;
           const uid = user.uid;
           console.log("uid", uid);
-          // navigation.navigate("遷移先")
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Home' }]
+          });
+          // ユーザー登録画面への遷移
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Signup2' }]
+          });
         })
         .catch((error) => {
           console.error('firebase error message:', firebaseErrorTransition(error));
