@@ -151,7 +151,7 @@ export default function App() {
           name="Signup2"
           component={Signup2}
           options={{
-            title: "Signup2",
+            title: "Create Account",
             headerStyle: {
               backgroundColor: BackColor,
             },
