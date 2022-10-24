@@ -18,7 +18,8 @@ export const Signup2 = () => {
   const [taxFlg, setTaxFlg] = useState(false);
 
 
-  console.log(styleFlg);
+  console.log("styleFlg", styleFlg);
+  console.log("taxFlg", taxFlg);
 
   return (
     <View style={styles.mainBody}>
