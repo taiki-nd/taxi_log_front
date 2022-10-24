@@ -1,4 +1,5 @@
 import { signOut } from '@firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { auth } from '../auth/firebase';
@@ -16,6 +17,7 @@ export const Setting = (props: any) => {
   const funcSignout = () => {
     signOut(auth).then(() => {
       console.log('signout')
+      AsyncStorage.removeItem("uid")
       navigation.reset({
         index: 0,
         routes: [{ name: 'Signin' }]

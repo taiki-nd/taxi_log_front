@@ -8,6 +8,7 @@ import { StandardTextLink } from '../../parts/StandardTextLink';
 import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from '../../../auth/firebase';
 import { errorCode, firebaseErrorTransition } from '../../../utils/const';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Signup = (props: any) => {
   // props
@@ -22,10 +23,13 @@ export const Signup = (props: any) => {
   // signin状態の監視
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user: any) => {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Home' }]
-      });
+      if (user) {
+        AsyncStorage.setItem("uid", user.uid);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }]
+        });
+      }
     });
     return unsubscribe;
   }, []);

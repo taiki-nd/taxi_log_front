@@ -8,6 +8,7 @@ import { StandardTextLink } from '../../parts/StandardTextLink';
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from '../../../auth/firebase';
 import { firebaseErrorTransition } from '../../../utils/const';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Signin = (props: any) => {
   // props
@@ -22,6 +23,7 @@ export const Signin = (props: any) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user: any) => {
       if (user) {
+        AsyncStorage.setItem("uid", user.uid);
         navigation.reset({
           index: 0,
           routes: [{ name: 'Home' }]
