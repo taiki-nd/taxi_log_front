@@ -11,15 +11,70 @@ import { auth } from '../../../auth/firebase';
 import { errorCode, firebaseErrorTransition } from '../../../utils/const';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StandardLabel } from '../../parts/StandardLabel';
+import { async } from '@firebase/util';
+import axios from 'axios';
+import { usePinInputDescendantsContext } from '@chakra-ui/react';
 
 export const Signup2 = () => {
   // state
+  const [nickName, setNickname] = useState("");
+  const [prefecture, setPrefecture] = useState("");
+  const [company, setCompany] = useState("");
   const [styleFlg, setStyleFlg] = useState("");
+  const [closeDay, setCloseDay] = useState("");
+  const [dailyTarget, setDailyTarget] = useState(0);
+  const [monthlyTarget, setMonthlyTarget] = useState(0);
   const [taxFlg, setTaxFlg] = useState("false");
+  const [openFlg, setOpenFlg] = useState("close");
+  const [admin, setAdmin] = useState(false);
 
+  /**
+   * createAccount
+   */
+  const createAccount = useCallback( async (e: SyntheticEvent) => {
+    e.preventDefault();
+    console.log('start creating account');
 
-  console.log("styleFlg", styleFlg);
-  console.log("taxFlg", taxFlg);
+    // headerの作成
+    var header = {
+      uuid: AsyncStorage.getItem("uid"),
+    }
+
+    // taxFlg変換
+    var isTax = false;
+    if (taxFlg === "true") {
+      isTax = true;
+    }
+
+    // jsonDataの作成
+    var jsonData = {
+      uuid: AsyncStorage.getItem("uid"),
+      nickname: nickName,
+      prefecture: prefecture,
+      company: company,
+      style_flg: styleFlg,
+      close_day: closeDay,
+      daily_target: dailyTarget,
+      monthly_target: monthlyTarget,
+      is_tax: isTax,
+      open_flg: openFlg,
+      is_admin: admin,
+    }
+
+    //UsersCreate
+    try {
+      console.log("try to create user");
+      await axios({
+        method: 'post',
+        url: 'http://10.0.2.2:5050/api/v1/users',
+        data: jsonData,
+      }).then((response) => {
+        console.log(response.data);
+      }).catch(error => console.log(error));
+    } catch (ex: any) {
+      console.error("ex", ex);
+    }
+  }, [])
 
   return (
     <View style={styles.mainBody}>
@@ -56,7 +111,7 @@ export const Signup2 = () => {
                   {errorMessage}
                 </Text>
               ) : null*/}
-              <StandardButton displayText="Create Account"/>
+              <StandardButton displayText="Create Account" onPress={createAccount}/>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAwareScrollView>
