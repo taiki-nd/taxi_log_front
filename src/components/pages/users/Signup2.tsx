@@ -15,7 +15,7 @@ import { StandardLabel } from '../../parts/StandardLabel';
 export const Signup2 = () => {
   // state
   const [styleFlg, setStyleFlg] = useState("");
-  const [taxFlg, setTaxFlg] = useState(false);
+  const [taxFlg, setTaxFlg] = useState("false");
 
 
   console.log("styleFlg", styleFlg);
