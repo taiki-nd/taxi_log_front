@@ -1,20 +1,14 @@
-import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
+import React, { SyntheticEvent, useCallback, useState } from 'react';
 import { StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { AccentColor, BackColor, BasicColor } from '../../../styles/common/color';
+import { AccentColor, BackColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
 import { StandardTextInput } from '../../parts/StandardTextInput';
-import { StandardTextLink } from '../../parts/StandardTextLink';
-import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import { auth, getUid } from '../../../auth/firebase';
-import { errorCode, firebaseErrorTransition, method } from '../../../utils/const';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getUid } from '../../../auth/firebase';
+import {  method } from '../../../utils/const';
 import { StandardLabel } from '../../parts/StandardLabel';
-import { async } from '@firebase/util';
 import axios from 'axios';
-import { usePinInputDescendantsContext } from '@chakra-ui/react';
-import { apiVerOne } from '../../../api/apiVerOne';
 
 export const Signup2 = () => {
   // state
