@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useState } from "react";
 import { server } from "../utils/constHide";
 
 axios.defaults.baseURL = server.baseUrl;
