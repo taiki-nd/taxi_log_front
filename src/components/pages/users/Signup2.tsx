@@ -16,9 +16,9 @@ export const Signup2 = () => {
   const [prefecture, setPrefecture] = useState('');
   const [company, setCompany] = useState('');
   const [styleFlg, setStyleFlg] = useState('');
-  const [closeDay, setCloseDay] = useState(0);
-  const [dailyTarget, setDailyTarget] = useState(0);
-  const [monthlyTarget, setMonthlyTarget] = useState(0);
+  const [closeDay, setCloseDay] = useState(Number);
+  const [dailyTarget, setDailyTarget] = useState(Number);
+  const [monthlyTarget, setMonthlyTarget] = useState(Number);
   const [taxFlg, setTaxFlg] = useState('false');
   const [openFlg, setOpenFlg] = useState('close');
   const [admin, setAdmin] = useState(false);
@@ -39,23 +39,21 @@ export const Signup2 = () => {
     //UsersCreate
     try {
       // get uid
-      const uid = await getUid();
-      console.log('get uid', uid);
-      const uuid = String(uid);
+      const uid = String(await getUid());
 
       // headers
-      const headers = {'uuid': uuid}
-
+      const headers = {'uuid': uid}
+      
       // jsonDataの作成
       var jsonData = {
-        uuid: uuid,
+        uuid: uid,
         nickname: nickName,
         prefecture: prefecture,
         company: company,
         style_flg: styleFlg,
-        close_day: closeDay,
-        daily_target: dailyTarget,
-        monthly_target: monthlyTarget,
+        close_day: Number(closeDay),
+        daily_target: Number(dailyTarget),
+        monthly_target: Number(monthlyTarget),
         is_tax: isTax,
         open_flg: openFlg,
         is_admin: admin,
@@ -75,6 +73,7 @@ export const Signup2 = () => {
       }).catch(error => {
         console.log("error", error.code)
       });
+      
     } catch (ex: any) {
       console.error("ex", ex);
     }

@@ -12,6 +12,10 @@ import { RecordsUpdate } from './components/records/RecordsUpdate';
 import { Signup } from './components/pages/users/Signup';
 import { Signup2 } from './components/pages/users/Signup2';
 import { Signin } from './components/pages/users/Signin';
+import axios from "axios";
+import { server } from './utils/constHide';
+
+axios.defaults.baseURL = server.baseUrl;
 
 const Tab = createBottomTabNavigator();
 
