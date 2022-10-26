@@ -7,25 +7,26 @@ import { StandardButton } from '../../parts/StandardButton';
 import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
 import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import { auth } from '../../../auth/firebase';
-import { errorCode, firebaseErrorTransition } from '../../../utils/const';
+import { auth, getUid } from '../../../auth/firebase';
+import { errorCode, firebaseErrorTransition, method } from '../../../utils/const';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StandardLabel } from '../../parts/StandardLabel';
 import { async } from '@firebase/util';
 import axios from 'axios';
 import { usePinInputDescendantsContext } from '@chakra-ui/react';
+import { apiVerOne } from '../../../api/apiVerOne';
 
 export const Signup2 = () => {
   // state
-  const [nickName, setNickname] = useState("");
-  const [prefecture, setPrefecture] = useState("");
-  const [company, setCompany] = useState("");
-  const [styleFlg, setStyleFlg] = useState("");
-  const [closeDay, setCloseDay] = useState("");
+  const [nickName, setNickname] = useState('');
+  const [prefecture, setPrefecture] = useState('');
+  const [company, setCompany] = useState('');
+  const [styleFlg, setStyleFlg] = useState('');
+  const [closeDay, setCloseDay] = useState(0);
   const [dailyTarget, setDailyTarget] = useState(0);
   const [monthlyTarget, setMonthlyTarget] = useState(0);
-  const [taxFlg, setTaxFlg] = useState("false");
-  const [openFlg, setOpenFlg] = useState("close");
+  const [taxFlg, setTaxFlg] = useState('false');
+  const [openFlg, setOpenFlg] = useState('close');
   const [admin, setAdmin] = useState(false);
 
   /**
@@ -35,46 +36,55 @@ export const Signup2 = () => {
     e.preventDefault();
     console.log('start creating account');
 
-    // headerの作成
-    var header = {
-      uuid: AsyncStorage.getItem("uid"),
-    }
-
     // taxFlg変換
     var isTax = false;
     if (taxFlg === "true") {
       isTax = true;
     }
 
-    // jsonDataの作成
-    var jsonData = {
-      uuid: AsyncStorage.getItem("uid"),
-      nickname: nickName,
-      prefecture: prefecture,
-      company: company,
-      style_flg: styleFlg,
-      close_day: closeDay,
-      daily_target: dailyTarget,
-      monthly_target: monthlyTarget,
-      is_tax: isTax,
-      open_flg: openFlg,
-      is_admin: admin,
-    }
-
     //UsersCreate
     try {
-      console.log("try to create user");
+      // get uid
+      const uid = await getUid();
+      console.log('get uid', uid);
+      const uuid = String(uid);
+
+      // headers
+      const headers = {'uuid': uuid}
+
+      // jsonDataの作成
+      var jsonData = {
+        uuid: uuid,
+        nickname: nickName,
+        prefecture: prefecture,
+        company: company,
+        style_flg: styleFlg,
+        close_day: closeDay,
+        daily_target: dailyTarget,
+        monthly_target: monthlyTarget,
+        is_tax: isTax,
+        open_flg: openFlg,
+        is_admin: admin,
+      }
+
+      // apiメソッドの呼び出し
+      // const resp = await apiVerOne(method.POST, '/users', headers, null, jsonData);
+      // console.log("resp", resp);
       await axios({
-        method: 'post',
-        url: 'http://10.0.2.2:5050/api/v1/users',
+        method: method.POST,
+        url: '/users',
+        headers: headers,
         data: jsonData,
+        params: null,
       }).then((response) => {
-        console.log(response.data);
-      }).catch(error => console.log(error));
+        console.log("resp", response.data);
+      }).catch(error => {
+        console.log("error", error.code)
+      });
     } catch (ex: any) {
       console.error("ex", ex);
     }
-  }, [])
+  }, [nickName, prefecture, company, styleFlg, closeDay, dailyTarget, monthlyTarget, taxFlg]);
 
   return (
     <View style={styles.mainBody}>
@@ -83,11 +93,11 @@ export const Signup2 = () => {
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View>
               <StandardLabel displayText={"ニックネーム"}/>
-              <StandardTextInput placeholder="ニックネーム" keyboardType="default" secureTextEntry={false}/>
+              <StandardTextInput placeholder="ニックネーム" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setNickname(text)}/>
               <StandardLabel displayText={"営業区域"}/>
-              <StandardTextInput placeholder="営業区域" keyboardType="default" secureTextEntry={false}/>
+              <StandardTextInput placeholder="営業区域" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setPrefecture(text)}/>
               <StandardLabel displayText={"所属会社"}/>
-              <StandardTextInput placeholder="所属会社" keyboardType="default" secureTextEntry={false}/>
+              <StandardTextInput placeholder="所属会社" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setCompany(text)}/>
               <StandardLabel displayText={"勤務形態"}/>
               <RadioButton.Group onValueChange={value => setStyleFlg(value)} value={styleFlg}>
                 <RadioButton.Item label="隔日勤務" value="every_other_day" style={styles.radioButtonStyle} color={AccentColor}/>
@@ -96,11 +106,11 @@ export const Signup2 = () => {
                 <RadioButton.Item label="他" value="other" style={styles.radioButtonStyle} color={AccentColor}/>
               </RadioButton.Group>
               <StandardLabel displayText={"締め日（月末の場合は31）"}/>
-              <StandardTextInput placeholder="15" keyboardType="default" secureTextEntry={false}/>
+              <StandardTextInput placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setCloseDay(i)}/>
               <StandardLabel displayText={"目標売上（1日あたり）"}/>
-              <StandardTextInput placeholder="65000" keyboardType="default" secureTextEntry={false}/>
+              <StandardTextInput placeholder="65000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailyTarget(i)}/>
               <StandardLabel displayText={"目標売上（1ヶ月あたり）"}/>
-              <StandardTextInput placeholder="720000" keyboardType="default" secureTextEntry={false}/>
+              <StandardTextInput placeholder="720000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setMonthlyTarget(i)}/>
               <StandardLabel displayText={"標準入力価格設定"}/>
               <RadioButton.Group onValueChange={value => setTaxFlg(value)} value={taxFlg}>
                 <RadioButton.Item label="税込みで入力" value="true" style={styles.radioButtonStyle} color={AccentColor}/>

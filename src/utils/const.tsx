@@ -39,3 +39,13 @@ export const firebaseErrorTransition = (error: any) => {
 export const errorCode = {
   passwordNotMatch: 'パスワードが一致していません。'
 }
+
+/**
+ * method
+ */
+export const method = {
+  GET: 'get',
+  POST: 'post',
+  PUT: 'put',
+  DELETE: 'delete',
+}
