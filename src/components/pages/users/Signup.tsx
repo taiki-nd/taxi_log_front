@@ -7,7 +7,7 @@ import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
 import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from '../../../auth/firebase';
-import { errorCode, firebaseErrorTransition } from '../../../utils/const';
+import { errorCode, errorCodeTransition, firebaseErrorTransition } from '../../../utils/const';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Signup = (props: any) => {
@@ -42,7 +42,7 @@ export const Signup = (props: any) => {
     // passwordの確認
     if (password !== confirmPassword) {
       console.error("password not match");
-      setErrorMessage(errorCode.passwordNotMatch);
+      setErrorMessage(errorCodeTransition(errorCode.PASSWORD_NOT_MATCH));
     } else {
       // firebaseへのuser登録
       await createUserWithEmailAndPassword(auth, email, password)
