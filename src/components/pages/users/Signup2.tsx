@@ -43,7 +43,7 @@ export const Signup2 = () => {
 
       // headers
       const headers = {'uuid': uid}
-      
+
       // jsonDataの作成
       var jsonData = {
         uuid: uid,
@@ -69,9 +69,9 @@ export const Signup2 = () => {
         data: jsonData,
         params: null,
       }).then((response) => {
-        console.log("resp", response.data);
+        console.log("data", response.data);
       }).catch(error => {
-        console.log("error", error.code)
+        console.error("error", error.request._response);
       });
       
     } catch (ex: any) {
