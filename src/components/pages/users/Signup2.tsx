@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useCallback, useState } from 'react';
+import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { Text, StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -12,7 +12,7 @@ import axios from 'axios';
 
 export const Signup2 = () => {
   // state
-  const [nickName, setNickname] = useState('');
+  const [nickname, setnickname] = useState('');
   const [prefecture, setPrefecture] = useState('');
   const [company, setCompany] = useState('');
   const [styleFlg, setStyleFlg] = useState('');
@@ -23,13 +23,29 @@ export const Signup2 = () => {
   const [openFlg, setOpenFlg] = useState('close');
   const [admin, setAdmin] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+  
+  // 必須項目チェックによるボタン活性化処理
+  useEffect(() => {
+    if (nickname !== ''
+      && prefecture !== ''
+      && company !== ''
+      && styleFlg !== ''
+      && closeDay !== 0) {
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
+    }
+  }, [nickname, prefecture, company, styleFlg, closeDay]);
 
   /**
    * createAccount
    */
   const createAccount = useCallback( async (e: SyntheticEvent) => {
     e.preventDefault();
-    console.log('start creating account');
+    
+    // ボタンの非活性化
+    setButtonDisabled(true);
 
     // taxFlg変換
     var isTax = false;
@@ -48,7 +64,7 @@ export const Signup2 = () => {
       // jsonDataの作成
       var jsonData = {
         uuid: uid,
-        nickname: nickName,
+        nickname: nickname,
         prefecture: prefecture,
         company: company,
         style_flg: styleFlg,
@@ -71,17 +87,21 @@ export const Signup2 = () => {
         params: null,
       }).then((response) => {
         console.log("data", response.data);
+        // ボタンの活性化
+        setButtonDisabled(true);
       }).catch(error => {
         var errorCode = error.response.data.info.code;
         var message: string[] = [];
         message = errorCodeTransition(errorCode);
         setErrorMessages(message);
+        // ボタンの活性化
+        setButtonDisabled(true);
       });
       
     } catch (ex: any) {
       console.error("ex", ex);
     }
-  }, [nickName, prefecture, company, styleFlg, closeDay, dailyTarget, monthlyTarget, taxFlg]);
+  }, [nickname, prefecture, company, styleFlg, closeDay, dailyTarget, monthlyTarget, taxFlg]);
 
   return (
     <View style={styles.mainBody}>
@@ -89,7 +109,7 @@ export const Signup2 = () => {
         <KeyboardAwareScrollView>
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View>
-              <StandardTextInput label="ニックネーム" placeholder="ニックネーム" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setNickname(text)}/>
+              <StandardTextInput label="ニックネーム" placeholder="ニックネーム" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setnickname(text)}/>
               <StandardTextInput label="営業区域" placeholder="営業区域" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setPrefecture(text)}/>
               <StandardTextInput label="所属会社" placeholder="所属会社" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setCompany(text)}/>
               <StandardLabel displayText={"勤務形態"}/>
@@ -115,7 +135,7 @@ export const Signup2 = () => {
                     </Text>
                   )})
               ) : null}
-              <StandardButton displayText="Create Account" onPress={createAccount}/>
+              <StandardButton displayText="Create Account" disabled={buttonDisabled} onPress={createAccount}/>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAwareScrollView>

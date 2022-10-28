@@ -7,7 +7,7 @@ import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
 import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from '../../../auth/firebase';
-import { errorCode, errorCodeTransition, firebaseErrorTransition } from '../../../utils/const';
+import { errorCodeTransition, firebaseErrorTransition } from '../../../utils/const';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Signup = (props: any) => {
@@ -19,6 +19,16 @@ export const Signup = (props: any) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+
+  // 必須項目チェックによるボタン活性化処理
+  useEffect(() => {
+    if (email !== '' && password !== '' && confirmPassword !== '') {
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
+    }
+  }, [email, password, confirmPassword]);
 
   // signin状態の監視
   useEffect(() => {
@@ -39,6 +49,10 @@ export const Signup = (props: any) => {
    */
   const funcSignup = useCallback(async (e: SyntheticEvent) => {
     e.preventDefault();
+
+    // ボタンの非活性化
+    setButtonDisabled(true);
+
     // passwordの確認
     if (password !== confirmPassword) {
       console.error("password not match");
@@ -56,6 +70,8 @@ export const Signup = (props: any) => {
             index: 0,
             routes: [{ name: 'Home' }]
           });
+          // ボタンの活性化
+          setButtonDisabled(true);
           // ユーザー登録画面への遷移
           navigation.reset({
             index: 0,
@@ -65,6 +81,8 @@ export const Signup = (props: any) => {
         .catch((error) => {
           console.error('firebase error message:', firebaseErrorTransition(error));
           setErrorMessages(firebaseErrorTransition(error));
+          // ボタンの活性化
+          setButtonDisabled(false);
         });
     }
   }, [email, password, confirmPassword]);
@@ -97,7 +115,7 @@ export const Signup = (props: any) => {
                     </Text>
                   )})
               ) : null}
-              <StandardButton displayText={'SIGNUP'} onPress={funcSignup}/>
+              <StandardButton displayText={'SIGNUP'} disabled={buttonDisabled} onPress={funcSignup}/>
               <StandardTextLink displayText="Signin here" onPress={() => moveScreen("Signin")}/>
             </View>
           </TouchableWithoutFeedback>

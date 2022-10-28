@@ -18,6 +18,16 @@ export const Signin = (props: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+
+  // 必須項目チェックによるボタン活性化処理
+  useEffect(() => {
+    if (email !== '' && password !== '') {
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
+    }
+  }, [email, password]);
 
   // signin状態の監視
   useEffect(() => {
@@ -38,9 +48,15 @@ export const Signin = (props: any) => {
    */
   const funcSignin = useCallback(async (e: SyntheticEvent) => {
     e.preventDefault();
+
+    // ボタンの非活性化
+    setButtonDisabled(true);
+
     // signin処理
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
+        // ボタンの活性化
+        setButtonDisabled(true);
         const user = userCredential.user;
         const uid = user.uid;
         AsyncStorage.setItem("uid", uid);
@@ -50,7 +66,9 @@ export const Signin = (props: any) => {
       .catch((error) => {
         console.log('error', error.code);
         console.error('firebase error message:', firebaseErrorTransition(error));
-          setErrorMessages(firebaseErrorTransition(error));
+        setErrorMessages(firebaseErrorTransition(error));
+        // ボタンの活性化
+        setButtonDisabled(true);
       });
   }, [email, password]);
 
@@ -80,7 +98,7 @@ export const Signin = (props: any) => {
                     </Text>
                   )})
               ) : null}
-              <StandardButton displayText={"SIGNIN"} onPress={funcSignin}/>
+              <StandardButton displayText={"SIGNIN"} disabled={buttonDisabled} onPress={funcSignin}/>
               <StandardTextLink displayText="Signup here" onPress={() => moveScreen("Signup")}/>
             </View>
           </TouchableWithoutFeedback>
