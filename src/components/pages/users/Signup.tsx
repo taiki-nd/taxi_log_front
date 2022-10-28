@@ -18,7 +18,7 @@ export const Signup = (props: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
   // signin状態の監視
   useEffect(() => {
@@ -42,7 +42,9 @@ export const Signup = (props: any) => {
     // passwordの確認
     if (password !== confirmPassword) {
       console.error("password not match");
-      setErrorMessage(errorCodeTransition(errorCode.PASSWORD_NOT_MATCH));
+      var errorCode: string[] = [];
+      errorCode.push('password_not_match')
+      setErrorMessages(errorCodeTransition(errorCode));
     } else {
       // firebaseへのuser登録
       await createUserWithEmailAndPassword(auth, email, password)
@@ -62,7 +64,7 @@ export const Signup = (props: any) => {
         })
         .catch((error) => {
           console.error('firebase error message:', firebaseErrorTransition(error));
-          setErrorMessage(firebaseErrorTransition(error));
+          setErrorMessages(firebaseErrorTransition(error));
         });
     }
   }, [email, password, confirmPassword]);
@@ -87,10 +89,13 @@ export const Signup = (props: any) => {
               <StandardTextInput placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false} onChangeText={(text: string) => setEmail(text)}/>
               <StandardTextInput placeholder="Enter password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
               <StandardTextInput placeholder="Confirm password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setConfirmPassword(text)}/>
-              {errorMessage != '' ? (
-                <Text style={styles.errorTextStyle}>
-                  {errorMessage}
-                </Text>
+              {errorMessages.length != 0 ? (
+                errorMessages.map((errorMessage: string) => { 
+                  return(
+                    <Text style={styles.errorTextStyle}>
+                      {errorMessage}
+                    </Text>
+                  )})
               ) : null}
               <StandardButton displayText={'SIGNUP'} onPress={funcSignup}/>
               <StandardTextLink displayText="Signin here" onPress={() => moveScreen("Signin")}/>

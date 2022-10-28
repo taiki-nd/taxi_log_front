@@ -17,7 +17,7 @@ export const Signin = (props: any) => {
   // state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
   // signin状態の監視
   useEffect(() => {
@@ -48,8 +48,9 @@ export const Signin = (props: any) => {
         navigation.navigate("Home");
       })
       .catch((error) => {
+        console.log('error', error.code);
         console.error('firebase error message:', firebaseErrorTransition(error));
-          setErrorMessage(firebaseErrorTransition(error));
+          setErrorMessages(firebaseErrorTransition(error));
       });
   }, [email, password]);
 
@@ -71,10 +72,13 @@ export const Signin = (props: any) => {
               </View>
               <StandardTextInput placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false} onChangeText={(text: string) => setEmail(text)}/>
               <StandardTextInput placeholder="Enter password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
-              {errorMessage != '' ? (
-                <Text style={styles.errorTextStyle}>
-                  {errorMessage}
-                </Text>
+              {errorMessages.length != 0 ? (
+                errorMessages.map((errorMessage: string) => { 
+                  return(
+                    <Text style={styles.errorTextStyle}>
+                      {errorMessage}
+                    </Text>
+                  )})
               ) : null}
               <StandardButton displayText={"SIGNIN"} onPress={funcSignin}/>
               <StandardTextLink displayText="Signup here" onPress={() => moveScreen("Signup")}/>

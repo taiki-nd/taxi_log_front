@@ -1,12 +1,12 @@
 import React, { SyntheticEvent, useCallback, useState } from 'react';
-import { StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { Text, StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { AccentColor, BackColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
 import { StandardTextInput } from '../../parts/StandardTextInput';
 import { getUid } from '../../../auth/firebase';
-import {  method } from '../../../utils/const';
+import {  errorCodeTransition, method } from '../../../utils/const';
 import { StandardLabel } from '../../parts/StandardLabel';
 import axios from 'axios';
 
@@ -22,6 +22,7 @@ export const Signup2 = () => {
   const [taxFlg, setTaxFlg] = useState('false');
   const [openFlg, setOpenFlg] = useState('close');
   const [admin, setAdmin] = useState(false);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
   /**
    * createAccount
@@ -71,7 +72,10 @@ export const Signup2 = () => {
       }).then((response) => {
         console.log("data", response.data);
       }).catch(error => {
-        console.error("error", error.request._response);
+        var errorCode = error.response.data.info.code;
+        var message: string[] = [];
+        message = errorCodeTransition(errorCode);
+        setErrorMessages(message);
       });
       
     } catch (ex: any) {
@@ -109,11 +113,14 @@ export const Signup2 = () => {
                 <RadioButton.Item label="税込みで入力" value="true" style={styles.radioButtonStyle} color={AccentColor}/>
                 <RadioButton.Item label="税抜きで入力" value="false" style={styles.radioButtonStyle} color={AccentColor}/>
               </RadioButton.Group>
-              {/*errorMessage != '' ? (
-                <Text style={styles.errorTextStyle}>
-                  {errorMessage}
-                </Text>
-              ) : null*/}
+              {errorMessages.length != 0 ? (
+                errorMessages.map((errorMessage: string) => { 
+                  return(
+                    <Text style={styles.errorTextStyle}>
+                      {errorMessage}
+                    </Text>
+                  )})
+              ) : null}
               <StandardButton displayText="Create Account" onPress={createAccount}/>
             </View>
           </TouchableWithoutFeedback>

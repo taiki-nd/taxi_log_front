@@ -1,43 +1,106 @@
 /**
  * firebaseErrorTransition
- * @param code any
- * @returns string
+ * @param error any
+ * @return string
  */
 export const firebaseErrorTransition = (error: any) => {
+  var errorMessage: string[] = [];
   switch (error.code) {
     case 'auth/email-already-in-use':
-      return 'このメールアドレスは既に使用されています。';
-    case 'auth/invalid-email':
-      return 'メールアドレスの形式が正しくありません。';
-    case 'auth/user-disabled':
-      return 'サービスの利用が停止されています。';
-    case 'auth/user-not-found':
-      return 'メールアドレスまたはパスワードが違います。';
-    case 'auth/user-mismatch':
-      return '認証されているユーザーと異なるアカウントが選択されました。';
+      errorMessage.push('このメールアドレスは既に使用されています。');
+      break;
     case 'auth/weak-password':
-      return 'パスワードは6文字以上にしてください。';
+      errorMessage.push('パスワードは6文字以上です。');
+      break;
+    case 'auth/invalid-email':
+      errorMessage.push('メールアドレスの形式が正しくありません。');
+      break;
+    case 'auth/user-not-found':
     case 'auth/wrong-password':
-      return 'メールアドレスまたはパスワードが違います。';
-    case 'auth/popup-blocked':
-      return '認証ポップアップがブロックされました。ポップアップブロックをご利用の場合は設定を解除してください。';
+      errorMessage.push('メールアドレスまたはパスワードが違います。');
+      break;
+    case 'auth/user-mismatch':
+      errorMessage.push('認証されているユーザーと異なるアカウントが選択されました。');
+      break;
     case 'auth/operation-not-supported-in-this-environment':
     case 'auth/auth-domain-config-required':
     case 'auth/operation-not-allowed':
     case 'auth/unauthorized-domain':
-      return '現在この認証方法はご利用頂けません。';
+      errorMessage.push('現在この認証方法はご利用頂けません。');
+      break;
     case 'auth/requires-recent-login':
-      return '認証の有効期限が切れています。';
+      errorMessage.push('認証の有効期限が切れています。');
+      break;
     default:
-      return '認証に失敗しました。しばらく時間をおいて再度お試しください。';
+      errorMessage.push('認証に失敗しました。しばらく時間をおいて再度お試しください。');
+      break;
   }
+
+  return errorMessage
 }
 
 /**
- * error
+ * errorCodeTransition
+ * @param code any
+ * @return string
+ */
+export const errorCodeTransition = (codes: string[]) => {
+  var errorMessage: string[] = [];
+  console.log(codes);
+  codes.forEach(code => {
+    console.log(code);
+    console.log(errorMessage);
+    switch (code) {
+      case 'user_auth_error':
+      case 'user_not_sigin':
+      case 'user_not_match':
+      case 'uuid_null_error':
+        errorMessage.push('ユーザー認証に失敗しました。再度ログインしてください。');
+        break;
+      case 'password_not_match':
+        errorMessage.push('パスワードが一致していません。');
+        break;
+      case 'body_parse_error':
+        errorMessage.push('情報処理に失敗しました。しばらく時間をおいてから再度試してください。');
+        break;
+      case 'follow_relationship_error':
+        errorMessage.push('フォローの解除・フォロワーの解除を実施してください。');
+        break;
+      // validation error
+      case 'nickname_null_error':
+        errorMessage.push('ニックネームを入力してください。');
+        break;
+      case 'prefecture_null_error':
+        errorMessage.push('営業区域を入力してください');
+        break;
+      case 'company_null_error':
+        errorMessage.push('所属会社を入力してください。');
+        break;
+      case 'style_flg_null_error':
+        errorMessage.push('業務形態を選択してください。');
+        break;
+      case 'nickname_letter_count_error':
+        errorMessage.push('ニックネームの文字数が無効です。3〜30文字です。');
+        break;
+      case 'specified_word_error(style_flg)':
+        errorMessage.push('業務形態に無効な文字が含ませています。再度選択してください。');
+        break;
+      case 'close_day_date_error':
+        errorMessage.push('締め日に無効な値が入力されています。1〜31の数値を入力して下さい。');
+        break;
+      default:
+        errorMessage.push('システムエラーが発生しました。');
+        break;
+    }
+  });
+  return errorMessage  
+}
+
+/**
+ * errorCode
  */
 export const errorCode = {
-  passwordNotMatch: 'パスワードが一致していません。'
+  PASSWORD_NOT_MATCH: 'password_not_match',
 }
 
 /**
