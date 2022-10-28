@@ -64,7 +64,6 @@ export const Signin = (props: any) => {
         navigation.navigate("Home");
       })
       .catch((error) => {
-        console.log('error', error.code);
         console.error('firebase error message:', firebaseErrorTransition(error));
         setErrorMessages(firebaseErrorTransition(error));
         // ボタンの活性化
@@ -91,9 +90,9 @@ export const Signin = (props: any) => {
               <StandardTextInput label="Email" placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false} onChangeText={(text: string) => setEmail(text)}/>
               <StandardTextInput label="Password" placeholder="Enter password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
               {errorMessages.length != 0 ? (
-                errorMessages.map((errorMessage: string) => { 
+                errorMessages.map((errorMessage: string, index: number) => { 
                   return(
-                    <Text style={styles.errorTextStyle}>
+                    <Text style={styles.errorTextStyle} key={index}>
                       {errorMessage}
                     </Text>
                   )})

@@ -24,7 +24,7 @@ export const Signup2 = () => {
   const [admin, setAdmin] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [buttonDisabled, setButtonDisabled] = useState(true);
-  
+
   // 必須項目チェックによるボタン活性化処理
   useEffect(() => {
     if (nickname !== ''
@@ -128,9 +128,9 @@ export const Signup2 = () => {
                 <RadioButton.Item label="税抜きで入力" value="false" style={styles.radioButtonStyle} color={AccentColor}/>
               </RadioButton.Group>
               {errorMessages.length != 0 ? (
-                errorMessages.map((errorMessage: string) => { 
+                errorMessages.map((errorMessage: string, index: number) => { 
                   return(
-                    <Text style={styles.errorTextStyle}>
+                    <Text style={styles.errorTextStyle} key={index}>
                       {errorMessage}
                     </Text>
                   )})

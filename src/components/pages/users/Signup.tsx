@@ -63,6 +63,8 @@ export const Signup = (props: any) => {
       // firebaseへのuser登録
       await createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
+          // ボタンの活性化
+          setButtonDisabled(true);
           const user = userCredential.user;
           const uid = user.uid;
           console.log("uid", uid);
@@ -70,8 +72,6 @@ export const Signup = (props: any) => {
             index: 0,
             routes: [{ name: 'Home' }]
           });
-          // ボタンの活性化
-          setButtonDisabled(true);
           // ユーザー登録画面への遷移
           navigation.reset({
             index: 0,
@@ -108,9 +108,9 @@ export const Signup = (props: any) => {
               <StandardTextInput label="Password" placeholder="Enter password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
               <StandardTextInput label="Password確認用" placeholder="Confirm password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setConfirmPassword(text)}/>
               {errorMessages.length != 0 ? (
-                errorMessages.map((errorMessage: string) => { 
+                errorMessages.map((errorMessage: string, index: number) => { 
                   return(
-                    <Text style={styles.errorTextStyle}>
+                    <Text style={styles.errorTextStyle} key={index}>
                       {errorMessage}
                     </Text>
                   )})
