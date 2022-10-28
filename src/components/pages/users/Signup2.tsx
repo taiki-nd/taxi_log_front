@@ -89,12 +89,9 @@ export const Signup2 = () => {
         <KeyboardAwareScrollView>
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View>
-              <StandardLabel displayText={"ニックネーム"}/>
-              <StandardTextInput placeholder="ニックネーム" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setNickname(text)}/>
-              <StandardLabel displayText={"営業区域"}/>
-              <StandardTextInput placeholder="営業区域" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setPrefecture(text)}/>
-              <StandardLabel displayText={"所属会社"}/>
-              <StandardTextInput placeholder="所属会社" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setCompany(text)}/>
+              <StandardTextInput label="ニックネーム" placeholder="ニックネーム" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setNickname(text)}/>
+              <StandardTextInput label="営業区域" placeholder="営業区域" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setPrefecture(text)}/>
+              <StandardTextInput label="所属会社" placeholder="所属会社" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setCompany(text)}/>
               <StandardLabel displayText={"勤務形態"}/>
               <RadioButton.Group onValueChange={value => setStyleFlg(value)} value={styleFlg}>
                 <RadioButton.Item label="隔日勤務" value="every_other_day" style={styles.radioButtonStyle} color={AccentColor}/>
@@ -102,12 +99,9 @@ export const Signup2 = () => {
                 <RadioButton.Item label="夜勤" value="night" style={styles.radioButtonStyle} color={AccentColor}/>
                 <RadioButton.Item label="他" value="other" style={styles.radioButtonStyle} color={AccentColor}/>
               </RadioButton.Group>
-              <StandardLabel displayText={"締め日（月末の場合は31）"}/>
-              <StandardTextInput placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setCloseDay(i)}/>
-              <StandardLabel displayText={"目標売上（1日あたり）"}/>
-              <StandardTextInput placeholder="65000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailyTarget(i)}/>
-              <StandardLabel displayText={"目標売上（1ヶ月あたり）"}/>
-              <StandardTextInput placeholder="720000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setMonthlyTarget(i)}/>
+              <StandardTextInput label="締め日(月末の場合は31)" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setCloseDay(i)}/>
+              <StandardTextInput label="目標売上（1日あたり）" placeholder="65000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailyTarget(i)}/>
+              <StandardTextInput label="目標売上（1ヶ月あたり）" placeholder="720000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setMonthlyTarget(i)}/>
               <StandardLabel displayText={"標準入力価格設定"}/>
               <RadioButton.Group onValueChange={value => setTaxFlg(value)} value={taxFlg}>
                 <RadioButton.Item label="税込みで入力" value="true" style={styles.radioButtonStyle} color={AccentColor}/>

@@ -1,8 +1,9 @@
-import { StyleSheet, TextInput, View } from 'react-native';
-import { BasicColor } from '../../styles/common/color';
+import { StyleSheet, View } from 'react-native';
+import { BackColor, BasicColor } from '../../styles/common/color';
+import { TextInput } from 'react-native-paper';
 
 export const StandardTextInput = (props: any) => {
-  const {placeholder, keyboardType, secureTextEntry, onChangeText} = props;
+  const {placeholder, keyboardType, secureTextEntry, label, onChangeText} = props;
   return (
     <View style={styles.SectionStyle}>
       <TextInput
@@ -17,6 +18,11 @@ export const StandardTextInput = (props: any) => {
         blurOnSubmit={true}
         onChangeText={onChangeText}
         scrollEnabled={false}
+        label={label}
+        mode="outlined"
+        outlineColor={BasicColor}
+        activeOutlineColor={BasicColor}
+        textColor={BasicColor}
       />
     </View>
   );
@@ -25,7 +31,6 @@ export const StandardTextInput = (props: any) => {
 const styles = StyleSheet.create({
   SectionStyle: {
     flexDirection: 'row',
-    height: 40,
     marginTop: 20,
     marginLeft: 35,
     marginRight: 35,
@@ -33,12 +38,7 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     flex: 1,
-    color: BasicColor,
-    paddingLeft: 15,
-    paddingRight: 15,
-    borderWidth: 1,
-    borderRadius: 30,
-    borderColor: BasicColor,
+    backgroundColor: BackColor,
   },
 });
 

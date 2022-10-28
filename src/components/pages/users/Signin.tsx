@@ -70,8 +70,8 @@ export const Signin = (props: any) => {
               <View style={{alignItems: 'center'}}>
                 <Image source={require('../../../assets/logo.png')} style={styles.logo}></Image>
               </View>
-              <StandardTextInput placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false} onChangeText={(text: string) => setEmail(text)}/>
-              <StandardTextInput placeholder="Enter password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
+              <StandardTextInput label="Email" placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false} onChangeText={(text: string) => setEmail(text)}/>
+              <StandardTextInput label="Password" placeholder="Enter password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
               {errorMessages.length != 0 ? (
                 errorMessages.map((errorMessage: string) => { 
                   return(
