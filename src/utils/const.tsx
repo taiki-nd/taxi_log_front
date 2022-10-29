@@ -57,6 +57,9 @@ export const errorCodeTransition = (codes: string[]) => {
       case 'uuid_null_error':
         errorMessage.push('ユーザー認証に失敗しました。再度ログインしてください。');
         break;
+      case 'uuid_duplicate_error':
+        errorMessage.push('既に存在するユーザーです。ログインしてください。');
+        break;
       case 'password_not_match':
         errorMessage.push('パスワードが一致していません。');
         break;
@@ -70,6 +73,9 @@ export const errorCodeTransition = (codes: string[]) => {
       case 'nickname_null_error':
         errorMessage.push('ニックネームを入力してください。');
         break;
+      case 'nickname_letter_count_error':
+        errorMessage.push('ニックネームの文字数が無効です。3〜30文字です。');
+        break;
       case 'prefecture_null_error':
         errorMessage.push('営業区域を入力してください');
         break;
@@ -78,9 +84,6 @@ export const errorCodeTransition = (codes: string[]) => {
         break;
       case 'style_flg_null_error':
         errorMessage.push('業務形態を選択してください。');
-        break;
-      case 'nickname_letter_count_error':
-        errorMessage.push('ニックネームの文字数が無効です。3〜30文字です。');
         break;
       case 'specified_word_error(style_flg)':
         errorMessage.push('業務形態に無効な文字が含ませています。再度選択してください。');
