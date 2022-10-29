@@ -129,9 +129,9 @@ export const Signup2 = (props: any) => {
         <KeyboardAwareScrollView>
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View>
-              <StandardTextInput label="ニックネーム" placeholder="ニックネーム" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setnickname(text)}/>
-              <StandardTextInput label="営業区域" placeholder="営業区域" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setPrefecture(text)}/>
-              <StandardTextInput label="所属会社" placeholder="所属会社" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setCompany(text)}/>
+              <StandardTextInput label="ニックネーム" placeholder="3〜30文字" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setnickname(text)}/>
+              <StandardTextInput label="営業区域" placeholder="東京23区武三地区" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setPrefecture(text)}/>
+              <StandardTextInput label="所属会社" placeholder="株式会社〇〇" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setCompany(text)}/>
               <StandardLabel displayText={"勤務形態"}/>
               <RadioButton.Group onValueChange={value => setStyleFlg(value)} value={styleFlg}>
                 <RadioButton.Item label="隔日勤務" value="every_other_day" style={styles.radioButtonStyle} color={AccentColor}/>
