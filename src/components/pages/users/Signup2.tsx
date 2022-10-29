@@ -9,8 +9,12 @@ import { getUid } from '../../../auth/firebase';
 import {  errorCodeTransition, method } from '../../../utils/const';
 import { StandardLabel } from '../../parts/StandardLabel';
 import axios from 'axios';
+import { StandardTextLink } from '../../parts/StandardTextLink';
 
-export const Signup2 = () => {
+export const Signup2 = (props: any) => {
+  // props
+  const { navigation } = props;
+
   // state
   const [nickname, setnickname] = useState('');
   const [prefecture, setPrefecture] = useState('');
@@ -89,6 +93,11 @@ export const Signup2 = () => {
         console.log("data", response.data);
         // ボタンの活性化
         setButtonDisabled(true);
+        // ユーザー登録画面への遷移
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }]
+        });
       }).catch(error => {
         var errorCode = error.response.data.info.code;
         var message: string[] = [];
@@ -102,6 +111,17 @@ export const Signup2 = () => {
       console.error("ex", ex);
     }
   }, [nickname, prefecture, company, styleFlg, closeDay, dailyTarget, monthlyTarget, taxFlg]);
+
+  /**
+   * moveScreen
+   * @param screen 
+   */
+  const moveScreen = (screen: any) => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: screen }]
+    });
+  }
 
   return (
     <View style={styles.mainBody}>
@@ -136,6 +156,7 @@ export const Signup2 = () => {
                   )})
               ) : null}
               <StandardButton displayText="Create Account" disabled={buttonDisabled} onPress={createAccount}/>
+              <StandardTextLink displayText="Signin here" onPress={() => moveScreen("Signin")}/>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAwareScrollView>

@@ -76,7 +76,10 @@ export const Signin = (props: any) => {
    * @param screen 
    */
   const moveScreen = (screen: any) => {
-    props.navigation.navigate(screen)
+    navigation.reset({
+      index: 0,
+      routes: [{ name: screen }]
+    });
   }
   return (
     <View style={styles.mainBody}>
