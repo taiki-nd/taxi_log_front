@@ -1,8 +1,8 @@
 import { View } from 'react-native';
 import { Provider, Portal, Dialog, Paragraph, Button } from 'react-native-paper';
 
-export const DialogTwoButton = (props: any) => {
-  const {title, description, displayButton1, displayButton2, visible, funcButton1, funcButton2, onDismiss } = props;
+export const DialogOneButton = (props: any) => {
+  const {title, description, displayButton1, visible, funcButton1, onDismiss } = props;
   return (
     <Provider>
         <View>
@@ -14,7 +14,6 @@ export const DialogTwoButton = (props: any) => {
               </Dialog.Content>
               <Dialog.Actions>
                 <Button onPress={funcButton1}>{displayButton1}</Button>
-                <Button onPress={funcButton2}>{displayButton2}</Button>
               </Dialog.Actions>
             </Dialog>
           </Portal>
