@@ -59,7 +59,6 @@ export const Signin = (props: any) => {
         setButtonDisabled(true);
         const user = userCredential.user;
         const uid = user.uid;
-        AsyncStorage.setItem("uid", uid);
         console.log(uid);
         navigation.navigate("Home");
       })
