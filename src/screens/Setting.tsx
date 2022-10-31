@@ -5,26 +5,15 @@ import { View, Text, StyleSheet } from 'react-native';
 import { auth } from '../auth/firebase';
 import { StandardButton } from '../components/parts/StandardButton';
 import { BackColor } from '../styles/common/color';
+import { FuncSignout } from '../utils/commonFunc/user/Signout';
 
 export const Setting = (props: any) => {
-  // props
-  const { navigation } = props;
-
   /**
    * funcSignout
    * サインアウト処理
    */
   const funcSignout = () => {
-    signOut(auth).then(() => {
-      console.log('signout')
-      AsyncStorage.removeItem("uid")
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Signin' }]
-      });
-    }).catch((error: any) => {
-      console.error('firebase error message:', error.code, error.message);
-    });
+    FuncSignout(props);
   }
   return (
     <View style={styles.mainBody}>
