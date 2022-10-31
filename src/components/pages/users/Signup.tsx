@@ -68,10 +68,6 @@ export const Signup = (props: any) => {
           const user = userCredential.user;
           const uid = user.uid;
           console.log("uid", uid);
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'Home' }]
-          });
           // ユーザー登録画面への遷移
           navigation.reset({
             index: 0,
