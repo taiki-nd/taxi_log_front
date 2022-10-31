@@ -1,8 +1,4 @@
-import { signOut } from '@firebase/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { auth } from '../auth/firebase';
+import { View, StyleSheet } from 'react-native';
 import { StandardButton } from '../components/parts/StandardButton';
 import { BackColor } from '../styles/common/color';
 import { FuncSignout } from '../utils/commonFunc/user/Signout';
