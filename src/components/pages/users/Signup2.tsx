@@ -1,18 +1,15 @@
 import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { Text, StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { RadioButton, Provider, Portal, Dialog, Paragraph, Button } from 'react-native-paper';
+import { RadioButton } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { AccentColor, BackColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
 import { StandardTextInput } from '../../parts/StandardTextInput';
 import { auth, getUid } from '../../../auth/firebase';
-import { deleteUser } from "firebase/auth";
 import {  errorCodeTransition, method } from '../../../utils/const';
 import { StandardLabel } from '../../parts/StandardLabel';
 import axios from 'axios';
 import { StandardTextLink } from '../../parts/StandardTextLink';
-import { sendEmailVerification } from 'firebase/auth';
-import { DialogTwoButton } from '../../parts/DialogTwoButton';
 
 export const Signup2 = (props: any) => {
   // props
@@ -32,69 +29,21 @@ export const Signup2 = (props: any) => {
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [visibleCompleteDialog, setVisibleCompleteDialog] = useState(false);
-  const [emailVerification, setEmailVerification] = useState(false);
+  const [visibleFailedDialog, setVisibleFailedDialog] = useState(false);
 
   useEffect(() => {
-    funcEmailVerification();
-  }, []);
-
-  // メールアドレス認証
-  const funcEmailVerification = async () => {
-    console.log("メール認証開始/メール認証ステータス", emailVerification)
     var currentUser = auth.currentUser;
-    if (currentUser !== null && !currentUser.emailVerified) {
-      try {
-        await sendEmailVerification(currentUser)
-          .then(() => {
-            // Dialogの表示
-            setVisibleCompleteDialog(true);
-          })
-          .catch((error) => {
-            console.error(error);
-            setVisibleCompleteDialog(false);
-            // errorDialogの表示
-            /* TODO
-            メールの送信失敗
-            user削除
-            モーダル生成
-            */
-          })
-      } catch (ex: any) {
-        /* TODO
-        user削除
-        モーダル生成
-        */
+    console.log("メール認証開始/メール認証ステータス", currentUser?.emailVerified)
+    if (currentUser !== null) {
+      currentUser.reload();
+      if (!currentUser.emailVerified) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SignupEmail' }]
+        });
       }
-    } else {
-
     }
-  }
-
-/**
- * dialogComplete
- * ダイアログの完了ボタンの押下
- */
-  const dialogComplete = () => {
-    setVisibleCompleteDialog(false);
-    funcEmailVerification();
-  }
-
-  /**
-   * dialogCancel
-   * ダイアログのアカウント作成中止の押下
-   */
-  const dialogCancel = () => {
-    const user = auth.currentUser;
-    if (user !== null) {
-      deleteUser(user)
-      .then(() => {
-        console.log('Successfully deleted user');
-      })
-      .catch((error: any) => {
-        console.log('Error deleting user:', error);
-      });
-    }
-  }
+  }, []);
 
   // 必須項目チェックによるボタン活性化処理
   useEffect(() => {
@@ -227,15 +176,6 @@ export const Signup2 = (props: any) => {
           </TouchableWithoutFeedback>
         </KeyboardAwareScrollView>
       </View>
-      <DialogTwoButton
-        visible={visibleCompleteDialog}
-        title='メール認証'
-        description='登録のアドレスへ認証メールを送信しました。認証後、完了ボタンをクリックして下さい。'
-        displayButton1='完了'
-        displayButton2='アカウント作成中止'
-        funcButton1={dialogComplete}
-        funcButton2={dialogCancel}
-      />
     </View>
   );
 }

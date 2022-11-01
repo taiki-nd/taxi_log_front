@@ -14,6 +14,7 @@ import { Signup2 } from './components/pages/users/Signup2';
 import { Signin } from './components/pages/users/Signin';
 import axios from "axios";
 import { server } from './utils/constHide';
+import { SignupEmail } from './components/pages/users/SignupEmail';
 
 axios.defaults.baseURL = server.baseUrl;
 
@@ -136,6 +137,26 @@ export default function App() {
           component={Signup}
           options={{
             title: "Signup",
+            headerStyle: {
+              backgroundColor: BackColor,
+            },
+            headerTitleStyle: {
+              color: BasicColor,
+            },
+            tabBarButton: () => null,
+            tabBarStyle: {
+              display: 'none',
+            }
+          }}
+        />
+        {/*
+        // SignupEmail
+        */}
+        <Tab.Screen
+          name="SignupEmail"
+          component={SignupEmail}
+          options={{
+            title: "メールアドレス認証",
             headerStyle: {
               backgroundColor: BackColor,
             },

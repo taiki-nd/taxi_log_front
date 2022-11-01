@@ -68,10 +68,10 @@ export const Signup = (props: any) => {
           const user = userCredential.user;
           const uid = user.uid;
           console.log("uid", uid);
-          // ユーザー登録画面への遷移
+          // メール認証画面への遷移
           navigation.reset({
             index: 0,
-            routes: [{ name: 'Signup2' }]
+            routes: [{ name: 'SignupEmail' }]
           });
         })
         .catch((error) => {

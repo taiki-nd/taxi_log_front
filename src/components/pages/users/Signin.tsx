@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
-import { Text, StyleSheet, View, TouchableWithoutFeedback, Image, Keyboard } from 'react-native';
+import { Text, StyleSheet, View, TouchableWithoutFeedback, Image, Keyboard, StatusBar } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import {  BackColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
@@ -7,8 +7,8 @@ import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from '../../../auth/firebase';
-import { firebaseErrorTransition } from '../../../utils/const';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { firebaseErrorTransition, method } from '../../../utils/const';
+import axios from 'axios';
 
 export const Signin = (props: any) => {
   // props
@@ -33,7 +33,6 @@ export const Signin = (props: any) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user: any) => {
       if (user) {
-        AsyncStorage.setItem("uid", user.uid);
         navigation.reset({
           index: 0,
           routes: [{ name: 'Home' }]
@@ -54,13 +53,29 @@ export const Signin = (props: any) => {
 
     // signin処理
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+      .then( async (userCredential) => {
         // ボタンの活性化
         setButtonDisabled(true);
         const user = userCredential.user;
         const uid = user.uid;
         console.log(uid);
-        navigation.navigate("Home");
+        console.log("メール認証開始/メール認証ステータス", user.emailVerified)
+        if (!user.emailVerified) {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'SignupEmail' }]
+          });
+          return;
+        }
+        // userの登録情報の確認
+        var status: boolean;
+        status = await isUserRegistered(uid)
+        console.log('status', status);
+        if (status) {
+          moveScreen('Home');
+          return;
+        }
+        moveScreen('Signup2')
       })
       .catch((error) => {
         console.error('firebase error message:', firebaseErrorTransition(error));
@@ -69,6 +84,31 @@ export const Signin = (props: any) => {
         setButtonDisabled(true);
       });
   }, [email, password]);
+
+  /**
+   * isUserRegistered
+   * DBにユーザー登録されているか確認
+   */
+  const isUserRegistered = async (uid: string): Promise<boolean> => {
+    var status = false
+    console.log('check isUserRegistered')
+    // headers
+    const headers = {'uuid': uid}
+    await axios({
+      method: method.GET,
+      url: 'user/get_user_form_uid',
+      headers: headers,
+      data: null,
+      params: null,
+    }).then((response) => {
+      console.log("data", response.data);
+      status = true;
+    }).catch(error => {
+      console.log("error", error);
+      status = false;
+    });
+    return status
+  }
 
   /**
    * moveScreen
