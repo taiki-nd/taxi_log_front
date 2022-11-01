@@ -27,6 +27,7 @@ export const HomeScreen = (props: any) => {
       <Text>ホーム画面</Text>
       <TransitionButton display={"Signup"} navigation={navigation} screen={'Signup'}/>
       <TransitionButton display={"Signin"} navigation={navigation} screen={'Signin'}/>
+      <TransitionButton display={"Signup2"} navigation={navigation} screen={'Signup2'}/>
     </View>
   );
 };

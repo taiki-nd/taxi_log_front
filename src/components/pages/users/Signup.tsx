@@ -7,7 +7,8 @@ import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
 import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from '../../../auth/firebase';
-import { errorCode, firebaseErrorTransition } from '../../../utils/const';
+import { errorCodeTransition, firebaseErrorTransition } from '../../../utils/const';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Signup = (props: any) => {
   // props
@@ -17,15 +18,28 @@ export const Signup = (props: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+
+  // 必須項目チェックによるボタン活性化処理
+  useEffect(() => {
+    if (email !== '' && password !== '' && confirmPassword !== '') {
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
+    }
+  }, [email, password, confirmPassword]);
 
   // signin状態の監視
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user: any) => {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Home' }]
-      });
+      if (user) {
+        AsyncStorage.setItem("uid", user.uid);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }]
+        });
+      }
     });
     return unsubscribe;
   }, []);
@@ -35,22 +49,36 @@ export const Signup = (props: any) => {
    */
   const funcSignup = useCallback(async (e: SyntheticEvent) => {
     e.preventDefault();
+
+    // ボタンの非活性化
+    setButtonDisabled(true);
+
     // passwordの確認
     if (password !== confirmPassword) {
       console.error("password not match");
-      setErrorMessage(errorCode.passwordNotMatch);
+      var errorCode: string[] = [];
+      errorCode.push('password_not_match')
+      setErrorMessages(errorCodeTransition(errorCode));
     } else {
       // firebaseへのuser登録
       await createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
+          // ボタンの活性化
+          setButtonDisabled(true);
           const user = userCredential.user;
           const uid = user.uid;
           console.log("uid", uid);
-          // navigation.navigate("遷移先")
+          // メール認証画面への遷移
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'SignupEmail' }]
+          });
         })
         .catch((error) => {
           console.error('firebase error message:', firebaseErrorTransition(error));
-          setErrorMessage(firebaseErrorTransition(error));
+          setErrorMessages(firebaseErrorTransition(error));
+          // ボタンの活性化
+          setButtonDisabled(false);
         });
     }
   }, [email, password, confirmPassword]);
@@ -60,7 +88,10 @@ export const Signup = (props: any) => {
    * @param screen 
    */
   const moveScreen = (screen: any) => {
-    props.navigation.navigate(screen)
+    navigation.reset({
+      index: 0,
+      routes: [{ name: screen }]
+    });
   }
 
   return (
@@ -72,15 +103,18 @@ export const Signup = (props: any) => {
               <View style={{alignItems: 'center'}}>
                 <Image source={require('../../../assets/logo.png')} style={styles.logo}></Image>
               </View>
-              <StandardTextInput placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false} onChangeText={(text: string) => setEmail(text)}/>
-              <StandardTextInput placeholder="Enter password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
-              <StandardTextInput placeholder="Confirm password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setConfirmPassword(text)}/>
-              {errorMessage != '' ? (
-                <Text style={styles.errorTextStyle}>
-                  {errorMessage}
-                </Text>
+              <StandardTextInput label="Email" placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false} onChangeText={(text: string) => setEmail(text)}/>
+              <StandardTextInput label="Password" placeholder="Enter password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
+              <StandardTextInput label="Password確認用" placeholder="Confirm password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setConfirmPassword(text)}/>
+              {errorMessages.length != 0 ? (
+                errorMessages.map((errorMessage: string, index: number) => { 
+                  return(
+                    <Text style={styles.errorTextStyle} key={index}>
+                      {errorMessage}
+                    </Text>
+                  )})
               ) : null}
-              <StandardButton displayText={'SIGNUP'} onPress={funcSignup}/>
+              <StandardButton displayText={'SIGNUP'} disabled={buttonDisabled} onPress={funcSignup}/>
               <StandardTextLink displayText="Signin here" onPress={() => moveScreen("Signin")}/>
             </View>
           </TouchableWithoutFeedback>
