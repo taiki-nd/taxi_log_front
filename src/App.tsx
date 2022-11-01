@@ -10,7 +10,13 @@ import { Analysis } from './screens/Analysis';
 import { Setting } from './screens/Setting';
 import { RecordsUpdate } from './components/records/RecordsUpdate';
 import { Signup } from './components/pages/users/Signup';
+import { Signup2 } from './components/pages/users/Signup2';
 import { Signin } from './components/pages/users/Signin';
+import axios from "axios";
+import { server } from './utils/constHide';
+import { SignupEmail } from './components/pages/users/SignupEmail';
+
+axios.defaults.baseURL = server.baseUrl;
 
 const Tab = createBottomTabNavigator();
 
@@ -131,6 +137,46 @@ export default function App() {
           component={Signup}
           options={{
             title: "Signup",
+            headerStyle: {
+              backgroundColor: BackColor,
+            },
+            headerTitleStyle: {
+              color: BasicColor,
+            },
+            tabBarButton: () => null,
+            tabBarStyle: {
+              display: 'none',
+            }
+          }}
+        />
+        {/*
+        // SignupEmail
+        */}
+        <Tab.Screen
+          name="SignupEmail"
+          component={SignupEmail}
+          options={{
+            title: "メールアドレス認証",
+            headerStyle: {
+              backgroundColor: BackColor,
+            },
+            headerTitleStyle: {
+              color: BasicColor,
+            },
+            tabBarButton: () => null,
+            tabBarStyle: {
+              display: 'none',
+            }
+          }}
+        />
+        {/**
+         * Signup2
+         */}
+        <Tab.Screen
+          name="Signup2"
+          component={Signup2}
+          options={{
+            title: "Create Account",
             headerStyle: {
               backgroundColor: BackColor,
             },

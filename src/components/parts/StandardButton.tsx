@@ -1,39 +1,39 @@
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { Button } from 'react-native-paper';
 import { AccentColor, BasicColor } from '../../styles/common/color';
 
 export const StandardButton = (props: any) => {
-  const {displayText, onPress} = props;
+  const {displayText, disabled, onPress} = props;
   return (
-    <TouchableOpacity
-      style={styles.buttonStyle}
-      activeOpacity={0.5}
-    >
-      <Text
-        style={styles.buttonTextStyle}
+    <View style={styles.SectionStyle}>
+      <Button
+        style={styles.buttonStyle}
+        textColor={AccentColor}
+        mode="contained-tonal"
         onPress={onPress}
+        disabled={disabled}
       >
         {displayText}
-      </Text>
-    </TouchableOpacity>
+      </Button>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  SectionStyle: {
+    flexDirection: 'row',
+    marginTop: 20,
+    marginLeft: 35,
+    marginRight: 35,
+    margin: 10,
+    justifyContent: 'center',
+  },
   buttonStyle: {
     backgroundColor: BasicColor,
-    borderWidth: 1,
+    color: AccentColor,
+    borderWidth: 2,
     borderColor: AccentColor,
     height: 40,
     alignItems: 'center',
-    borderRadius: 30,
-    marginLeft: 35,
-    marginRight: 35,
-    marginTop: 20,
-    marginBottom: 25,
   },
-  buttonTextStyle: {
-    color: AccentColor,
-    paddingVertical: 10,
-    fontSize: 16,
-  }
 });
