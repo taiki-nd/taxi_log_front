@@ -1,12 +1,13 @@
 import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { Text, StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import CalendarStrip from 'react-native-calendar-strip';
 import { RadioButton } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { StandardTextInput } from '../components/parts/StandardTextInput';
 import { StandardLabel } from '../components/parts/StandardLabel';
 import { StandardButton } from '../components/parts/StandardButton';
 import { StandardTextLink } from '../components/parts/StandardTextLink';
-import { AccentColor, BackColor } from '../styles/common/color';
+import { AccentColor, BackColor, BasicColor } from '../styles/common/color';
 
 export const RecordsCreate = (props: any) => {
   // props
@@ -45,7 +46,16 @@ export const RecordsCreate = (props: any) => {
         <KeyboardAwareScrollView>
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View>
-              <StandardTextInput label="日付" placeholder="------" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setDate(text)}/>
+              <CalendarStrip
+                scrollable
+                style={{height:100, paddingTop: 10, paddingBottom: 10}}
+                daySelectionAnimation={{type: 'border', duration: 200, borderWidth: 1, borderHighlightColor: BasicColor}}
+                calendarColor={BackColor}
+                calendarHeaderStyle={{color: BasicColor}}
+                dateNumberStyle={{color: BasicColor}}
+                dateNameStyle={{color: BasicColor}}
+                iconContainer={{flex: 0.1}}
+              />
               <StandardLabel displayText={"曜日"}/>
               <RadioButton.Group onValueChange={value => setDay(value)} value={day}>
                 <RadioButton.Item label="月" value="every_other_day" style={styles.radioButtonStyle} color={AccentColor}/>
