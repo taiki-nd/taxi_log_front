@@ -26,6 +26,21 @@ export const RecordsCreate = (props: any) => {
   const [dailySales, setDailySales] = useState(Number);
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
+  // 必須項目チェックによるボタン活性化処理
+  useEffect(() => {
+    if (date !== undefined
+      && day !== ''
+      && styleFlg !== ''
+      && startHour !== undefined
+      && runningTime !== undefined
+      && occupancyRate !== undefined
+      && numberOfTime !== undefined){
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
+    }
+  }, [date, day, styleFlg, startHour, runningTime, occupancyRate, numberOfTime]);
+
   console.log(date);
 
   const createRecord = () => {
