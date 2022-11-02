@@ -8,13 +8,14 @@ import { StandardLabel } from '../components/parts/StandardLabel';
 import { StandardButton } from '../components/parts/StandardButton';
 import { StandardTextLink } from '../components/parts/StandardTextLink';
 import { AccentColor, BackColor, BasicColor } from '../styles/common/color';
+import moment from 'moment';
 
 export const RecordsCreate = (props: any) => {
   // props
   const { navigation } = props;
 
   // state
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState(moment);
   const [day, setDay] = useState('');
   const [styleFlg, setStyleFlg] = useState('');
   const [startHour, setStartHour] = useState(Number);
@@ -24,6 +25,8 @@ export const RecordsCreate = (props: any) => {
   const [isTax, setIsTax] = useState(Boolean);
   const [dailySales, setDailySales] = useState(Number);
   const [buttonDisabled, setButtonDisabled] = useState(true);
+
+  console.log(date);
 
   const createRecord = () => {
     console.log("pressed createRecord button");
@@ -55,6 +58,10 @@ export const RecordsCreate = (props: any) => {
                 dateNumberStyle={{color: BasicColor}}
                 dateNameStyle={{color: BasicColor}}
                 iconContainer={{flex: 0.1}}
+                onDateSelected={value => {
+                  setDate(value);
+                  console.log(value);
+                }}
               />
               <StandardLabel displayText={"曜日"}/>
               <RadioButton.Group onValueChange={value => setDay(value)} value={day}>
