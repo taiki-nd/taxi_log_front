@@ -20,6 +20,7 @@ export const RecordsCreate = (props: any) => {
   const [styleFlg, setStyleFlg] = useState('');
   const [startHour, setStartHour] = useState(Number);
   const [runningTime, setRunningTime] = useState(Number);
+  const [runningKm, setRunningKm] = useState(Number);
   const [occupancyRate, setOccupancyRate] = useState(Number);
   const [numberOfTime, setNumberOfTime] = useState(Number);
   const [isTax, setIsTax] = useState(Boolean);
@@ -34,13 +35,14 @@ export const RecordsCreate = (props: any) => {
       && startHour !== undefined
       && runningTime !== undefined
       && occupancyRate !== undefined
+      && runningKm !== 0
       && numberOfTime !== undefined
       && dailySales !== 0){
       setButtonDisabled(false);
     } else {
       setButtonDisabled(true);
     }
-  }, [date, day, styleFlg, startHour, runningTime, occupancyRate, numberOfTime]);
+  }, [date, day, styleFlg, startHour, runningTime, runningKm ,occupancyRate, numberOfTime, dailySales]);
 
   const createRecord = () => {
     console.log("pressed createRecord button");
@@ -79,13 +81,13 @@ export const RecordsCreate = (props: any) => {
               />
               <StandardLabel displayText={"曜日"}/>
               <RadioButton.Group onValueChange={value => setDay(value)} value={day}>
-                <RadioButton.Item label="月" value="every_other_day" style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="火" value="day" style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="水" value="night" style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="木" value="other" style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="金" value="other" style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="土" value="other" style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="日" value="other" style={styles.radioButtonStyle} color={AccentColor}/>
+                <RadioButton.Item label="月" value="Mon." style={styles.radioButtonStyle} color={AccentColor}/>
+                <RadioButton.Item label="火" value="Tue." style={styles.radioButtonStyle} color={AccentColor}/>
+                <RadioButton.Item label="水" value="Wed." style={styles.radioButtonStyle} color={AccentColor}/>
+                <RadioButton.Item label="木" value="Thu." style={styles.radioButtonStyle} color={AccentColor}/>
+                <RadioButton.Item label="金" value="Fri." style={styles.radioButtonStyle} color={AccentColor}/>
+                <RadioButton.Item label="土" value="Sat." style={styles.radioButtonStyle} color={AccentColor}/>
+                <RadioButton.Item label="日" value="Sun." style={styles.radioButtonStyle} color={AccentColor}/>
               </RadioButton.Group>
               <StandardLabel displayText={"勤務形態"}/>
               <RadioButton.Group onValueChange={value => setStyleFlg(value)} value={styleFlg}>
@@ -96,6 +98,7 @@ export const RecordsCreate = (props: any) => {
               </RadioButton.Group>
               <StandardTextInput label="始業開始時刻" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setStartHour(i)}/>
               <StandardTextInput label="走行時間" placeholder="17" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setRunningTime(i)}/>
+              <StandardTextInput label="走行距離" placeholder="285" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setRunningKm(i)}/>
               <StandardTextInput label="乗車率" placeholder="55" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setOccupancyRate(i)}/>
               <StandardTextInput label="乗車回数" placeholder="38" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setNumberOfTime(i)}/>
               <StandardTextInput label="売上" placeholder="58000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailySales(i)}/>
