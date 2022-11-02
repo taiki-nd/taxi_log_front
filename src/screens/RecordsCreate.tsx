@@ -34,14 +34,13 @@ export const RecordsCreate = (props: any) => {
       && startHour !== undefined
       && runningTime !== undefined
       && occupancyRate !== undefined
-      && numberOfTime !== undefined){
+      && numberOfTime !== undefined
+      && dailySales !== 0){
       setButtonDisabled(false);
     } else {
       setButtonDisabled(true);
     }
   }, [date, day, styleFlg, startHour, runningTime, occupancyRate, numberOfTime]);
-
-  console.log(date);
 
   const createRecord = () => {
     console.log("pressed createRecord button");
@@ -99,7 +98,7 @@ export const RecordsCreate = (props: any) => {
               <StandardTextInput label="走行時間" placeholder="17" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setRunningTime(i)}/>
               <StandardTextInput label="乗車率" placeholder="55" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setOccupancyRate(i)}/>
               <StandardTextInput label="乗車回数" placeholder="38" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setNumberOfTime(i)}/>
-              <StandardTextInput label="売上" placeholder="58000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setNumberOfTime(i)}/>
+              <StandardTextInput label="売上" placeholder="58000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailySales(i)}/>
               
               {/*errorMessages.length != 0 ? (
                 errorMessages.map((errorMessage: string, index: number) => { 
