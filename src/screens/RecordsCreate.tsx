@@ -9,12 +9,17 @@ import { StandardButton } from '../components/parts/StandardButton';
 import { StandardTextLink } from '../components/parts/StandardTextLink';
 import { AccentColor, BackColor, BasicColor } from '../styles/common/color';
 import moment from 'moment';
+import axios from 'axios';
+import { method } from '../utils/const';
+import { onAuthStateChanged } from 'firebase/auth/react-native';
+import { auth } from '../auth/firebase';
 
 export const RecordsCreate = (props: any) => {
   // props
   const { navigation } = props;
 
   // state
+  const [uid, setUid] = useState('')
   const [date, setDate] = useState(moment);
   const [day, setDay] = useState('');
   const [styleFlg, setStyleFlg] = useState('');
@@ -23,9 +28,60 @@ export const RecordsCreate = (props: any) => {
   const [runningKm, setRunningKm] = useState(Number);
   const [occupancyRate, setOccupancyRate] = useState(Number);
   const [numberOfTime, setNumberOfTime] = useState(Number);
-  const [isTax, setIsTax] = useState(Boolean);
+  const [taxFlg, setTaxFlg] = useState('');
   const [dailySales, setDailySales] = useState(Number);
   const [buttonDisabled, setButtonDisabled] = useState(true);
+
+  // signinユーザー情報の取得
+  useEffect(() => {
+    var currentUser = auth.currentUser
+    if (currentUser) {
+      setUid(currentUser.uid);
+    } else {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Signin' }]
+      });
+      return
+    }
+    // headers
+    const headers = {'uuid': uid}
+
+    axios({
+      method: method.GET,
+      url: 'user/get_user_form_uid',
+      headers: headers,
+      data: null,
+      params: null,
+    }).then((response) => {
+      console.log("data", response.data);
+      setStyleFlg(response.data.data.style_flg)
+      if (response.data.data.is_tax){
+        setTaxFlg('true');
+      } else {
+        setTaxFlg('false');
+      }
+    }).catch(error => {
+      var errorCode = error.response.data.info.code;
+      var message: string[] = [];
+      //message = errorCodeTransition(errorCode);
+      console.log(errorCode)
+    });
+  }, []);
+
+  // user情報の取得
+  useEffect(() => {
+    // headers
+    const headers = {'uuid': uid}
+
+    axios({
+      method: method.GET,
+      url: 'user/get_user_form_uid',
+      headers: headers,
+      data: null,
+      params: null,
+    })
+  }, []);
 
   // 必須項目チェックによるボタン活性化処理
   useEffect(() => {
@@ -37,16 +93,24 @@ export const RecordsCreate = (props: any) => {
       && occupancyRate !== undefined
       && runningKm !== 0
       && numberOfTime !== undefined
-      && dailySales !== 0){
+      && dailySales !== 0
+      && taxFlg !== ''){
       setButtonDisabled(false);
     } else {
       setButtonDisabled(true);
     }
-  }, [date, day, styleFlg, startHour, runningTime, runningKm ,occupancyRate, numberOfTime, dailySales]);
+  }, [date, day, styleFlg, startHour, runningTime, runningKm ,occupancyRate, numberOfTime, dailySales, taxFlg]);
 
-  const createRecord = () => {
+  /**
+   * createRecord
+   */
+  const createRecord = useCallback(async (e: SyntheticEvent) => {
+    e.preventDefault();
     console.log("pressed createRecord button");
-  }
+    console.log(date, day, styleFlg, startHour, runningTime, runningKm ,occupancyRate, numberOfTime, dailySales);
+
+    // recordの作成
+  }, []);
 
   /**
    * moveScreen
@@ -102,6 +166,11 @@ export const RecordsCreate = (props: any) => {
               <StandardTextInput label="乗車率" placeholder="55" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setOccupancyRate(i)}/>
               <StandardTextInput label="乗車回数" placeholder="38" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setNumberOfTime(i)}/>
               <StandardTextInput label="売上" placeholder="58000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailySales(i)}/>
+              <StandardLabel displayText={"標準入力価格設定"}/>
+              <RadioButton.Group onValueChange={value => setTaxFlg(value)} value={taxFlg}>
+                <RadioButton.Item label="税込みで入力" value="true" style={styles.radioButtonStyle} color={AccentColor}/>
+                <RadioButton.Item label="税抜きで入力" value="false" style={styles.radioButtonStyle} color={AccentColor}/>
+              </RadioButton.Group>
               
               {/*errorMessages.length != 0 ? (
                 errorMessages.map((errorMessage: string, index: number) => { 
