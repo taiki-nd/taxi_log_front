@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { Text, StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import CalendarStrip from 'react-native-calendar-strip';
 import { RadioButton } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -10,7 +10,7 @@ import { StandardTextLink } from '../components/parts/StandardTextLink';
 import { AccentColor, BackColor, BasicColor } from '../styles/common/color';
 import moment from 'moment';
 import axios from 'axios';
-import { method } from '../utils/const';
+import { errorCodeTransition, method } from '../utils/const';
 import { auth } from '../auth/firebase';
 
 export const RecordsCreate = (props: any) => {
@@ -31,6 +31,7 @@ export const RecordsCreate = (props: any) => {
   const [taxFlg, setTaxFlg] = useState('');
   const [dailySales, setDailySales] = useState(Number);
   const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
   // signinユーザー情報の取得
   useEffect(() => {
@@ -67,8 +68,8 @@ export const RecordsCreate = (props: any) => {
     }).catch(error => {
       var errorCode = error.response.data.info.code;
       var message: string[] = [];
-      //message = errorCodeTransition(errorCode);
-      console.log(errorCode)
+      message = errorCodeTransition(errorCode);
+      setErrorMessages(message);
     });
   }, []);
 
@@ -153,8 +154,8 @@ export const RecordsCreate = (props: any) => {
         var errorCode = error.response.data.info.code;
         var message: string[] = [];
         console.log(errorCode);
-        //message = errorCodeTransition(errorCode);
-        //setErrorMessages(message);
+        message = errorCodeTransition(errorCode);
+        setErrorMessages(message);
         // ボタンの活性化
         setButtonDisabled(true);
       });
@@ -213,7 +214,7 @@ export const RecordsCreate = (props: any) => {
               <StandardTextInput label="始業開始時刻" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setStartHour(i)}/>
               <StandardTextInput label="走行時間" placeholder="17" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setRunningTime(i)}/>
               <StandardTextInput label="走行距離" placeholder="285" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setRunningKm(i)}/>
-              <StandardTextInput label="乗車率" placeholder="55" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setOccupancyRate(i)}/>
+              <StandardTextInput label="乗車率" placeholder="55.8" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setOccupancyRate(i)}/>
               <StandardTextInput label="乗車回数" placeholder="38" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setNumberOfTime(i)}/>
               <StandardTextInput label="売上" placeholder="58000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailySales(i)}/>
               <StandardLabel displayText={"標準入力価格設定"}/>
@@ -221,15 +222,14 @@ export const RecordsCreate = (props: any) => {
                 <RadioButton.Item label="税込みで入力" value="true" style={styles.radioButtonStyle} color={AccentColor}/>
                 <RadioButton.Item label="税抜きで入力" value="false" style={styles.radioButtonStyle} color={AccentColor}/>
               </RadioButton.Group>
-              
-              {/*errorMessages.length != 0 ? (
+              {errorMessages.length != 0 ? (
                 errorMessages.map((errorMessage: string, index: number) => { 
                   return(
                     <Text style={styles.errorTextStyle} key={index}>
                       {errorMessage}
                     </Text>
                   )})
-                  ) : null*/}
+                  ) : null}
               <StandardButton displayText="Create Record" disabled={buttonDisabled} onPress={createRecord} id={userId} uid={uid} />
               <StandardTextLink displayText="Cancel" onPress={() => moveScreen("Home")}/>
             </View>
