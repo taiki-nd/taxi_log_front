@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
-import { Text, StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import CalendarStrip from 'react-native-calendar-strip';
 import { RadioButton } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -11,7 +11,6 @@ import { AccentColor, BackColor, BasicColor } from '../styles/common/color';
 import moment from 'moment';
 import axios from 'axios';
 import { method } from '../utils/const';
-import { onAuthStateChanged } from 'firebase/auth/react-native';
 import { auth } from '../auth/firebase';
 
 export const RecordsCreate = (props: any) => {
@@ -19,7 +18,8 @@ export const RecordsCreate = (props: any) => {
   const { navigation } = props;
 
   // state
-  const [uid, setUid] = useState('')
+  const [userId, setUserId] = useState(Number);
+  const [uid, setUid] = useState('');
   const [date, setDate] = useState(moment);
   const [day, setDay] = useState('');
   const [styleFlg, setStyleFlg] = useState('');
@@ -44,8 +44,9 @@ export const RecordsCreate = (props: any) => {
       });
       return
     }
+
     // headers
-    const headers = {'uuid': uid}
+    const headers = {'uuid': currentUser.uid}
 
     axios({
       method: method.GET,
@@ -55,7 +56,9 @@ export const RecordsCreate = (props: any) => {
       params: null,
     }).then((response) => {
       console.log("data", response.data);
-      setStyleFlg(response.data.data.style_flg)
+      setUserId(response.data.data.id);
+      setStyleFlg(response.data.data.style_flg);
+      console.log(response.data.data.id, response.data.data.style_flg)
       if (response.data.data.is_tax){
         setTaxFlg('true');
       } else {
@@ -67,20 +70,6 @@ export const RecordsCreate = (props: any) => {
       //message = errorCodeTransition(errorCode);
       console.log(errorCode)
     });
-  }, []);
-
-  // user情報の取得
-  useEffect(() => {
-    // headers
-    const headers = {'uuid': uid}
-
-    axios({
-      method: method.GET,
-      url: 'user/get_user_form_uid',
-      headers: headers,
-      data: null,
-      params: null,
-    })
   }, []);
 
   // 必須項目チェックによるボタン活性化処理
@@ -107,10 +96,72 @@ export const RecordsCreate = (props: any) => {
   const createRecord = useCallback(async (e: SyntheticEvent) => {
     e.preventDefault();
     console.log("pressed createRecord button");
-    console.log(date, day, styleFlg, startHour, runningTime, runningKm ,occupancyRate, numberOfTime, dailySales);
 
-    // recordの作成
-  }, []);
+    setButtonDisabled(true);
+    console.log(uid);
+
+    // headers
+    const headers = {'uuid': uid}
+
+    // taxFlg変換
+    var isTax = false;
+    if (taxFlg === "true") {
+      isTax = true;
+    }
+
+    console.log(date);
+
+    // jsonData
+    var jsonData = {
+      date: moment(date),
+      day_of_week: day,
+      style_flg: styleFlg,
+      start_hour: Number(startHour),
+      running_time: Number(runningTime),
+      running_km: Number(runningKm),
+      occupancy_rate: Number(occupancyRate),
+      number_of_time: Number(numberOfTime),
+      is_tax: isTax,
+      daily_sales: Number(dailySales),
+      user_id: Number(userId)
+    }
+
+    console.log(jsonData);
+
+    // params
+    var params = {
+      uuid: uid,
+    }
+
+    try {
+      await axios({
+        method: method.POST,
+        url: '/records',
+        headers: headers,
+        data: jsonData,
+        params: params,
+      }).then((response) => {
+        console.log("data", response.data);
+        // ボタンの活性化
+        setButtonDisabled(false);
+        // ユーザー登録画面への遷移
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Records' }]
+        });
+      }).catch(error => {
+        var errorCode = error.response.data.info.code;
+        var message: string[] = [];
+        console.log(errorCode);
+        //message = errorCodeTransition(errorCode);
+        //setErrorMessages(message);
+        // ボタンの活性化
+        setButtonDisabled(true);
+      });
+    } catch (ex: any) {
+
+    }
+  }, [userId, uid, date, day, styleFlg, startHour, runningTime, runningKm ,occupancyRate, numberOfTime, dailySales, taxFlg]);
 
   /**
    * moveScreen
@@ -140,7 +191,6 @@ export const RecordsCreate = (props: any) => {
                 iconContainer={{flex: 0.1}}
                 onDateSelected={value => {
                   setDate(value);
-                  console.log(value);
                 }}
               />
               <StandardLabel displayText={"曜日"}/>
@@ -180,7 +230,7 @@ export const RecordsCreate = (props: any) => {
                     </Text>
                   )})
                   ) : null*/}
-              <StandardButton displayText="Create Record" disabled={buttonDisabled} onPress={createRecord}/>
+              <StandardButton displayText="Create Record" disabled={buttonDisabled} onPress={createRecord} id={userId} uid={uid} />
               <StandardTextLink displayText="Cancel" onPress={() => moveScreen("Home")}/>
             </View>
           </TouchableWithoutFeedback>
