@@ -1,8 +1,11 @@
+import { map } from '@firebase/util';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { Button, Card, Paragraph, Title } from 'react-native-paper';
 import { auth } from '../auth/firebase';
 import { TransitionButton } from '../components/parts/TransitionButton';
+import { Record } from '../models/Record';
 import { AccentColor, BackColor, BasicColor } from '../styles/common/color';
 import { errorCodeTransition, method } from '../utils/const';
 
@@ -13,6 +16,7 @@ export const RecordsIndex = (props: any) => {
   // state
   const [uid, setUid] = useState('');
   const [userId, setUserId] = useState(Number);
+  const [records, setRecords] = useState([]);
 
   // records取得（初期表示）
   useEffect(() => {
@@ -59,6 +63,7 @@ export const RecordsIndex = (props: any) => {
       params: null,
     }).then((response) => {
       console.log("data", response.data);
+      setRecords(response.data.data);
     }).catch(error => {
       var errorCode = error.response.data.info.code;
       var message: string[] = [];
@@ -69,6 +74,22 @@ export const RecordsIndex = (props: any) => {
 
   return (
     <View style={styles.mainBody}>
+      <FlatList
+        data={records}
+        renderItem = {({item}: { item: Record }) => (
+          <Card style={styles.cardStyle} key={item.id}>
+            <Card.Content>
+              <Title>{item.date}</Title>
+              <Paragraph>売上：¥{item.daily_sales}</Paragraph>
+              <Paragraph>実車率：{item.occupancy_rate}%</Paragraph>
+            </Card.Content>
+            <Card.Actions>
+              <Button>edit</Button>
+              <Button>delete</Button>
+            </Card.Actions>
+          </Card>
+        )}
+      />
     </View>
   );
 };
@@ -76,8 +97,11 @@ export const RecordsIndex = (props: any) => {
 const styles = StyleSheet.create({
   mainBody: {
     flex: 1,
-    justifyContent: 'center',
     backgroundColor: BackColor,
     alignContent: 'center',
   },
+  cardStyle: {
+    marginHorizontal: 10,
+    marginBottom: 25,
+  }
 });
