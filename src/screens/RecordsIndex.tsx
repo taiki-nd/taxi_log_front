@@ -1,12 +1,11 @@
-import { map } from '@firebase/util';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { Button, Card, Paragraph, Title } from 'react-native-paper';
+import { View, StyleSheet, FlatList } from 'react-native';
+import { Card, Paragraph, Title } from 'react-native-paper';
 import { auth } from '../auth/firebase';
-import { TransitionButton } from '../components/parts/TransitionButton';
+import { SmallButtonCustom } from '../components/parts/SmallButtonCustom';
 import { Record } from '../models/Record';
-import { AccentColor, BackColor, BasicColor } from '../styles/common/color';
+import { BackColor, BasicColor, CoverColor, SeaColor, TomatoColor } from '../styles/common/color';
 import { errorCodeTransition, method } from '../utils/const';
 
 export const RecordsIndex = (props: any) => {
@@ -72,6 +71,44 @@ export const RecordsIndex = (props: any) => {
     });
   }, []);
 
+  const sampleMethod = () => {
+    console.log("sampleMethod pressed");
+  }
+
+  /**
+   * dateTransition
+   * @param date 
+   * @returns string
+   */
+  const dateTransition = (date: string) => {
+    var transitionDate = new Date(date);
+    return transitionDate.getFullYear() + '/' +('0' + (transitionDate.getMonth()+1)).slice(-2)+ '/' +  ('0' + transitionDate.getDate()).slice(-2);
+  }
+
+  /**
+   * dayTransition
+   * @param day 
+   * @returns string
+   */
+  const dayTransition = (day: string) => {
+    switch (day) {
+      case 'Mon.':
+        return '月'
+      case 'Tue.':
+        return '火'
+      case 'Wed.':
+        return '水'
+      case 'Thu.':
+        return '木'
+      case 'Fri.':
+        return '金'
+      case 'Sat.':
+        return '土'
+      case 'Sun.':
+        return '日'
+    }
+  }
+
   return (
     <View style={styles.mainBody}>
       <FlatList
@@ -79,13 +116,13 @@ export const RecordsIndex = (props: any) => {
         renderItem = {({item}: { item: Record }) => (
           <Card style={styles.cardStyle} key={item.id}>
             <Card.Content>
-              <Title>{item.date}</Title>
-              <Paragraph>売上：¥{item.daily_sales}</Paragraph>
-              <Paragraph>実車率：{item.occupancy_rate}%</Paragraph>
+              <Title style={styles.textColor}>{dateTransition(item.date)}({dayTransition(item.day_of_week)})</Title>
+              <Paragraph style={styles.textColor}>売上：¥{item.daily_sales}  /  実車率：{item.occupancy_rate}%</Paragraph>
+              <Paragraph style={styles.textColor}>走行距離：{item.running_km}km</Paragraph>
             </Card.Content>
             <Card.Actions>
-              <Button>edit</Button>
-              <Button>delete</Button>
+              <SmallButtonCustom displayText="edit" color={SeaColor} disabled={false} onPress={sampleMethod} />
+              <SmallButtonCustom displayText="delete" color={TomatoColor} disabled={false} onPress={sampleMethod} />
             </Card.Actions>
           </Card>
         )}
@@ -101,7 +138,11 @@ const styles = StyleSheet.create({
     alignContent: 'center',
   },
   cardStyle: {
+    backgroundColor: CoverColor,
     marginHorizontal: 10,
     marginBottom: 25,
+  },
+  textColor: {
+    color: BasicColor,
   }
 });
