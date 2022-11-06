@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, Alert } from 'react-native';
 import { Card, Paragraph, Title } from 'react-native-paper';
 import { auth } from '../auth/firebase';
 import { SmallButtonCustom } from '../components/parts/SmallButtonCustom';
@@ -15,7 +15,11 @@ export const RecordsIndex = (props: any) => {
   // state
   const [uid, setUid] = useState('');
   const [userId, setUserId] = useState(Number);
-  const [records, setRecords] = useState([]);
+  const [records, setRecords] = useState<any>([]);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(Number);
+
+  console.log("records", records);
 
   // records取得（初期表示）
   useEffect(() => {
@@ -54,15 +58,22 @@ export const RecordsIndex = (props: any) => {
       //setErrorMessages(message);
     });
 
+    var params = {
+      page: page,
+    }
+
     axios({
       method: method.GET,
       url: '/records',
       headers: headers,
       data: null,
-      params: null,
+      params: params,
     }).then((response) => {
       console.log("data", response.data);
       setRecords(response.data.data);
+      setPage(page + 1);
+      setLastPage(response.data.meta.last_page);
+      console.log(response.data.meta.last_page);
     }).catch(error => {
       var errorCode = error.response.data.info.code;
       var message: string[] = [];
@@ -70,6 +81,38 @@ export const RecordsIndex = (props: any) => {
       //setErrorMessages(message);
     });
   }, []);
+
+  const recordsIndex = () => {
+    if (page > lastPage) {
+      console.log("last page")
+      return
+    }
+
+    // headers
+    const headers = {'uuid': uid}
+    
+    var params = {
+      page: page,
+    }
+
+    axios({
+      method: method.GET,
+      url: '/records',
+      headers: headers,
+      data: null,
+      params: params,
+    }).then((response) => {
+      console.log("data", response.data);
+      var addedRecords = records.concat(response.data.data);
+      setRecords(addedRecords);
+      setPage(page + 1);
+    }).catch(error => {
+      var errorCode = error.response.data.info.code;
+      var message: string[] = [];
+      message = errorCodeTransition(errorCode);
+      //setErrorMessages(message);
+    });
+  }
 
   const sampleMethod = () => {
     console.log("sampleMethod pressed");
@@ -113,10 +156,11 @@ export const RecordsIndex = (props: any) => {
     <View style={styles.mainBody}>
       <FlatList
         data={records}
+        extraData={records}
         renderItem = {({item}: { item: Record }) => (
-          <Card style={styles.cardStyle} key={item.id}>
+          <Card style={styles.cardStyle}>
             <Card.Content>
-              <Title style={styles.textColor}>{dateTransition(item.date)}({dayTransition(item.day_of_week)})</Title>
+              <Title style={styles.textColor}>{dateTransition(item.date)}({dayTransition(item.day_of_week)}) id:{item.id}</Title>
               <Paragraph style={styles.textColor}>売上：¥{item.daily_sales}  /  実車率：{item.occupancy_rate}%</Paragraph>
               <Paragraph style={styles.textColor}>走行距離：{item.running_km}km</Paragraph>
             </Card.Content>
@@ -126,6 +170,8 @@ export const RecordsIndex = (props: any) => {
             </Card.Actions>
           </Card>
         )}
+        onEndReached={recordsIndex}
+        onEndReachedThreshold={0}
       />
     </View>
   );
