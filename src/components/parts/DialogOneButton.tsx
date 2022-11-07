@@ -8,7 +8,7 @@ export const DialogOneButton = (props: any) => {
     <Provider>
         <View>
           <Portal>
-            <Dialog visible={visible} onDismiss={onDismiss}>
+            <Dialog visible={visible} onDismiss={onDismiss} style={styles.dialog}>
               <Dialog.Title style={styles.text}>{title}</Dialog.Title>
               <Dialog.Content>
                 <Paragraph style={styles.text}>{description}</Paragraph>
