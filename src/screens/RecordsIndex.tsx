@@ -19,8 +19,6 @@ export const RecordsIndex = (props: any) => {
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(Number);
 
-  console.log("records", records);
-
   // records取得（初期表示）
   useEffect(() => {
     var currentUser = auth.currentUser
@@ -73,7 +71,6 @@ export const RecordsIndex = (props: any) => {
       setRecords(response.data.data);
       setPage(page + 1);
       setLastPage(response.data.meta.last_page);
-      console.log(response.data.meta.last_page);
     }).catch(error => {
       var errorCode = error.response.data.info.code;
       var message: string[] = [];
@@ -116,6 +113,33 @@ export const RecordsIndex = (props: any) => {
 
   const sampleMethod = () => {
     console.log("sampleMethod pressed");
+  }
+
+  /** 
+   * deleteRecord
+   * @param id
+   */
+  const deleteRecord = (id: number, user_id: number) => {
+    // headers
+    const headers = {'uuid': uid}
+
+    // params
+    const params = {'user_id': user_id}
+    
+    axios({
+      method: method.DELETE,
+      url: `/records/${id}`,
+      headers: headers,
+      data: null,
+      params: params,
+    }).then((response) => {
+      console.log("data", response.data);
+    }).catch((error) => {
+      var errorCode = error.response.data.info.code;
+      var message: string[] = [];
+      message = errorCodeTransition(errorCode);
+      //setErrorMessages(message);
+    })
   }
 
   /**
@@ -166,7 +190,7 @@ export const RecordsIndex = (props: any) => {
             </Card.Content>
             <Card.Actions>
               <SmallButtonCustom displayText="edit" color={SeaColor} disabled={false} onPress={sampleMethod} />
-              <SmallButtonCustom displayText="delete" color={TomatoColor} disabled={false} onPress={sampleMethod} />
+              <SmallButtonCustom displayText="delete" color={TomatoColor} disabled={false} onPress={() => deleteRecord(item.id, item.user_id)} />
             </Card.Actions>
           </Card>
         )}
