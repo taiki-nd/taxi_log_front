@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, Alert } from 'react-native';
 import { Card, Paragraph, Title } from 'react-native-paper';
 import { auth } from '../auth/firebase';
+import { DialogOneButton } from '../components/parts/DialogOneButton';
+import { DialogTwoButton } from '../components/parts/DialogTwoButton';
 import { SmallButtonCustom } from '../components/parts/SmallButtonCustom';
 import { Record } from '../models/Record';
 import { BackColor, BasicColor, CoverColor, SeaColor, TomatoColor } from '../styles/common/color';
@@ -18,6 +20,10 @@ export const RecordsIndex = (props: any) => {
   const [records, setRecords] = useState<any>([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(Number);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const [visibleConfirmDeleteDialog, setVisibleConfirmDeleteDialog] = useState(false);
+  const [visibleFailedDialog, setVisibleFailedDialog] = useState(false);
+  const [selectedId, setSelectedId] = useState(Number);
 
   // records取得（初期表示）
   useEffect(() => {
@@ -75,7 +81,7 @@ export const RecordsIndex = (props: any) => {
       var errorCode = error.response.data.info.code;
       var message: string[] = [];
       message = errorCodeTransition(errorCode);
-      //setErrorMessages(message);
+      setErrorMessages(message);
     });
   }, []);
 
@@ -115,31 +121,59 @@ export const RecordsIndex = (props: any) => {
     console.log("sampleMethod pressed");
   }
 
+  /**
+   * deleteRecordConfirm
+   * @param id number
+   * @param user_id number
+   */
+  const deleteRecordConfirm = (id: number, user_id: number) => {
+    setVisibleConfirmDeleteDialog(true);
+    setSelectedId(id);
+    setUserId(user_id);
+  }
+
+  /**
+   * cancelDeleteRecord
+   */
+  const cancelDeleteRecord = () => {
+    setVisibleConfirmDeleteDialog(false);
+  }
+
   /** 
    * deleteRecord
-   * @param id
    */
-  const deleteRecord = (id: number, user_id: number) => {
+  const deleteRecord = () => {
     // headers
     const headers = {'uuid': uid}
 
     // params
-    const params = {'user_id': user_id}
-    
+    const params = {'user_id': userId}
+
     axios({
       method: method.DELETE,
-      url: `/records/${id}`,
+      url: `/records/${selectedId}`,
       headers: headers,
       data: null,
       params: params,
     }).then((response) => {
       console.log("data", response.data);
+      setVisibleConfirmDeleteDialog(false);
     }).catch((error) => {
       var errorCode = error.response.data.info.code;
       var message: string[] = [];
       message = errorCodeTransition(errorCode);
-      //setErrorMessages(message);
+      setVisibleConfirmDeleteDialog(false);
+      setVisibleFailedDialog(true);
+      setErrorMessages(message);
     })
+  }
+
+  /**
+   * dialogOk
+   */
+  const dialogOk = () => {
+    console.log("dialogOk");
+    setVisibleFailedDialog(false);
   }
 
   /**
@@ -184,18 +218,36 @@ export const RecordsIndex = (props: any) => {
         renderItem = {({item}: { item: Record }) => (
           <Card style={styles.cardStyle}>
             <Card.Content>
-              <Title style={styles.textColor}>{dateTransition(item.date)}({dayTransition(item.day_of_week)})</Title>
+              <Title style={styles.textColor}>{dateTransition(item.date)}({dayTransition(item.day_of_week)})id:{item.id}</Title>
               <Paragraph style={styles.textColor}>売上：¥{item.daily_sales}  /  実車率：{item.occupancy_rate}%</Paragraph>
               <Paragraph style={styles.textColor}>走行距離：{item.running_km}km</Paragraph>
             </Card.Content>
             <Card.Actions>
               <SmallButtonCustom displayText="edit" color={SeaColor} disabled={false} onPress={sampleMethod} />
-              <SmallButtonCustom displayText="delete" color={TomatoColor} disabled={false} onPress={() => deleteRecord(item.id, item.user_id)} />
+              <SmallButtonCustom displayText="delete" color={TomatoColor} disabled={false} onPress={() => deleteRecordConfirm(item.id, item.user_id)} />
             </Card.Actions>
           </Card>
         )}
         onEndReached={recordsIndex}
         onEndReachedThreshold={0}
+      />
+      <DialogTwoButton
+        visible={visibleConfirmDeleteDialog}
+        title='削除確認'
+        description='選択したレコードを削除しますか？'
+        displayButton1='削除'
+        displayButton2='キャンセル'
+        funcButton1={deleteRecord}
+        funcButton2={cancelDeleteRecord}
+        onDismiss={cancelDeleteRecord}
+      />
+      <DialogOneButton
+        visible={visibleFailedDialog}
+        title='削除失敗'
+        description={errorMessages}
+        displayButton1='OK'
+        funcButton1={dialogOk}
+        onDismiss={dialogOk}
       />
     </View>
   );
