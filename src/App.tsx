@@ -8,13 +8,13 @@ import { RecordsIndex } from './screens/RecordsIndex';
 import { RecordsCreate } from './screens/RecordsCreate';
 import { Analysis } from './screens/Analysis';
 import { Setting } from './screens/Setting';
-import { RecordsUpdate } from './components/records/RecordsUpdate';
 import { Signup } from './components/pages/users/Signup';
 import { Signup2 } from './components/pages/users/Signup2';
 import { Signin } from './components/pages/users/Signin';
 import axios from "axios";
 import { server } from './utils/constHide';
 import { SignupEmail } from './components/pages/users/SignupEmail';
+import { RecordsEdit } from './components/pages/records/RecordsEdit';
 
 axios.defaults.baseURL = server.baseUrl;
 
@@ -213,10 +213,10 @@ export default function App() {
         // RecordsUpdate
         */}
         <Tab.Screen
-          name="RecordsUpdate"
-          component={RecordsUpdate}
+          name="RecordsEdit"
+          component={RecordsEdit}
           options={{
-            title: "RecordsUpdate",
+            title: "Recordの編集",
             headerStyle: {
               backgroundColor: BackColor,
             },

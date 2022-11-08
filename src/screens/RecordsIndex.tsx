@@ -117,10 +117,6 @@ export const RecordsIndex = (props: any) => {
     });
   }
 
-  const sampleMethod = () => {
-    console.log("sampleMethod pressed");
-  }
-
   /**
    * deleteRecordConfirm
    * @param id number
@@ -227,7 +223,7 @@ export const RecordsIndex = (props: any) => {
               <Paragraph style={styles.textColor}>走行距離：{item.running_km}km</Paragraph>
             </Card.Content>
             <Card.Actions>
-              <SmallButtonCustom displayText="edit" color={SeaColor} disabled={false} onPress={sampleMethod} />
+              <SmallButtonCustom displayText="edit" color={SeaColor} disabled={false} onPress={() => {navigation.navigate('RecordsEdit', {record_id: item.id, user_id: item.user_id})}} />
               <SmallButtonCustom displayText="delete" color={TomatoColor} disabled={false} onPress={() => deleteRecordConfirm(item.id, item.user_id)} />
             </Card.Actions>
           </Card>
