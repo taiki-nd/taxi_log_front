@@ -158,6 +158,10 @@ export const RecordsIndex = (props: any) => {
     }).then((response) => {
       console.log("data", response.data);
       setVisibleConfirmDeleteDialog(false);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Records' }]
+      });
     }).catch((error) => {
       var errorCode = error.response.data.info.code;
       var message: string[] = [];
