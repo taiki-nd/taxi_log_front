@@ -37,6 +37,8 @@ export const RecordsEdit = (props: any) => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
+  console.log(runningKm, runningTime)
+
   // signinユーザー情報の取得
   useEffect(() => {
     var currentUser = auth.currentUser
@@ -53,22 +55,37 @@ export const RecordsEdit = (props: any) => {
     // headers
     const headers = {'uuid': currentUser.uid}
 
+    // params
+    const params = {
+      user_id: user_id,
+    }
+
+    console.log("here")
+
     axios({
       method: method.GET,
-      url: 'user/get_user_form_uid',
+      url: `/records/${record_id}`,
       headers: headers,
       data: null,
-      params: null,
+      params: params,
     }).then((response) => {
       console.log("data", response.data);
+      // データの取得
       setUserId(response.data.data.id);
+      setDate(response.data.data.date);
+      setDay(response.data.data.day_of_week);
       setStyleFlg(response.data.data.style_flg);
-      console.log(response.data.data.id, response.data.data.style_flg)
+      setStartHour(response.data.data.start_hour);
+      setRunningTime(response.data.data.running_time);
+      setRunningKm(response.data.data.running_km);
+      setOccupancyRate(response.data.data.occupancy_rate);
+      setNumberOfTime(response.data.data.number_of_time);
       if (response.data.data.is_tax){
         setTaxFlg('true');
       } else {
         setTaxFlg('false');
       }
+      setDailySales(response.data.data.daily_sales);
     }).catch(error => {
       var errorCode = error.response.data.info.code;
       var message: string[] = [];
@@ -96,11 +113,11 @@ export const RecordsEdit = (props: any) => {
   }, [date, day, styleFlg, startHour, runningTime, runningKm ,occupancyRate, numberOfTime, dailySales, taxFlg]);
 
   /**
-   * createRecord
+   * updateRecord
    */
-  const createRecord = useCallback(async (e: SyntheticEvent) => {
+  const updateRecord = useCallback(async (e: SyntheticEvent) => {
     e.preventDefault();
-    console.log("pressed createRecord button");
+    console.log("pressed updateRecord button");
 
     setButtonDisabled(true);
     console.log(uid);
@@ -113,8 +130,6 @@ export const RecordsEdit = (props: any) => {
     if (taxFlg === "true") {
       isTax = true;
     }
-
-    console.log(date);
 
     // jsonData
     var jsonData = {
@@ -215,12 +230,12 @@ export const RecordsEdit = (props: any) => {
                 <RadioButton.Item label="夜勤" value="night" style={styles.radioButtonStyle} color={AccentColor}/>
                 <RadioButton.Item label="他" value="other" style={styles.radioButtonStyle} color={AccentColor}/>
               </RadioButton.Group>
-              <StandardTextInput label="始業開始時刻" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setStartHour(i)}/>
-              <StandardTextInput label="走行時間" placeholder="17" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setRunningTime(i)}/>
-              <StandardTextInput label="走行距離" placeholder="285" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setRunningKm(i)}/>
-              <StandardTextInput label="乗車率" placeholder="55.8" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setOccupancyRate(i)}/>
-              <StandardTextInput label="乗車回数" placeholder="38" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setNumberOfTime(i)}/>
-              <StandardTextInput label="売上" placeholder="58000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailySales(i)}/>
+              <StandardTextInput label="始業開始時刻" defaultValue={String(startHour)} placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setStartHour(i)}/>
+              <StandardTextInput label="走行時間" defaultValue={String(runningTime)} placeholder="17" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setRunningTime(i)}/>
+              <StandardTextInput label="走行距離" defaultValue={String(runningKm)} placeholder="285" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setRunningKm(i)}/>
+              <StandardTextInput label="乗車率" defaultValue={String(occupancyRate)} placeholder="55.8" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setOccupancyRate(i)}/>
+              <StandardTextInput label="乗車回数" defaultValue={String(numberOfTime)} placeholder="38" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setNumberOfTime(i)}/>
+              <StandardTextInput label="売上" defaultValue={String(dailySales)} placeholder="58000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailySales(i)}/>
               <StandardLabel displayText={"標準入力価格設定"}/>
               <RadioButton.Group onValueChange={value => setTaxFlg(value)} value={taxFlg}>
                 <RadioButton.Item label="税込みで入力" value="true" style={styles.radioButtonStyle} color={AccentColor}/>
@@ -234,7 +249,7 @@ export const RecordsEdit = (props: any) => {
                     </Text>
                   )})
                   ) : null}
-              <StandardButton displayText="Create Record" disabled={buttonDisabled} onPress={createRecord} id={userId} uid={uid} />
+              <StandardButton displayText="Update Record" disabled={buttonDisabled} onPress={updateRecord} id={userId} uid={uid} />
               <StandardTextLink displayText="Cancel" onPress={() => moveScreen("Home")}/>
             </View>
           </TouchableWithoutFeedback>

@@ -59,7 +59,6 @@ export const RecordsCreate = (props: any) => {
       console.log("data", response.data);
       setUserId(response.data.data.id);
       setStyleFlg(response.data.data.style_flg);
-      console.log(response.data.data.id, response.data.data.style_flg)
       if (response.data.data.is_tax){
         setTaxFlg('true');
       } else {

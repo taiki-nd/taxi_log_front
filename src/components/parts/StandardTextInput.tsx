@@ -3,7 +3,7 @@ import { BackColor, BasicColor } from '../../styles/common/color';
 import { TextInput } from 'react-native-paper';
 
 export const StandardTextInput = (props: any) => {
-  const {placeholder, keyboardType, secureTextEntry, label, onChangeText} = props;
+  const {placeholder, keyboardType, secureTextEntry, label, onChangeText, defaultValue} = props;
   return (
     <View style={styles.SectionStyle}>
       <TextInput
@@ -23,6 +23,7 @@ export const StandardTextInput = (props: any) => {
         outlineColor={BasicColor}
         activeOutlineColor={BasicColor}
         textColor={BasicColor}
+        value = {defaultValue}
       />
     </View>
   );
