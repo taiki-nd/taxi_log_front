@@ -20,7 +20,7 @@ export const RecordsEdit = (props: any) => {
   // 変数
   var record_id = route.params.record_id;
   var user_id = route.params.user_id;
-  console.log(record_id, user_id)
+  
   // state
   const [userId, setUserId] = useState(Number);
   const [uid, setUid] = useState('');
@@ -36,8 +36,6 @@ export const RecordsEdit = (props: any) => {
   const [dailySales, setDailySales] = useState(Number);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
-
-  console.log(runningKm, runningTime)
 
   // signinユーザー情報の取得
   useEffect(() => {
@@ -59,8 +57,6 @@ export const RecordsEdit = (props: any) => {
     const params = {
       user_id: user_id,
     }
-
-    console.log("here")
 
     axios({
       method: method.GET,
@@ -117,10 +113,8 @@ export const RecordsEdit = (props: any) => {
    */
   const updateRecord = useCallback(async (e: SyntheticEvent) => {
     e.preventDefault();
-    console.log("pressed updateRecord button");
 
     setButtonDisabled(true);
-    console.log(uid);
 
     // headers
     const headers = {'uuid': uid}
@@ -212,6 +206,7 @@ export const RecordsEdit = (props: any) => {
                 onDateSelected={value => {
                   setDate(value);
                 }}
+                selectedDate={date}
               />
               <StandardLabel displayText={"曜日"}/>
               <RadioButton.Group onValueChange={value => setDay(value)} value={day}>
@@ -250,7 +245,7 @@ export const RecordsEdit = (props: any) => {
                   )})
                   ) : null}
               <StandardButton displayText="Update Record" disabled={buttonDisabled} onPress={updateRecord} id={userId} uid={uid} />
-              <StandardTextLink displayText="Cancel" onPress={() => moveScreen("Home")}/>
+              <StandardTextLink displayText="Cancel" onPress={() => moveScreen("Records")}/>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAwareScrollView>
