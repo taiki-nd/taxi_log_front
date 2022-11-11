@@ -1,6 +1,6 @@
 # taxi_log_front
- 
-<img src="[画像のURL](https://user-images.githubusercontent.com/84260062/201301365-03c0e077-8441-4322-81b8-58325e9e2df3.png)" width=400>
+
+<img src="[画像のURL](https://user-images.githubusercontent.com/84260062/201302622-cdbdb2a8-b1d3-4c55-934a-c6c4cc848719.png)" width="320px">
 
 # 技術スタック
 
