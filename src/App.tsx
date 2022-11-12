@@ -237,17 +237,8 @@ export default function App() {
           name="RecordsShow"
           component={RecordsShow}
           options={{
-            title: "Record詳細",
-            headerStyle: {
-              backgroundColor: BackColor,
-            },
-            headerTitleStyle: {
-              color: BasicColor,
-            },
+            headerShown: false,
             tabBarButton: () => null,
-            tabBarStyle: {
-              display: 'none',
-            }
           }}
         />
       </Tab.Navigator>

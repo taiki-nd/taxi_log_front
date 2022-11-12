@@ -2,11 +2,12 @@ import axios from "axios";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import { Text, DataTable } from "react-native-paper";
 import { auth } from "../../../auth/firebase";
 import { BackColor } from "../../../styles/common/color";
 import { DateTransition, DayTransition } from "../../../utils/commonFunc/record/DateTranstion";
 import { errorCodeTransition, method } from "../../../utils/const";
+import { StandardSpace } from "../../parts/Space";
 
 export const RecordsShow = (props: any) => {
     // props
@@ -83,18 +84,95 @@ export const RecordsShow = (props: any) => {
         setErrorMessages(message);
       });
     }, []);
+
+    /**
+     * averageSalesPerHour
+     * @returns {number}
+     */
+    const averageSalesPerHour = () => {
+      return Math.round(dailySales/runningTime);
+    }
+
+    /**
+     * averageSalesPerCustomer
+     * @returns {number}
+     */
+    const averageSalesPerCustomer = () => {
+      return Math.round(dailySales/numberOfTime);
+    }
+
+    /**
+     * averageSalesPerKm
+     * @returns {number}
+     */
+    const averageSalesPerKm = () => {
+      return Math.round(dailySales/runningKm);
+    }
   
     return (
       <View style={styles.mainBody}>
-        <Text>{DateTransition(String(date))}({DayTransition(day)})</Text>
+        <Text variant="titleLarge">{DateTransition(String(date))}({DayTransition(day)})の売上記録</Text>
+
+        <DataTable>
+          <DataTable.Header>
+            <DataTable.Title>売上</DataTable.Title>
+            <DataTable.Title>売上達成率</DataTable.Title>
+            <DataTable.Title>実車率</DataTable.Title>
+          </DataTable.Header>
+          <DataTable.Row>
+            <DataTable.Cell>{dailySales}円</DataTable.Cell>
+            <DataTable.Cell>todo%</DataTable.Cell>
+            <DataTable.Cell>{occupancyRate}%</DataTable.Cell>
+          </DataTable.Row>
+        </DataTable>
+
+        <StandardSpace/>
+
+        <DataTable>
+          <DataTable.Header>
+            <DataTable.Title>走行時間</DataTable.Title>
+            <DataTable.Title>平均単価/時間</DataTable.Title>
+          </DataTable.Header>
+          <DataTable.Row>
+            <DataTable.Cell>{runningTime}時間</DataTable.Cell>
+            <DataTable.Cell>{averageSalesPerHour()}円</DataTable.Cell>
+          </DataTable.Row>
+        </DataTable>
+
+        <StandardSpace/>
+        
+        <DataTable>
+          <DataTable.Header>
+            <DataTable.Title>組数</DataTable.Title>
+            <DataTable.Title>平均単価/組</DataTable.Title>
+          </DataTable.Header>
+          <DataTable.Row>
+            <DataTable.Cell>{numberOfTime}組</DataTable.Cell>
+            <DataTable.Cell>{averageSalesPerCustomer()}円</DataTable.Cell>
+          </DataTable.Row>
+        </DataTable>
+
+        <StandardSpace/>
+
+        <DataTable>
+          <DataTable.Header>
+            <DataTable.Title>走行距離</DataTable.Title>
+            <DataTable.Title>平均単価/km</DataTable.Title>
+          </DataTable.Header>
+          <DataTable.Row>
+            <DataTable.Cell>{runningKm}km</DataTable.Cell>
+            <DataTable.Cell>{averageSalesPerKm()}円</DataTable.Cell>
+          </DataTable.Row>
+        </DataTable>
+
       </View>
     );
   };
   
   const styles = StyleSheet.create({
     mainBody: {
+      padding: 10,
       flex: 1,
-      justifyContent: 'center',
       backgroundColor: BackColor,
       alignContent: 'center',
     },
