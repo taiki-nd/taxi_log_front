@@ -1,8 +1,11 @@
 import axios from "axios";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { auth } from "../../../auth/firebase";
+import { BackColor } from "../../../styles/common/color";
+import { DateTransition, DayTransition } from "../../../utils/commonFunc/record/DateTranstion";
 import { errorCodeTransition, method } from "../../../utils/const";
 
 export const RecordsShow = (props: any) => {
@@ -81,7 +84,27 @@ export const RecordsShow = (props: any) => {
       });
     }, []);
   
-  return (
-    <Text>レコード詳細画面</Text>
-  );
-}
+    return (
+      <View style={styles.mainBody}>
+        <Text>{DateTransition(String(date))}({DayTransition(day)})</Text>
+      </View>
+    );
+  };
+  
+  const styles = StyleSheet.create({
+    mainBody: {
+      flex: 1,
+      justifyContent: 'center',
+      backgroundColor: BackColor,
+      alignContent: 'center',
+    },
+    radioButtonStyle: {
+      marginLeft: 35,
+      marginRight: 35,
+    },
+    errorTextStyle: {
+      color: 'red',
+      textAlign: 'center',
+      fontSize: 14,
+    },
+  });

@@ -8,6 +8,7 @@ import { DialogTwoButton } from '../components/parts/DialogTwoButton';
 import { SmallButtonCustom } from '../components/parts/SmallButtonCustom';
 import { Record } from '../models/Record';
 import { BackColor, BasicColor, CoverColor, SeaColor, TomatoColor } from '../styles/common/color';
+import { DateTransition, DayTransition } from '../utils/commonFunc/record/DateTranstion';
 import { errorCodeTransition, method } from '../utils/const';
 
 export const RecordsIndex = (props: any) => {
@@ -176,40 +177,6 @@ export const RecordsIndex = (props: any) => {
     setVisibleFailedDialog(false);
   }
 
-  /**
-   * dateTransition
-   * @param date 
-   * @returns string
-   */
-  const dateTransition = (date: string) => {
-    var transitionDate = new Date(date);
-    return transitionDate.getFullYear() + '/' +('0' + (transitionDate.getMonth()+1)).slice(-2)+ '/' +  ('0' + transitionDate.getDate()).slice(-2);
-  }
-
-  /**
-   * dayTransition
-   * @param day 
-   * @returns string
-   */
-  const dayTransition = (day: string) => {
-    switch (day) {
-      case 'Mon.':
-        return '月'
-      case 'Tue.':
-        return '火'
-      case 'Wed.':
-        return '水'
-      case 'Thu.':
-        return '木'
-      case 'Fri.':
-        return '金'
-      case 'Sat.':
-        return '土'
-      case 'Sun.':
-        return '日'
-    }
-  }
-
   return (
     <View style={styles.mainBody}>
       <FlatList
@@ -218,7 +185,7 @@ export const RecordsIndex = (props: any) => {
         renderItem = {({item}: { item: Record }) => (
           <Card style={styles.cardStyle} onPress={() => navigation.navigate('RecordsShow', {record_id: item.id, user_id: item.user_id})}>
             <Card.Content>
-              <Title style={styles.textColor}>{dateTransition(item.date)}({dayTransition(item.day_of_week)})</Title>
+              <Title style={styles.textColor}>{DateTransition(item.date)}({DayTransition(item.day_of_week)})</Title>
               <Paragraph style={styles.textColor}>売上：¥{item.daily_sales}  /  実車率：{item.occupancy_rate}%</Paragraph>
               <Paragraph style={styles.textColor}>走行距離：{item.running_km}km</Paragraph>
             </Card.Content>
