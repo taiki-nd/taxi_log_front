@@ -15,6 +15,7 @@ import axios from "axios";
 import { server } from './utils/constHide';
 import { SignupEmail } from './components/pages/users/SignupEmail';
 import { RecordsEdit } from './components/pages/records/RecordsEdit';
+import { RecordsShow } from './components/pages/records/RecordsShow';
 
 axios.defaults.baseURL = server.baseUrl;
 
@@ -217,6 +218,26 @@ export default function App() {
           component={RecordsEdit}
           options={{
             title: "Recordの編集",
+            headerStyle: {
+              backgroundColor: BackColor,
+            },
+            headerTitleStyle: {
+              color: BasicColor,
+            },
+            tabBarButton: () => null,
+            tabBarStyle: {
+              display: 'none',
+            }
+          }}
+        />
+        {/*
+        // RecordsShow
+        */}
+        <Tab.Screen
+          name="RecordsShow"
+          component={RecordsShow}
+          options={{
+            title: "Record詳細",
             headerStyle: {
               backgroundColor: BackColor,
             },
