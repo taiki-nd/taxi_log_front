@@ -204,6 +204,7 @@ export const RecordsEdit = (props: any) => {
                 dateNumberStyle={{color: BasicColor}}
                 dateNameStyle={{color: BasicColor}}
                 iconContainer={{flex: 0.1}}
+                markedDates={[date]}
                 onDateSelected={value => {
                   setDate(value);
                 }}
