@@ -224,6 +224,9 @@ export default function App() {
               color: BasicColor,
             },
             tabBarButton: () => null,
+            tabBarStyle: {
+              display: 'none',
+            }
           }}
         />
       </Tab.Navigator>

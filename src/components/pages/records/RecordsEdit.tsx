@@ -195,6 +195,7 @@ export const RecordsEdit = (props: any) => {
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View>
               <CalendarStrip
+                selectedDate={date}
                 scrollable
                 style={{height:100, paddingTop: 10, paddingBottom: 10}}
                 daySelectionAnimation={{type: 'border', duration: 200, borderWidth: 1, borderHighlightColor: BasicColor}}
@@ -206,7 +207,6 @@ export const RecordsEdit = (props: any) => {
                 onDateSelected={value => {
                   setDate(value);
                 }}
-                selectedDate={date}
               />
               <StandardLabel displayText={"曜日"}/>
               <RadioButton.Group onValueChange={value => setDay(value)} value={day}>
