@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text, DataTable } from "react-native-paper";
 import { auth } from "../../../auth/firebase";
-import { BackColor } from "../../../styles/common/color";
+import { AccentColor, BackColor, BasicColor } from "../../../styles/common/color";
 import { DateTransition, DayTransition } from "../../../utils/commonFunc/record/DateTranstion";
 import { errorCodeTransition, method } from "../../../utils/const";
 import { StandardSpace } from "../../parts/Space";
@@ -111,15 +111,21 @@ export const RecordsShow = (props: any) => {
   
     return (
       <View style={styles.mainBody}>
-        <Text variant="titleLarge">{DateTransition(String(date))}({DayTransition(day)})の売上記録</Text>
 
+        <StandardSpace/>
+
+        <Text variant="titleLarge"  style={styles.title}>{DateTransition(String(date))}({DayTransition(day)})の売上記録</Text>
+
+        <StandardSpace/>
+
+        <Text variant="titleMedium" style={styles.subTitle}>総括</Text>
         <DataTable>
-          <DataTable.Header>
+          <DataTable.Header style={styles.tableHeader}>
             <DataTable.Title>売上</DataTable.Title>
             <DataTable.Title>売上達成率</DataTable.Title>
             <DataTable.Title>実車率</DataTable.Title>
           </DataTable.Header>
-          <DataTable.Row>
+          <DataTable.Row style={styles.tableRow}>
             <DataTable.Cell>{dailySales}円</DataTable.Cell>
             <DataTable.Cell>todo%</DataTable.Cell>
             <DataTable.Cell>{occupancyRate}%</DataTable.Cell>
@@ -128,12 +134,13 @@ export const RecordsShow = (props: any) => {
 
         <StandardSpace/>
 
+        <Text variant="titleMedium" style={styles.subTitle}>時間単価</Text>
         <DataTable>
-          <DataTable.Header>
+          <DataTable.Header style={styles.tableHeader}>
             <DataTable.Title>走行時間</DataTable.Title>
             <DataTable.Title>平均単価/時間</DataTable.Title>
           </DataTable.Header>
-          <DataTable.Row>
+          <DataTable.Row style={styles.tableRow}>
             <DataTable.Cell>{runningTime}時間</DataTable.Cell>
             <DataTable.Cell>{averageSalesPerHour()}円</DataTable.Cell>
           </DataTable.Row>
@@ -141,12 +148,13 @@ export const RecordsShow = (props: any) => {
 
         <StandardSpace/>
         
+        <Text variant="titleMedium" style={styles.subTitle}>客単価</Text>
         <DataTable>
-          <DataTable.Header>
+          <DataTable.Header style={styles.tableHeader}>
             <DataTable.Title>組数</DataTable.Title>
             <DataTable.Title>平均単価/組</DataTable.Title>
           </DataTable.Header>
-          <DataTable.Row>
+          <DataTable.Row style={styles.tableRow}>
             <DataTable.Cell>{numberOfTime}組</DataTable.Cell>
             <DataTable.Cell>{averageSalesPerCustomer()}円</DataTable.Cell>
           </DataTable.Row>
@@ -154,16 +162,22 @@ export const RecordsShow = (props: any) => {
 
         <StandardSpace/>
 
+        <Text variant="titleMedium" style={styles.subTitle}>距離単価</Text>
         <DataTable>
-          <DataTable.Header>
+          <DataTable.Header style={styles.tableHeader}>
             <DataTable.Title>走行距離</DataTable.Title>
             <DataTable.Title>平均単価/km</DataTable.Title>
           </DataTable.Header>
-          <DataTable.Row>
+          <DataTable.Row style={styles.tableRow}>
             <DataTable.Cell>{runningKm}km</DataTable.Cell>
             <DataTable.Cell>{averageSalesPerKm()}円</DataTable.Cell>
           </DataTable.Row>
         </DataTable>
+
+        <StandardSpace/>
+
+        <Text variant="titleMedium" style={styles.subTitle}>詳細走行情報</Text>
+        <Text>todo</Text>
 
       </View>
     );
@@ -176,9 +190,22 @@ export const RecordsShow = (props: any) => {
       backgroundColor: BackColor,
       alignContent: 'center',
     },
-    radioButtonStyle: {
-      marginLeft: 35,
-      marginRight: 35,
+    tableHeader: {
+      borderBottomColor: AccentColor,
+      borderBottomWidth: 1,
+    },
+    tableRow: {
+      borderBottomColor: AccentColor,
+      borderBottomWidth: 0.5,
+    },
+    title: {
+      color: BasicColor,
+      fontWeight: 'bold',
+    },
+    subTitle: {
+      color: BasicColor,
+      fontWeight: 'bold',
+      textDecorationLine: 'underline',
     },
     errorTextStyle: {
       color: 'red',
