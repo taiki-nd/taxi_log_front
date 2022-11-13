@@ -333,6 +333,14 @@ export const RecordsShow = (props: any) => {
                       <DialogTextInput label="売上" placeholder="4300" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setSales(i)}/>
                       <DialogTextInput label="memo" placeholder="〇〇を経由して〇〇へ" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setDescription(text)}/>
                     </Dialog.Content>
+                    {errorMessages.length != 0 ? (
+                      errorMessages.map((errorMessage: string, index: number) => { 
+                        return(
+                          <Text style={styles.errorTextStyle} key={index}>
+                            {errorMessage}
+                          </Text>
+                        )})
+                      ) : null}
                     <Dialog.Actions>
                       <SmallButtonCustom displayText="create" disabled={detailCreateButtonDisabled} color={SeaColor} onPress={detailsCreate}/>
                       <SmallButtonCustom displayText="cancel" color={TomatoColor} onPress={() => setVisibleCreateDetailsDialog(false)}/>
