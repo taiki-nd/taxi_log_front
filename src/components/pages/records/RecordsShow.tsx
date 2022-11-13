@@ -30,7 +30,7 @@ export const RecordsShow = (props: any) => {
     const [numberOfTime, setNumberOfTime] = useState(Number);
     const [taxFlg, setTaxFlg] = useState('');
     const [dailySales, setDailySales] = useState(Number);
-    const [buttonDisabled, setButtonDisabled] = useState(true);
+    const [dailyTarget, setDailyTarget] = useState(Number);
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
     useEffect(() => {
@@ -52,6 +52,22 @@ export const RecordsShow = (props: any) => {
       const params = {
         user_id: user_id,
       }
+
+      axios({
+        method: method.GET,
+        url: 'user/get_user_form_uid',
+        headers: headers,
+        data: null,
+        params: null,
+      }).then((response) => {
+        console.log("data", response.data);
+        setDailyTarget(response.data.data.daily_target);
+      }).catch(error => {
+        var errorCode = error.response.data.info.code;
+        var message: string[] = [];
+        message = errorCodeTransition(errorCode);
+        setErrorMessages(message);
+      });
   
       axios({
         method: method.GET,
@@ -84,6 +100,14 @@ export const RecordsShow = (props: any) => {
         setErrorMessages(message);
       });
     }, []);
+
+    /**
+     * DailySalesTargetAchievementRate
+     * @returns {number}
+     */
+    const DailySalesTargetAchievementRate = () => {
+      return Math.round((dailySales/dailyTarget)*100)
+    }
 
     /**
      * averageSalesPerHour
@@ -127,7 +151,7 @@ export const RecordsShow = (props: any) => {
           </DataTable.Header>
           <DataTable.Row style={styles.tableRow}>
             <DataTable.Cell>{dailySales}円</DataTable.Cell>
-            <DataTable.Cell>todo%</DataTable.Cell>
+            <DataTable.Cell>{DailySalesTargetAchievementRate()}%</DataTable.Cell>
             <DataTable.Cell>{occupancyRate}%</DataTable.Cell>
           </DataTable.Row>
         </DataTable>
