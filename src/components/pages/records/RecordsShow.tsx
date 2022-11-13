@@ -7,6 +7,7 @@ import { auth } from "../../../auth/firebase";
 import { AccentColor, BackColor, BasicColor } from "../../../styles/common/color";
 import { DateTransition, DayTransition } from "../../../utils/commonFunc/record/DateTranstion";
 import { errorCodeTransition, method } from "../../../utils/const";
+import { DialogOneButton } from "../../parts/DialogOneButton";
 import { StandardSpace } from "../../parts/Space";
 
 export const RecordsShow = (props: any) => {
@@ -31,6 +32,7 @@ export const RecordsShow = (props: any) => {
     const [taxFlg, setTaxFlg] = useState('');
     const [dailySales, setDailySales] = useState(Number);
     const [dailyTarget, setDailyTarget] = useState(Number);
+    const [visibleFailedDialog, setVisibleFailedDialog] = useState(false);
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
     useEffect(() => {
@@ -67,6 +69,7 @@ export const RecordsShow = (props: any) => {
         var message: string[] = [];
         message = errorCodeTransition(errorCode);
         setErrorMessages(message);
+        setVisibleFailedDialog(true);
       });
   
       axios({
@@ -98,6 +101,7 @@ export const RecordsShow = (props: any) => {
         var message: string[] = [];
         message = errorCodeTransition(errorCode);
         setErrorMessages(message);
+        setVisibleFailedDialog(true);
       });
     }, []);
 
@@ -131,6 +135,18 @@ export const RecordsShow = (props: any) => {
      */
     const averageSalesPerKm = () => {
       return Math.round(dailySales/runningKm);
+    }
+
+    /**
+     * dialogOk
+     */
+    const dialogOk = () => {
+      console.log("dialogOk");
+      setVisibleFailedDialog(false);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Records' }]
+      });
     }
   
     return (
@@ -202,6 +218,15 @@ export const RecordsShow = (props: any) => {
 
         <Text variant="titleMedium" style={styles.subTitle}>詳細走行情報</Text>
         <Text>todo</Text>
+
+      <DialogOneButton
+        visible={visibleFailedDialog}
+        title='走行記録表示の失敗'
+        description={errorMessages}
+        displayButton1='OK'
+        funcButton1={dialogOk}
+        onDismiss={dialogOk}
+      />
 
       </View>
     );
