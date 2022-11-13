@@ -8,7 +8,9 @@ import { AccentColor, BackColor, BasicColor } from "../../../styles/common/color
 import { DateTransition, DayTransition } from "../../../utils/commonFunc/record/DateTranstion";
 import { errorCodeTransition, method } from "../../../utils/const";
 import { DialogOneButton } from "../../parts/DialogOneButton";
+import { SmallButton } from "../../parts/SmallButton";
 import { StandardSpace } from "../../parts/Space";
+import { StandardButton } from "../../parts/StandardButton";
 
 export const RecordsShow = (props: any) => {
     // props
@@ -33,6 +35,7 @@ export const RecordsShow = (props: any) => {
     const [dailySales, setDailySales] = useState(Number);
     const [dailyTarget, setDailyTarget] = useState(Number);
     const [visibleFailedDialog, setVisibleFailedDialog] = useState(false);
+    const [buttonDisabled, setButtonDisabled] = useState(false);
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
     useEffect(() => {
@@ -217,6 +220,9 @@ export const RecordsShow = (props: any) => {
         <StandardSpace/>
 
         <Text variant="titleMedium" style={styles.subTitle}>詳細走行情報</Text>
+        <SmallButton
+          displayText="詳細走行情報の追加" disabled={buttonDisabled} onPress={() => {navigation.navigate('DetailsCreate', {record_id: record_id, user_id: user_id})}} 
+        />
         <Text>todo</Text>
 
       <DialogOneButton
