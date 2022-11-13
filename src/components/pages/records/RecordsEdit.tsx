@@ -137,20 +137,19 @@ export const RecordsEdit = (props: any) => {
       number_of_time: Number(numberOfTime),
       is_tax: isTax,
       daily_sales: Number(dailySales),
-      user_id: Number(userId)
     }
 
     console.log(jsonData);
 
     // params
     var params = {
-      uuid: uid,
+      user_id: user_id,
     }
 
     try {
       await axios({
-        method: method.POST,
-        url: '/records',
+        method: method.PUT,
+        url: `/records/${record_id}`,
         headers: headers,
         data: jsonData,
         params: params,
