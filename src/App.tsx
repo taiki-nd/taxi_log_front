@@ -16,7 +16,6 @@ import { server } from './utils/constHide';
 import { SignupEmail } from './components/pages/users/SignupEmail';
 import { RecordsEdit } from './components/pages/records/RecordsEdit';
 import { RecordsShow } from './components/pages/records/RecordsShow';
-import { DetailsCreate } from './components/pages/details/DetailsCreate';
 
 axios.defaults.baseURL = server.baseUrl;
 
@@ -239,23 +238,6 @@ export default function App() {
           component={RecordsShow}
           options={{
             headerShown: false,
-            tabBarButton: () => null,
-          }}
-        />
-        {/*
-        // RecordsShow
-        */}
-        <Tab.Screen
-          name="DetailsCreate"
-          component={DetailsCreate}
-          options={{
-            title: "Add Detail",
-            headerStyle: {
-              backgroundColor: BackColor,
-            },
-            headerTitleStyle: {
-              color: BasicColor,
-            },
             tabBarButton: () => null,
           }}
         />

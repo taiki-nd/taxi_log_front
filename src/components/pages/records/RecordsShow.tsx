@@ -1,16 +1,18 @@
 import axios from "axios";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { Text, DataTable } from "react-native-paper";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { Text, DataTable, Dialog, Provider, Portal, RadioButton } from "react-native-paper";
 import { auth } from "../../../auth/firebase";
-import { AccentColor, BackColor, BasicColor } from "../../../styles/common/color";
+import { AccentColor, BackColor, BasicColor, CoverColor, SeaColor, TomatoColor } from "../../../styles/common/color";
 import { DateTransition, DayTransition } from "../../../utils/commonFunc/record/DateTranstion";
 import { errorCodeTransition, method } from "../../../utils/const";
 import { DialogOneButton } from "../../parts/DialogOneButton";
+import { DialogTextInput } from "../../parts/DialogTextInput";
 import { SmallButton } from "../../parts/SmallButton";
+import { SmallButtonCustom } from "../../parts/SmallButtonCustom";
 import { StandardSpace } from "../../parts/Space";
-import { StandardButton } from "../../parts/StandardButton";
+import { StandardLabel } from "../../parts/StandardLabel";
 
 export const RecordsShow = (props: any) => {
     // props
@@ -35,8 +37,16 @@ export const RecordsShow = (props: any) => {
     const [dailySales, setDailySales] = useState(Number);
     const [dailyTarget, setDailyTarget] = useState(Number);
     const [visibleFailedDialog, setVisibleFailedDialog] = useState(false);
-    const [buttonDisabled, setButtonDisabled] = useState(false);
+    const [visibleCreateDetailsDialog, setVisibleCreateDetailsDialog] = useState(false);
+    const [detailCreateButtonDisabled, setDetailCreateButtonDisabled] = useState(true);
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
+
+    const [DepartHour, setDepartHour] = useState(Number);
+    const [DepartPlace, setDepartPlace] = useState('');
+    const [ArrivePlace, setArrivePlace] = useState('');
+    const [sales, setSales] = useState(Number);
+    const [methodFlg, setMethodFlg] = useState('');
+    const [description, setDescription] = useState('');
 
     useEffect(() => {
       var currentUser = auth.currentUser
@@ -109,6 +119,86 @@ export const RecordsShow = (props: any) => {
     }, []);
 
     /**
+     * 必須項目チェックによるボタン活性化処理
+     */
+    useEffect(() => {
+      if (DepartHour !== undefined
+        && DepartPlace !== ''
+        && ArrivePlace !== ''
+        && sales !== undefined
+        && methodFlg !== ''
+        && taxFlg !== ''){
+        setDetailCreateButtonDisabled(false);
+      } else {
+        setDetailCreateButtonDisabled(true);
+      }
+    }, [DepartHour, DepartPlace, ArrivePlace, sales, methodFlg, taxFlg]);
+
+    /**
+     * detailsCreate
+     */
+    const detailsCreate = () => {
+      console.log("pressed createRecord button");
+
+      setDetailCreateButtonDisabled(true);
+      console.log(uid);
+
+      // headers
+      const headers = {'uuid': uid}
+
+      // taxFlg変換
+      var isTax = false;
+      if (taxFlg === "true") {
+        isTax = true;
+      }
+
+      console.log(date);
+
+      // jsonData
+      var jsonData = {
+        depart_hour: Number(DepartHour),
+        depart_place: DepartPlace,
+        arrive_place: ArrivePlace,
+        is_tax: isTax,
+        sales: Number(sales),
+        method_flg: methodFlg,
+        description: description,
+        record_id: record_id,
+      }
+
+      console.log(jsonData);
+
+      try {
+        axios({
+          method: method.POST,
+          url: '/details',
+          headers: headers,
+          data: jsonData,
+          params: null,
+        }).then((response) => {
+          console.log("data", response.data);
+          // ボタンの活性化
+          setDetailCreateButtonDisabled(false);
+          // レコード一覧画面への遷移
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Records' }]
+          });
+        }).catch(error => {
+          var errorCode = error.response.data.info.code;
+          var message: string[] = [];
+          console.log(errorCode);
+          message = errorCodeTransition(errorCode);
+          setErrorMessages(message);
+          // ボタンの活性化
+          setDetailCreateButtonDisabled(true);
+        });
+      } catch (ex: any) {
+
+      }
+    }
+
+    /**
      * DailySalesTargetAchievementRate
      * @returns {number}
      */
@@ -154,13 +244,10 @@ export const RecordsShow = (props: any) => {
   
     return (
       <View style={styles.mainBody}>
-
         <StandardSpace/>
-
         <Text variant="titleLarge"  style={styles.title}>{DateTransition(String(date))}({DayTransition(day)})の売上記録</Text>
 
         <StandardSpace/>
-
         <Text variant="titleMedium" style={styles.subTitle}>総括</Text>
         <DataTable>
           <DataTable.Header style={styles.tableHeader}>
@@ -221,18 +308,50 @@ export const RecordsShow = (props: any) => {
 
         <Text variant="titleMedium" style={styles.subTitle}>詳細走行情報</Text>
         <SmallButton
-          displayText="詳細走行情報の追加" disabled={buttonDisabled} onPress={() => {navigation.navigate('DetailsCreate', {record_id: record_id, user_id: user_id})}} 
+          displayText="詳細走行情報の追加" onPress={() => setVisibleCreateDetailsDialog(true)} 
         />
-        <Text>todo</Text>
+        <Provider>
+          <View>
+            <Portal>
+              <Dialog visible={visibleCreateDetailsDialog} style={styles.dialog}>
+                <Dialog.Title style={styles.text}>走行詳細情報の追加</Dialog.Title>
+                <Dialog.ScrollArea>
+                  <ScrollView>
+                    <Dialog.Content>
+                      <DialogTextInput label="出発時刻" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDepartHour(i)}/>
+                      <DialogTextInput label="出発場所" placeholder="東京駅八重洲口" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setDepartPlace(text)}/>
+                      <DialogTextInput label="到着場所" placeholder="東京都庁" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setArrivePlace(text)}/>
+                      <StandardLabel displayText='乗車方式'/>
+                      <RadioButton.Group onValueChange={value => setMethodFlg(value)} value={methodFlg}>
+                        <RadioButton.Item label="流し" value="flow" style={styles.radioButtonStyle} color={AccentColor}/>
+                        <RadioButton.Item label="つけ待ち" value="wait" style={styles.radioButtonStyle} color={AccentColor}/>
+                        <RadioButton.Item label="アプリ配車" value="app" style={styles.radioButtonStyle} color={AccentColor}/>
+                        <RadioButton.Item label="自社無線" value="wireless" style={styles.radioButtonStyle} color={AccentColor}/>
+                        <RadioButton.Item label="自身顧客" value="own" style={styles.radioButtonStyle} color={AccentColor}/>
+                        <RadioButton.Item label="他" value="other" style={styles.radioButtonStyle} color={AccentColor}/>
+                      </RadioButton.Group>
+                      <DialogTextInput label="売上" placeholder="4300" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setSales(i)}/>
+                      <DialogTextInput label="memo" placeholder="〇〇を経由して〇〇へ" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setDescription(text)}/>
+                    </Dialog.Content>
+                    <Dialog.Actions>
+                      <SmallButtonCustom displayText="create" disabled={detailCreateButtonDisabled} color={SeaColor} onPress={detailsCreate}/>
+                      <SmallButtonCustom displayText="cancel" color={TomatoColor} onPress={() => setVisibleCreateDetailsDialog(false)}/>
+                    </Dialog.Actions>
+                  </ScrollView>
+                </Dialog.ScrollArea>
+              </Dialog>
+            </Portal>
+          </View>
+        </Provider>
 
-      <DialogOneButton
-        visible={visibleFailedDialog}
-        title='走行記録表示の失敗'
-        description={errorMessages}
-        displayButton1='OK'
-        funcButton1={dialogOk}
-        onDismiss={dialogOk}
-      />
+        <DialogOneButton
+          visible={visibleFailedDialog}
+          title='走行記録表示の失敗'
+          description={errorMessages}
+          displayButton1='OK'
+          funcButton1={dialogOk}
+          onDismiss={dialogOk}
+        />
 
       </View>
     );
@@ -266,5 +385,16 @@ export const RecordsShow = (props: any) => {
       color: 'red',
       textAlign: 'center',
       fontSize: 14,
+    },
+    text :{
+      color: BasicColor,
+    },
+    dialog: {
+      height: '70%',
+      backgroundColor: CoverColor,
+    },
+    radioButtonStyle: {
+      marginLeft: 35,
+      marginRight: 35,
     },
   });
