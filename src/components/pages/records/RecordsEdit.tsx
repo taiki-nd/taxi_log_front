@@ -139,8 +139,6 @@ export const RecordsEdit = (props: any) => {
       daily_sales: Number(dailySales),
     }
 
-    console.log(jsonData);
-
     // params
     var params = {
       user_id: user_id,
@@ -187,6 +185,13 @@ export const RecordsEdit = (props: any) => {
     });
   }
 
+  /**
+   * getStartingDate
+   */
+  const getStartingDate = () => {
+    return moment(date).subtract(3, 'days')
+  }
+
   return (
     <View style={styles.mainBody}>
       <View>
@@ -203,6 +208,7 @@ export const RecordsEdit = (props: any) => {
                 dateNumberStyle={{color: BasicColor}}
                 dateNameStyle={{color: BasicColor}}
                 iconContainer={{flex: 0.1}}
+                startingDate={getStartingDate()}
                 markedDates={[date]}
                 onDateSelected={value => {
                   setDate(value);
