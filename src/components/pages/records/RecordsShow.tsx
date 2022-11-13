@@ -36,6 +36,7 @@ export const RecordsShow = (props: any) => {
     const [taxFlg, setTaxFlg] = useState('');
     const [dailySales, setDailySales] = useState(Number);
     const [dailyTarget, setDailyTarget] = useState(Number);
+    const [details, setDetails] = useState<any[]>([]);
     const [visibleFailedDialog, setVisibleFailedDialog] = useState(false);
     const [visibleCreateDetailsDialog, setVisibleCreateDetailsDialog] = useState(false);
     const [detailCreateButtonDisabled, setDetailCreateButtonDisabled] = useState(true);
@@ -68,6 +69,7 @@ export const RecordsShow = (props: any) => {
         user_id: user_id,
       }
 
+      // user情報の取得
       axios({
         method: method.GET,
         url: 'user/get_user_form_uid',
@@ -85,6 +87,7 @@ export const RecordsShow = (props: any) => {
         setVisibleFailedDialog(true);
       });
   
+      // レコード詳細の取得
       axios({
         method: method.GET,
         url: `/records/${record_id}`,
@@ -109,6 +112,30 @@ export const RecordsShow = (props: any) => {
           setTaxFlg('false');
         }
         setDailySales(response.data.data.daily_sales);
+      }).catch(error => {
+        var errorCode = error.response.data.info.code;
+        var message: string[] = [];
+        message = errorCodeTransition(errorCode);
+        setErrorMessages(message);
+        setVisibleFailedDialog(true);
+      });
+
+      // detail一覧の取得
+
+      var paramsForDetails = {
+        user_id: user_id,
+        record_id: record_id,
+      }
+
+      axios({
+        method: method.GET,
+        url: '/details',
+        headers: headers,
+        data: null,
+        params: paramsForDetails,
+      }).then((response) => {
+        console.log(response.data.data);
+        setDetails(response.data.data);
       }).catch(error => {
         var errorCode = error.response.data.info.code;
         var message: string[] = [];
@@ -310,6 +337,9 @@ export const RecordsShow = (props: any) => {
         <SmallButton
           displayText="詳細走行情報の追加" onPress={() => setVisibleCreateDetailsDialog(true)} 
         />
+
+
+
         <Provider>
           <View>
             <Portal>
