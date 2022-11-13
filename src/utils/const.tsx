@@ -91,6 +91,27 @@ export const errorCodeTransition = (codes: string[]) => {
       case 'close_day_date_error':
         errorMessage.push('締め日に無効な値が入力されています。1〜31の数値を入力して下さい。');
         break;
+      case 'day_of_week_null_error':
+        errorMessage.push('曜日を選択してください');
+        break;
+      case 'start_hour_number_error':
+        errorMessage.push('業務開始時刻に無効な値が入力されています。0〜24の数値を入力して下さい。');
+        break;
+      case 'running_time_number_error':
+        errorMessage.push('走行時間に無効な値が入力されています。0〜24の数値を入力して下さい。');
+        break;
+      case 'running_km_number_error':
+        errorMessage.push('走行距離に無効な値が入力されています。0以上の数値を入力して下さい。');
+        break;
+      case 'number_of_time_number_error':
+        errorMessage.push('乗車率に無効な値が入力されています。0以上の数値を入力して下さい。');
+        break;
+      case 'occupancy_rate_number_error':
+        errorMessage.push('乗車率に無効な値が入力されています。0〜100の数値を入力して下さい。');
+        break;
+      case 'daily_sales_number_error':
+        errorMessage.push('売上に無効な値が入力されています。0以上の数値を入力して下さい。');
+        break;
       default:
         errorMessage.push('システムエラーが発生しました。');
         break;

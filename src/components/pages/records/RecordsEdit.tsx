@@ -1,22 +1,26 @@
-import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
-import { Text, StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import axios from "axios";
+import moment from "moment";
+import { SyntheticEvent, useCallback, useEffect, useState } from "react";
 import CalendarStrip from 'react-native-calendar-strip';
-import { RadioButton } from 'react-native-paper';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { StandardTextInput } from '../components/parts/StandardTextInput';
-import { StandardLabel } from '../components/parts/StandardLabel';
-import { StandardButton } from '../components/parts/StandardButton';
-import { StandardTextLink } from '../components/parts/StandardTextLink';
-import { AccentColor, BackColor, BasicColor } from '../styles/common/color';
-import moment from 'moment';
-import axios from 'axios';
-import { errorCodeTransition, method } from '../utils/const';
-import { auth } from '../auth/firebase';
+import { StyleSheet, View, Text, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { RadioButton } from "react-native-paper";
+import { auth } from "../../../auth/firebase";
+import { AccentColor, BackColor, BasicColor } from "../../../styles/common/color";
+import { errorCodeTransition, method } from "../../../utils/const";
+import { StandardButton } from "../../parts/StandardButton";
+import { StandardLabel } from "../../parts/StandardLabel";
+import { StandardTextInput } from "../../parts/StandardTextInput";
+import { StandardTextLink } from "../../parts/StandardTextLink";
 
-export const RecordsCreate = (props: any) => {
+export const RecordsEdit = (props: any) => {
   // props
-  const { navigation } = props;
+  const { navigation, route } = props;
 
+  // 変数
+  var record_id = route.params.record_id;
+  var user_id = route.params.user_id;
+  
   // state
   const [userId, setUserId] = useState(Number);
   const [uid, setUid] = useState('');
@@ -49,21 +53,35 @@ export const RecordsCreate = (props: any) => {
     // headers
     const headers = {'uuid': currentUser.uid}
 
+    // params
+    const params = {
+      user_id: user_id,
+    }
+
     axios({
       method: method.GET,
-      url: 'user/get_user_form_uid',
+      url: `/records/${record_id}`,
       headers: headers,
       data: null,
-      params: null,
+      params: params,
     }).then((response) => {
       console.log("data", response.data);
+      // データの取得
       setUserId(response.data.data.id);
+      setDate(response.data.data.date);
+      setDay(response.data.data.day_of_week);
       setStyleFlg(response.data.data.style_flg);
+      setStartHour(response.data.data.start_hour);
+      setRunningTime(response.data.data.running_time);
+      setRunningKm(response.data.data.running_km);
+      setOccupancyRate(response.data.data.occupancy_rate);
+      setNumberOfTime(response.data.data.number_of_time);
       if (response.data.data.is_tax){
         setTaxFlg('true');
       } else {
         setTaxFlg('false');
       }
+      setDailySales(response.data.data.daily_sales);
     }).catch(error => {
       var errorCode = error.response.data.info.code;
       var message: string[] = [];
@@ -91,14 +109,12 @@ export const RecordsCreate = (props: any) => {
   }, [date, day, styleFlg, startHour, runningTime, runningKm ,occupancyRate, numberOfTime, dailySales, taxFlg]);
 
   /**
-   * createRecord
+   * updateRecord
    */
-  const createRecord = useCallback(async (e: SyntheticEvent) => {
+  const updateRecord = useCallback(async (e: SyntheticEvent) => {
     e.preventDefault();
-    console.log("pressed createRecord button");
 
     setButtonDisabled(true);
-    console.log(uid);
 
     // headers
     const headers = {'uuid': uid}
@@ -108,8 +124,6 @@ export const RecordsCreate = (props: any) => {
     if (taxFlg === "true") {
       isTax = true;
     }
-
-    console.log(date);
 
     // jsonData
     var jsonData = {
@@ -123,20 +137,17 @@ export const RecordsCreate = (props: any) => {
       number_of_time: Number(numberOfTime),
       is_tax: isTax,
       daily_sales: Number(dailySales),
-      user_id: Number(userId)
     }
-
-    console.log(jsonData);
 
     // params
     var params = {
-      uuid: uid,
+      user_id: user_id,
     }
 
     try {
       await axios({
-        method: method.POST,
-        url: '/records',
+        method: method.PUT,
+        url: `/records/${record_id}`,
         headers: headers,
         data: jsonData,
         params: params,
@@ -174,6 +185,13 @@ export const RecordsCreate = (props: any) => {
     });
   }
 
+  /**
+   * getStartingDate
+   */
+  const getStartingDate = () => {
+    return moment(date).subtract(3, 'days')
+  }
+
   return (
     <View style={styles.mainBody}>
       <View>
@@ -181,6 +199,7 @@ export const RecordsCreate = (props: any) => {
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View>
               <CalendarStrip
+                selectedDate={date}
                 scrollable
                 style={{height:100, paddingTop: 10, paddingBottom: 10}}
                 daySelectionAnimation={{type: 'border', duration: 200, borderWidth: 1, borderHighlightColor: BasicColor}}
@@ -189,6 +208,8 @@ export const RecordsCreate = (props: any) => {
                 dateNumberStyle={{color: BasicColor}}
                 dateNameStyle={{color: BasicColor}}
                 iconContainer={{flex: 0.1}}
+                startingDate={getStartingDate()}
+                markedDates={[date]}
                 onDateSelected={value => {
                   setDate(value);
                 }}
@@ -210,12 +231,12 @@ export const RecordsCreate = (props: any) => {
                 <RadioButton.Item label="夜勤" value="night" style={styles.radioButtonStyle} color={AccentColor}/>
                 <RadioButton.Item label="他" value="other" style={styles.radioButtonStyle} color={AccentColor}/>
               </RadioButton.Group>
-              <StandardTextInput label="始業開始時刻" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setStartHour(i)}/>
-              <StandardTextInput label="走行時間" placeholder="17" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setRunningTime(i)}/>
-              <StandardTextInput label="走行距離" placeholder="285" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setRunningKm(i)}/>
-              <StandardTextInput label="乗車率" placeholder="55.8" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setOccupancyRate(i)}/>
-              <StandardTextInput label="乗車回数" placeholder="38" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setNumberOfTime(i)}/>
-              <StandardTextInput label="売上" placeholder="58000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailySales(i)}/>
+              <StandardTextInput label="始業開始時刻" defaultValue={String(startHour)} placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setStartHour(i)}/>
+              <StandardTextInput label="走行時間" defaultValue={String(runningTime)} placeholder="17" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setRunningTime(i)}/>
+              <StandardTextInput label="走行距離" defaultValue={String(runningKm)} placeholder="285" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setRunningKm(i)}/>
+              <StandardTextInput label="乗車率" defaultValue={String(occupancyRate)} placeholder="55.8" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setOccupancyRate(i)}/>
+              <StandardTextInput label="乗車回数" defaultValue={String(numberOfTime)} placeholder="38" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setNumberOfTime(i)}/>
+              <StandardTextInput label="売上" defaultValue={String(dailySales)} placeholder="58000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailySales(i)}/>
               <StandardLabel displayText={"標準入力価格設定"}/>
               <RadioButton.Group onValueChange={value => setTaxFlg(value)} value={taxFlg}>
                 <RadioButton.Item label="税込みで入力" value="true" style={styles.radioButtonStyle} color={AccentColor}/>
@@ -229,8 +250,8 @@ export const RecordsCreate = (props: any) => {
                     </Text>
                   )})
                   ) : null}
-              <StandardButton displayText="Create Record" disabled={buttonDisabled} onPress={createRecord} id={userId} uid={uid} />
-              <StandardTextLink displayText="Cancel" onPress={() => moveScreen("Home")}/>
+              <StandardButton displayText="Update Record" disabled={buttonDisabled} onPress={updateRecord} id={userId} uid={uid} />
+              <StandardTextLink displayText="Cancel" onPress={() => moveScreen("Records")}/>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAwareScrollView>
