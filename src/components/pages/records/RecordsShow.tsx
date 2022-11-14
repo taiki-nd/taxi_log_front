@@ -382,12 +382,17 @@ export const RecordsShow = (props: any) => {
             </DataTable.Header>
             {details.map((detail: Detail) => {
               return (
-                <DataTable.Row style={styles.tableRow} key={detail.id}>
+                <View key={detail.id}>
+                <DataTable.Row style={styles.tableRow}>
                   <DataTable.Cell>{detail.depart_hour}時台</DataTable.Cell>
                   <DataTable.Cell>{detail.depart_place}</DataTable.Cell>
                   <DataTable.Cell>{detail.arrive_place}</DataTable.Cell>
                   <DataTable.Cell>{detail.sales}円</DataTable.Cell>
                 </DataTable.Row>
+                <DataTable.Row style={styles.tableRow2}>
+                  <Text>memo: {detail.description}</Text>
+                </DataTable.Row>
+                </View>
               );
             })}
           </DataTable>
@@ -461,6 +466,11 @@ export const RecordsShow = (props: any) => {
     tableRow: {
       borderBottomColor: AccentColor,
       borderBottomWidth: 0.5,
+    },
+
+    tableRow2: {
+      borderBottomColor: AccentColor,
+      borderBottomWidth: 1,
     },
     title: {
       color: BasicColor,
