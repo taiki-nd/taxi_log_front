@@ -378,20 +378,26 @@ export const RecordsShow = (props: any) => {
               <DataTable.Title>出発時刻</DataTable.Title>
               <DataTable.Title>出発場所</DataTable.Title>
               <DataTable.Title>到着場所</DataTable.Title>
+              <DataTable.Title>乗車方式</DataTable.Title>
               <DataTable.Title>売上</DataTable.Title>
             </DataTable.Header>
             {details.map((detail: Detail) => {
               return (
                 <View key={detail.id}>
-                <DataTable.Row style={styles.tableRow}>
-                  <DataTable.Cell>{detail.depart_hour}時台</DataTable.Cell>
-                  <DataTable.Cell>{detail.depart_place}</DataTable.Cell>
-                  <DataTable.Cell>{detail.arrive_place}</DataTable.Cell>
-                  <DataTable.Cell>{detail.sales}円</DataTable.Cell>
-                </DataTable.Row>
-                <DataTable.Row style={styles.tableRow2}>
-                  <Text>memo: {detail.description}</Text>
-                </DataTable.Row>
+                  <DataTable.Row style={styles.tableRow}>
+                    <DataTable.Cell><Text style={styles.tableCell}>{detail.depart_hour}時台</Text></DataTable.Cell>
+                    <DataTable.Cell><Text style={styles.tableCell}>{detail.depart_place}</Text></DataTable.Cell>
+                    <DataTable.Cell><Text style={styles.tableCell}>{detail.arrive_place}</Text></DataTable.Cell>
+                    <DataTable.Cell><Text style={styles.tableCell}>{detail.method_flg}</Text></DataTable.Cell>
+                    <DataTable.Cell><Text style={styles.tableCell}>{detail.sales}円</Text></DataTable.Cell>
+                  </DataTable.Row>
+                  <DataTable.Row style={styles.tableRow}>
+                    <DataTable.Cell><Text style={styles.tableCell}>memo: {detail.description}</Text></DataTable.Cell>
+                  </DataTable.Row>
+                  <DataTable.Row style={styles.tableRow2}>
+                    <SmallButtonCustom displayText='edit' color={SeaColor}/>
+                    <SmallButtonCustom displayText='delete' color={TomatoColor}/>
+                  </DataTable.Row>
                 </View>
               );
             })}
@@ -467,10 +473,12 @@ export const RecordsShow = (props: any) => {
       borderBottomColor: AccentColor,
       borderBottomWidth: 0.5,
     },
-
     tableRow2: {
       borderBottomColor: AccentColor,
       borderBottomWidth: 1,
+    },
+    tableCell: {
+      fontSize: 12,
     },
     title: {
       color: BasicColor,
