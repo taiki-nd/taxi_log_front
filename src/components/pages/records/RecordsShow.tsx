@@ -61,9 +61,24 @@ export const RecordsShow = (props: any) => {
         });
         return
       }
+
+      // user情報の取得
+      getUser(currentUser.uid);
+  
+      // レコード詳細の取得
+      getRecords(currentUser.uid);
+
+      // detail一覧の取得
+      getDetails(currentUser.uid);
+    }, []);
+
+    /**
+     * getUser
+     */
+    const getUser = (uid: string) => {
   
       // headers
-      const headers = {'uuid': currentUser.uid}
+      const headers = {'uuid': uid}
   
       // params
       const params = {
@@ -87,8 +102,21 @@ export const RecordsShow = (props: any) => {
         setErrorMessages(message);
         setVisibleFailedDialog(true);
       });
+    }
+
+    /**
+     * getRecords
+     */
+    const getRecords = (uid: string) => {
+
+      // headers
+      const headers = {'uuid': uid}
   
-      // レコード詳細の取得
+      // params
+      const params = {
+        user_id: user_id,
+      }
+
       axios({
         method: method.GET,
         url: `/records/${record_id}`,
@@ -120,10 +148,19 @@ export const RecordsShow = (props: any) => {
         setErrorMessages(message);
         setVisibleFailedDialog(true);
       });
+    }
 
-      // detail一覧の取得
+    /**
+     * getDetails
+     * @param {string}
+     */
+    const getDetails = (uid: string) => {
 
-      var paramsForDetails = {
+      // headers
+      const headers = {'uuid': uid}
+
+      // params
+      var params = {
         user_id: user_id,
         record_id: record_id,
       }
@@ -133,7 +170,7 @@ export const RecordsShow = (props: any) => {
         url: '/details',
         headers: headers,
         data: null,
-        params: paramsForDetails,
+        params: params,
       }).then((response) => {
         console.log(response.data.data);
         setDetails(response.data.data);
@@ -144,7 +181,7 @@ export const RecordsShow = (props: any) => {
         setErrorMessages(message);
         setVisibleFailedDialog(true);
       });
-    }, []);
+    }
 
     /**
      * 必須項目チェックによるボタン活性化処理
@@ -206,12 +243,8 @@ export const RecordsShow = (props: any) => {
         }).then((response) => {
           console.log("data", response.data);
           // レコード詳細画面への遷移
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'RecordsShow' }],
-            navigate: [{record_id: record_id, user_id: user_id}]
-          });
           setVisibleCreateDetailsDialog(false);
+          getDetails(uid);
         }).catch(error => {
           var errorCode = error.response.data.info.code;
           var message: string[] = [];
@@ -352,7 +385,7 @@ export const RecordsShow = (props: any) => {
                 <DataTable.Row style={styles.tableRow} key={detail.id}>
                   <DataTable.Cell>{detail.depart_hour}時台</DataTable.Cell>
                   <DataTable.Cell>{detail.depart_place}</DataTable.Cell>
-                  <DataTable.Cell>{detail.arrive_place}円</DataTable.Cell>
+                  <DataTable.Cell>{detail.arrive_place}</DataTable.Cell>
                   <DataTable.Cell>{detail.sales}円</DataTable.Cell>
                 </DataTable.Row>
               );
