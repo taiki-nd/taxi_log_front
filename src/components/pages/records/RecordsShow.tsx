@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Text, DataTable, Dialog, Provider, Portal, RadioButton } from "react-native-paper";
 import { auth } from "../../../auth/firebase";
+import { Detail } from "../../../models/Detail";
 import { AccentColor, BackColor, BasicColor, CoverColor, SeaColor, TomatoColor } from "../../../styles/common/color";
 import { DateTransition, DayTransition } from "../../../utils/commonFunc/record/DateTranstion";
 import { errorCodeTransition, method } from "../../../utils/const";
@@ -204,13 +205,13 @@ export const RecordsShow = (props: any) => {
           params: null,
         }).then((response) => {
           console.log("data", response.data);
-          // ボタンの活性化
-          setDetailCreateButtonDisabled(false);
-          // レコード一覧画面への遷移
+          // レコード詳細画面への遷移
           navigation.reset({
             index: 0,
-            routes: [{ name: 'Records' }]
+            routes: [{ name: 'RecordsShow' }],
+            navigate: [{record_id: record_id, user_id: user_id}]
           });
+          setVisibleCreateDetailsDialog(false);
         }).catch(error => {
           var errorCode = error.response.data.info.code;
           var message: string[] = [];
@@ -271,75 +272,93 @@ export const RecordsShow = (props: any) => {
   
     return (
       <View style={styles.mainBody}>
-        <StandardSpace/>
-        <Text variant="titleLarge"  style={styles.title}>{DateTransition(String(date))}({DayTransition(day)})の売上記録</Text>
+        <ScrollView>
+          <StandardSpace/>
+          <Text variant="titleLarge"  style={styles.title}>{DateTransition(String(date))}({DayTransition(day)})の売上記録</Text>
 
-        <StandardSpace/>
-        <Text variant="titleMedium" style={styles.subTitle}>総括</Text>
-        <DataTable>
-          <DataTable.Header style={styles.tableHeader}>
-            <DataTable.Title>売上</DataTable.Title>
-            <DataTable.Title>売上達成率</DataTable.Title>
-            <DataTable.Title>実車率</DataTable.Title>
-          </DataTable.Header>
-          <DataTable.Row style={styles.tableRow}>
-            <DataTable.Cell>{dailySales}円</DataTable.Cell>
-            <DataTable.Cell>{DailySalesTargetAchievementRate()}%</DataTable.Cell>
-            <DataTable.Cell>{occupancyRate}%</DataTable.Cell>
-          </DataTable.Row>
-        </DataTable>
+          <StandardSpace/>
+          <Text variant="titleMedium" style={styles.subTitle}>総括</Text>
+          <DataTable>
+            <DataTable.Header style={styles.tableHeader}>
+              <DataTable.Title>売上</DataTable.Title>
+              <DataTable.Title>売上達成率</DataTable.Title>
+              <DataTable.Title>実車率</DataTable.Title>
+            </DataTable.Header>
+            <DataTable.Row style={styles.tableRow}>
+              <DataTable.Cell>{dailySales}円</DataTable.Cell>
+              <DataTable.Cell>{DailySalesTargetAchievementRate()}%</DataTable.Cell>
+              <DataTable.Cell>{occupancyRate}%</DataTable.Cell>
+            </DataTable.Row>
+          </DataTable>
 
-        <StandardSpace/>
+          <StandardSpace/>
 
-        <Text variant="titleMedium" style={styles.subTitle}>時間単価</Text>
-        <DataTable>
-          <DataTable.Header style={styles.tableHeader}>
-            <DataTable.Title>走行時間</DataTable.Title>
-            <DataTable.Title>平均単価/時間</DataTable.Title>
-          </DataTable.Header>
-          <DataTable.Row style={styles.tableRow}>
-            <DataTable.Cell>{runningTime}時間</DataTable.Cell>
-            <DataTable.Cell>{averageSalesPerHour()}円</DataTable.Cell>
-          </DataTable.Row>
-        </DataTable>
+          <Text variant="titleMedium" style={styles.subTitle}>時間単価</Text>
+          <DataTable>
+            <DataTable.Header style={styles.tableHeader}>
+              <DataTable.Title>走行時間</DataTable.Title>
+              <DataTable.Title>平均単価/時間</DataTable.Title>
+            </DataTable.Header>
+            <DataTable.Row style={styles.tableRow}>
+              <DataTable.Cell>{runningTime}時間</DataTable.Cell>
+              <DataTable.Cell>{averageSalesPerHour()}円</DataTable.Cell>
+            </DataTable.Row>
+          </DataTable>
 
-        <StandardSpace/>
-        
-        <Text variant="titleMedium" style={styles.subTitle}>客単価</Text>
-        <DataTable>
-          <DataTable.Header style={styles.tableHeader}>
-            <DataTable.Title>組数</DataTable.Title>
-            <DataTable.Title>平均単価/組</DataTable.Title>
-          </DataTable.Header>
-          <DataTable.Row style={styles.tableRow}>
-            <DataTable.Cell>{numberOfTime}組</DataTable.Cell>
-            <DataTable.Cell>{averageSalesPerCustomer()}円</DataTable.Cell>
-          </DataTable.Row>
-        </DataTable>
+          <StandardSpace/>
+          
+          <Text variant="titleMedium" style={styles.subTitle}>客単価</Text>
+          <DataTable>
+            <DataTable.Header style={styles.tableHeader}>
+              <DataTable.Title>組数</DataTable.Title>
+              <DataTable.Title>平均単価/組</DataTable.Title>
+            </DataTable.Header>
+            <DataTable.Row style={styles.tableRow}>
+              <DataTable.Cell>{numberOfTime}組</DataTable.Cell>
+              <DataTable.Cell>{averageSalesPerCustomer()}円</DataTable.Cell>
+            </DataTable.Row>
+          </DataTable>
 
-        <StandardSpace/>
+          <StandardSpace/>
 
-        <Text variant="titleMedium" style={styles.subTitle}>距離単価</Text>
-        <DataTable>
-          <DataTable.Header style={styles.tableHeader}>
-            <DataTable.Title>走行距離</DataTable.Title>
-            <DataTable.Title>平均単価/km</DataTable.Title>
-          </DataTable.Header>
-          <DataTable.Row style={styles.tableRow}>
-            <DataTable.Cell>{runningKm}km</DataTable.Cell>
-            <DataTable.Cell>{averageSalesPerKm()}円</DataTable.Cell>
-          </DataTable.Row>
-        </DataTable>
+          <Text variant="titleMedium" style={styles.subTitle}>距離単価</Text>
+          <DataTable>
+            <DataTable.Header style={styles.tableHeader}>
+              <DataTable.Title>走行距離</DataTable.Title>
+              <DataTable.Title>平均単価/km</DataTable.Title>
+            </DataTable.Header>
+            <DataTable.Row style={styles.tableRow}>
+              <DataTable.Cell>{runningKm}km</DataTable.Cell>
+              <DataTable.Cell>{averageSalesPerKm()}円</DataTable.Cell>
+            </DataTable.Row>
+          </DataTable>
 
-        <StandardSpace/>
+          <StandardSpace/>
 
-        <Text variant="titleMedium" style={styles.subTitle}>詳細走行情報</Text>
-        <SmallButton
-          displayText="詳細走行情報の追加" onPress={() => setVisibleCreateDetailsDialog(true)} 
-        />
+          <Text variant="titleMedium" style={styles.subTitle}>詳細走行情報</Text>
+          <SmallButton
+            displayText="詳細走行情報の追加" onPress={() => setVisibleCreateDetailsDialog(true)} 
+          />
 
-
-
+          <DataTable>
+            <DataTable.Header style={styles.tableHeader}>
+              <DataTable.Title>出発時刻</DataTable.Title>
+              <DataTable.Title>出発場所</DataTable.Title>
+              <DataTable.Title>到着場所</DataTable.Title>
+              <DataTable.Title>売上</DataTable.Title>
+            </DataTable.Header>
+            {details.map((detail: Detail) => {
+              return (
+                <DataTable.Row style={styles.tableRow} key={detail.id}>
+                  <DataTable.Cell>{detail.depart_hour}時台</DataTable.Cell>
+                  <DataTable.Cell>{detail.depart_place}</DataTable.Cell>
+                  <DataTable.Cell>{detail.arrive_place}円</DataTable.Cell>
+                  <DataTable.Cell>{detail.sales}円</DataTable.Cell>
+                </DataTable.Row>
+              );
+            })}
+          </DataTable>
+        </ScrollView>
         <Provider>
           <View>
             <Portal>
