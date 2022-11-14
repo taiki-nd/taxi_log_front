@@ -24,13 +24,13 @@
 <img src="https://user-images.githubusercontent.com/84260062/201505148-fe193631-d53a-492e-bc20-440ab59999d1.png" width="320px">
 
 ### レコード詳細
-// 作成中
+<img src="https://user-images.githubusercontent.com/84260062/201694276-39b80353-4392-48ff-b130-6b36f58a217e.png" width="320px">
 
 ### 走行情報詳細一覧
 // 作成中
 
 ### 走行情報詳細作成
-// 作成中
+<img src="https://user-images.githubusercontent.com/84260062/201694522-e34e4166-7659-4120-ae59-40bce29440a2.png" width="320px">
 
 ### 走行情報詳細編集
 // 作成中
