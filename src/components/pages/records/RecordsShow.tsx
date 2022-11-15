@@ -406,7 +406,7 @@ export const RecordsShow = (props: any) => {
         <Provider>
           <View>
             <Portal>
-              <Dialog visible={visibleCreateDetailsDialog} style={styles.dialog}>
+              <Dialog visible={visibleCreateDetailsDialog} style={styles.dialog} onDismiss={() => setVisibleCreateDetailsDialog(false)}>
                 <Dialog.Title style={styles.text}>走行詳細情報の追加</Dialog.Title>
                 <Dialog.ScrollArea>
                   <ScrollView>
