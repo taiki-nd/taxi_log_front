@@ -40,6 +40,7 @@ export const RecordsShow = (props: any) => {
     const [details, setDetails] = useState<any[]>([]);
     const [visibleFailedDialog, setVisibleFailedDialog] = useState(false);
     const [visibleCreateDetailsDialog, setVisibleCreateDetailsDialog] = useState(false);
+    const [visibleEditDetailsDialog, setVisibleEditDetailsDialog] = useState(false);
     const [detailCreateButtonDisabled, setDetailCreateButtonDisabled] = useState(true);
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
@@ -260,6 +261,46 @@ export const RecordsShow = (props: any) => {
     }
 
     /**
+     * getDetail
+     * @param {number} detail_id
+     */
+    const getDetail = (detail_id: number) => {
+      console.log("get detail here")
+      // headers
+      const headers = {'uuid': uid}
+
+      // params
+      var params = {
+        user_id: user_id,
+      }
+
+      // detailの取得
+      axios({
+        method: method.GET,
+        url: `/details/${detail_id}`,
+        headers: headers,
+        data: null,
+        params: params
+      }).then((response) => {
+        console.log("data", response.data);
+        // データの取得
+        setDepartHour(response.data.data.depart_hour);
+        setDepartPlace(response.data.data.depart_place);
+        setArrivePlace(response.data.data.arrive_place);
+        setSales(response.data.data.sales);
+        setMethodFlg(response.data.data.method_flg);
+        setDescription(response.data.data.description);
+        setVisibleEditDetailsDialog(true);
+      }).catch(error => {
+        var errorCode = error.response.data.info.code;
+        var message: string[] = [];
+        message = errorCodeTransition(errorCode);
+        setErrorMessages(message);
+        setVisibleFailedDialog(true);
+      });
+    }
+
+    /**
      * DailySalesTargetAchievementRate
      * @returns {number}
      */
@@ -395,7 +436,7 @@ export const RecordsShow = (props: any) => {
                     <DataTable.Cell><Text style={styles.tableCell}>memo: {detail.description}</Text></DataTable.Cell>
                   </DataTable.Row>
                   <DataTable.Row style={styles.tableRow2}>
-                    <SmallButtonCustom displayText='edit' color={SeaColor}/>
+                    <SmallButtonCustom displayText='edit' color={SeaColor} onPress={() => getDetail(detail.id)}/>
                     <SmallButtonCustom displayText='delete' color={TomatoColor}/>
                   </DataTable.Row>
                 </View>
@@ -437,6 +478,41 @@ export const RecordsShow = (props: any) => {
                     <Dialog.Actions>
                       <SmallButtonCustom displayText="create" disabled={detailCreateButtonDisabled} color={SeaColor} onPress={detailsCreate}/>
                       <SmallButtonCustom displayText="cancel" color={TomatoColor} onPress={() => setVisibleCreateDetailsDialog(false)}/>
+                    </Dialog.Actions>
+                  </ScrollView>
+                </Dialog.ScrollArea>
+              </Dialog>
+              <Dialog visible={visibleEditDetailsDialog} style={styles.dialog} onDismiss={() => setVisibleEditDetailsDialog(false)}>
+                <Dialog.Title style={styles.text}>走行詳細情報の編集</Dialog.Title>
+                <Dialog.ScrollArea>
+                  <ScrollView>
+                    <Dialog.Content>
+                      <DialogTextInput label="出発時刻" defaultValue={String(DepartHour)} placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDepartHour(i)}/>
+                      <DialogTextInput label="出発場所" defaultValue={DepartPlace} placeholder="東京駅八重洲口" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setDepartPlace(text)}/>
+                      <DialogTextInput label="到着場所" defaultValue={ArrivePlace} placeholder="東京都庁" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setArrivePlace(text)}/>
+                      <StandardLabel displayText='乗車方式'/>
+                      <RadioButton.Group onValueChange={value => setMethodFlg(value)} value={methodFlg}>
+                        <RadioButton.Item label="流し" value="flow" style={styles.radioButtonStyle} color={AccentColor}/>
+                        <RadioButton.Item label="つけ待ち" value="wait" style={styles.radioButtonStyle} color={AccentColor}/>
+                        <RadioButton.Item label="アプリ配車" value="app" style={styles.radioButtonStyle} color={AccentColor}/>
+                        <RadioButton.Item label="自社無線" value="wireless" style={styles.radioButtonStyle} color={AccentColor}/>
+                        <RadioButton.Item label="自身顧客" value="own" style={styles.radioButtonStyle} color={AccentColor}/>
+                        <RadioButton.Item label="他" value="other" style={styles.radioButtonStyle} color={AccentColor}/>
+                      </RadioButton.Group>
+                      <DialogTextInput label="売上" defaultValue={String(sales)} placeholder="4300" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setSales(i)}/>
+                      <DialogTextInput label="memo" defaultValue={description} placeholder="〇〇を経由して〇〇へ" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setDescription(text)}/>
+                    </Dialog.Content>
+                    {errorMessages.length != 0 ? (
+                      errorMessages.map((errorMessage: string, index: number) => { 
+                        return(
+                          <Text style={styles.errorTextStyle} key={index}>
+                            {errorMessage}
+                          </Text>
+                        )})
+                      ) : null}
+                    <Dialog.Actions>
+                      <SmallButtonCustom displayText="update" disabled={detailEditButtonDisabled} color={SeaColor} onPress={detailsCreate}/>
+                      <SmallButtonCustom displayText="cancel" color={TomatoColor} onPress={() => setVisibleEditDetailsDialog(false)}/>
                     </Dialog.Actions>
                   </ScrollView>
                 </Dialog.ScrollArea>
