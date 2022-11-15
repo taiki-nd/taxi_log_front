@@ -45,6 +45,7 @@ export const RecordsShow = (props: any) => {
     const [detailEditButtonDisabled, setDetailEditButtonDisabled] = useState(true);
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
+    const [detailId, setDetailId] = useState(Number);
     const [DepartHour, setDepartHour] = useState(Number);
     const [DepartPlace, setDepartPlace] = useState('');
     const [ArrivePlace, setArrivePlace] = useState('');
@@ -268,7 +269,6 @@ export const RecordsShow = (props: any) => {
      * @param {number} detail_id
      */
     const getDetail = (detail_id: number) => {
-      console.log("get detail here")
       // headers
       const headers = {'uuid': uid}
 
@@ -287,6 +287,7 @@ export const RecordsShow = (props: any) => {
       }).then((response) => {
         console.log("data", response.data);
         // データの取得
+        setDetailId(response.data.data.id);
         setDepartHour(response.data.data.depart_hour);
         setDepartPlace(response.data.data.depart_place);
         setArrivePlace(response.data.data.arrive_place);
@@ -309,6 +310,42 @@ export const RecordsShow = (props: any) => {
      */
     const DailySalesTargetAchievementRate = () => {
       return Math.round((dailySales/dailyTarget)*100)
+    }
+
+    /**
+     * updateDetail
+     */
+    const updateDetail = () => {
+      console.log(detailId);
+      // headers
+      const headers = {'uuid': uid}
+
+      // jsonData
+      var jsonData = {
+        depart_hour: Number(DepartHour),
+        depart_place: DepartPlace,
+        arrive_place: ArrivePlace,
+        sales: Number(sales),
+        method_flg: methodFlg,
+        description: description,
+      }
+
+      // params
+      var params = {
+        user_id: user_id,
+      }
+
+      axios({
+        method: method.PUT,
+        url: `/details/${detailId}`,
+        headers: headers,
+        data: jsonData,
+        params: params,
+      }).then((response) => {
+        console.log("data", response.data);
+        setVisibleEditDetailsDialog(false);
+        getDetails(uid);
+      })
     }
 
     /**
@@ -514,7 +551,7 @@ export const RecordsShow = (props: any) => {
                         )})
                       ) : null}
                     <Dialog.Actions>
-                      <SmallButtonCustom displayText="update" disabled={detailEditButtonDisabled} color={SeaColor} onPress={detailsCreate}/>
+                      <SmallButtonCustom displayText="update" disabled={detailEditButtonDisabled} color={SeaColor} onPress={updateDetail}/>
                       <SmallButtonCustom displayText="cancel" color={TomatoColor} onPress={() => setVisibleEditDetailsDialog(false)}/>
                     </Dialog.Actions>
                   </ScrollView>
