@@ -42,6 +42,7 @@ export const RecordsShow = (props: any) => {
     const [visibleCreateDetailsDialog, setVisibleCreateDetailsDialog] = useState(false);
     const [visibleEditDetailsDialog, setVisibleEditDetailsDialog] = useState(false);
     const [detailCreateButtonDisabled, setDetailCreateButtonDisabled] = useState(true);
+    const [detailEditButtonDisabled, setDetailEditButtonDisabled] = useState(true);
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
     const [DepartHour, setDepartHour] = useState(Number);
@@ -195,8 +196,10 @@ export const RecordsShow = (props: any) => {
         && methodFlg !== ''
         && taxFlg !== ''){
         setDetailCreateButtonDisabled(false);
+        setDetailEditButtonDisabled(false);
       } else {
         setDetailCreateButtonDisabled(true);
+        setDetailEditButtonDisabled(true);
       }
     }, [DepartHour, DepartPlace, ArrivePlace, sales, methodFlg, taxFlg]);
 
