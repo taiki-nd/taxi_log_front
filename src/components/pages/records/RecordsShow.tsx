@@ -10,6 +10,7 @@ import { DateTransition, DayTransition } from "../../../utils/commonFunc/record/
 import { errorCodeTransition, method } from "../../../utils/const";
 import { DialogOneButton } from "../../parts/DialogOneButton";
 import { DialogTextInput } from "../../parts/DialogTextInput";
+import { DialogTwoButton } from "../../parts/DialogTwoButton";
 import { SmallButton } from "../../parts/SmallButton";
 import { SmallButtonCustom } from "../../parts/SmallButtonCustom";
 import { StandardSpace } from "../../parts/Space";
@@ -39,10 +40,12 @@ export const RecordsShow = (props: any) => {
     const [dailyTarget, setDailyTarget] = useState(Number);
     const [details, setDetails] = useState<any[]>([]);
     const [visibleFailedDialog, setVisibleFailedDialog] = useState(false);
+    const [visibleConfirmDeleteDialog, setVisibleConfirmDeleteDialog] = useState(false);
     const [visibleCreateDetailsDialog, setVisibleCreateDetailsDialog] = useState(false);
     const [visibleEditDetailsDialog, setVisibleEditDetailsDialog] = useState(false);
     const [detailCreateButtonDisabled, setDetailCreateButtonDisabled] = useState(true);
     const [detailEditButtonDisabled, setDetailEditButtonDisabled] = useState(true);
+    const [dialogTitle, setDialogTitle] = useState('');
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
     const [detailId, setDetailId] = useState(Number);
@@ -103,6 +106,7 @@ export const RecordsShow = (props: any) => {
         var message: string[] = [];
         message = errorCodeTransition(errorCode);
         setErrorMessages(message);
+        setDialogTitle('ユーザー情報取得の失敗')
         setVisibleFailedDialog(true);
       });
     }
@@ -149,6 +153,7 @@ export const RecordsShow = (props: any) => {
         var message: string[] = [];
         message = errorCodeTransition(errorCode);
         setErrorMessages(message);
+        setDialogTitle('日報表示の失敗')
         setVisibleFailedDialog(true);
       });
     }
@@ -182,6 +187,7 @@ export const RecordsShow = (props: any) => {
         var message: string[] = [];
         message = errorCodeTransition(errorCode);
         setErrorMessages(message);
+        setDialogTitle('走行情報一覧表示の失敗')
         setVisibleFailedDialog(true);
       });
     }
@@ -300,6 +306,7 @@ export const RecordsShow = (props: any) => {
         var message: string[] = [];
         message = errorCodeTransition(errorCode);
         setErrorMessages(message);
+        setDialogTitle('走行情報一覧表示の失敗')
         setVisibleFailedDialog(true);
       });
     }
@@ -349,6 +356,37 @@ export const RecordsShow = (props: any) => {
     }
 
     /**
+     * deleteRecord
+     */
+    const deleteRecord = () => {
+      // headers
+      const headers = {'uuid': uid}
+
+      // params
+      const params = {'user_id': user_id}
+
+      axios({
+        method: method.DELETE,
+        url: `/details/${detailId}`,
+        headers: headers,
+        data: null,
+        params: params,
+      }).then((response) => {
+        console.log("data", response.data);
+        setVisibleConfirmDeleteDialog(false);
+        getDetails(uid);
+      }).catch((error) => {
+        var errorCode = error.response.data.info.code;
+        var message: string[] = [];
+        message = errorCodeTransition(errorCode);
+        setVisibleConfirmDeleteDialog(false);
+        setVisibleFailedDialog(true);
+        setDialogTitle('走行情報の削除失敗')
+        setErrorMessages(message);
+      })
+    }
+
+    /**
      * averageSalesPerHour
      * @returns {number}
      */
@@ -378,10 +416,29 @@ export const RecordsShow = (props: any) => {
     const dialogOk = () => {
       console.log("dialogOk");
       setVisibleFailedDialog(false);
+      if (detailId !== 0) {
+        getDetails(uid);
+        return
+      }
       navigation.reset({
         index: 0,
         routes: [{ name: 'Records' }]
       });
+    }
+
+    /**
+     * showDeleteConfirmDialog
+     */
+    const showDeleteConfirmDialog = (detail_id: number) => {
+      setVisibleConfirmDeleteDialog(true);
+      setDetailId(detail_id);
+    }
+
+    /**
+     * cancelDeleteDetail
+     */
+    const cancelDeleteDetail = () => {
+      setVisibleConfirmDeleteDialog(false);
     }
   
     return (
@@ -477,7 +534,7 @@ export const RecordsShow = (props: any) => {
                   </DataTable.Row>
                   <DataTable.Row style={styles.tableRow2}>
                     <SmallButtonCustom displayText='edit' color={SeaColor} onPress={() => getDetail(detail.id)}/>
-                    <SmallButtonCustom displayText='delete' color={TomatoColor}/>
+                    <SmallButtonCustom displayText='delete' color={TomatoColor} onPress={() => showDeleteConfirmDialog(detail.id)}/>
                   </DataTable.Row>
                 </View>
               );
@@ -563,11 +620,22 @@ export const RecordsShow = (props: any) => {
 
         <DialogOneButton
           visible={visibleFailedDialog}
-          title='走行記録表示の失敗'
+          title={dialogTitle}
           description={errorMessages}
           displayButton1='OK'
           funcButton1={dialogOk}
           onDismiss={dialogOk}
+        />
+
+        <DialogTwoButton
+          visible={visibleConfirmDeleteDialog}
+          title='削除確認'
+          description='選択した詳細走行情報を削除しますか？'
+          displayButton1='削除'
+          displayButton2='キャンセル'
+          funcButton1={deleteRecord}
+          funcButton2={cancelDeleteDetail}
+          onDismiss={cancelDeleteDetail}
         />
 
       </View>
