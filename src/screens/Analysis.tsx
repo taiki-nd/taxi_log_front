@@ -1,33 +1,90 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { Text } from "react-native-paper";
 import { LineChart } from 'react-native-chart-kit';
 import { AccentColor, BackColor, BasicColor } from '../styles/common/color';
+import axios from 'axios';
+import { auth } from '../auth/firebase';
+import { errorCodeTransition, method } from '../utils/const';
+import { DateTransition } from '../utils/commonFunc/record/DateTranstion';
 
 export const Analysis = (props: any) => {
-  console.log("route", props.route);
+  // props
+  const { navigation, route } = props;
+
+  //state
+  const [uid, setUid] = useState('')
+  const [monthlySalesSumData, setMonthlySalesSumData] = useState<number[]>([]);
+  const [monthlySalesSumLabels, setMonthlySalesSumLabels] = useState<string[]>([]);
+
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+
   useEffect(() => {
-    console.log('Home Mount');
-    return () => {
-      console.log('Home Unmount');
-    };
+    var currentUser = auth.currentUser
+    if (currentUser) {
+      setUid(currentUser.uid);
+    } else {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Signin' }]
+      });
+      return
+    }
+    getMonthlySalesSum(currentUser.uid);
   }, []);
+
+  /**
+   * getMonthlySalesSum
+   * 月次総売上データの取得
+   */
+  const getMonthlySalesSum = (uid: string) => {
+    // headers
+    const headers = {'uuid': uid}
+
+    // params
+    var today = new Date();
+    const params ={
+      'year': today.getFullYear(),
+      'month': today.getMonth()+1
+    }
+
+    axios({
+      method: method.GET,
+      url: '/analysis/sales_sum',
+      headers: headers,
+      data: null,
+      params: params,
+    }).then((response) => {
+      console.log("data", response.data);
+      // labelsの成形
+      var displayLabels: string[] = [];
+      response.data.labels.forEach((label: any) => {
+        const date = DateTransition(label)
+        displayLabels.push(date);
+      })
+      setMonthlySalesSumLabels(displayLabels)
+      // データの取得
+      setMonthlySalesSumData(response.data.data)
+    }).catch(error => {
+      var errorCode = error.response.data.info.code;
+      var message: string[] = [];
+      message = errorCodeTransition(errorCode);
+      setErrorMessages(message);
+      setDialogTitle('月次総売上のデータ取得の失敗')
+      //setVisibleFailedDialog(true);
+    });
+  }
+
   return (
     <View style={styles.mainBody}>
       <View>
         <Text variant="titleMedium" style={styles.subTitle}>月次総売上</Text>
         <LineChart
           data={{
-              labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+              labels: monthlySalesSumLabels,
               datasets: [{
-                  data: [
-                      Math.random() * 100,
-                      Math.random() * 100,
-                      Math.random() * 100,
-                      Math.random() * 100,
-                      Math.random() * 100,
-                      Math.random() * 100
-                  ]
+                  data: monthlySalesSumData
               }]
           }}
           width={Dimensions.get("window").width} // from react-native
