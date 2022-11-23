@@ -14,12 +14,13 @@ export const Analysis = (props: any) => {
 
   //state
   const [uid, setUid] = useState('')
-  const [monthlySalesSumData, setMonthlySalesSumData] = useState<number[]>([]);
-  const [monthlySalesSumLabels, setMonthlySalesSumLabels] = useState<string[]>([]);
+  const [monthlySalesSumData, setMonthlySalesSumData] = useState<number[]>([0, 0, 0]);
+  const [monthlySalesSumLabels, setMonthlySalesSumLabels] = useState<string[]>(['1', '2', '3']);
 
   const [dialogTitle, setDialogTitle] = useState('');
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
+  console.log(monthlySalesSumData, monthlySalesSumLabels)
   useEffect(() => {
     var currentUser = auth.currentUser
     if (currentUser) {
@@ -59,9 +60,10 @@ export const Analysis = (props: any) => {
       console.log("data", response.data);
       // labelsの成形
       var displayLabels: string[] = [];
-      response.data.labels.forEach((label: any) => {
-        const date = DateTransition(label)
-        displayLabels.push(date);
+      response.data.labels.forEach((label: string) => {
+        var date = new Date(label);
+        const dateOnlyDate = String(date.getDate());
+        displayLabels.push(dateOnlyDate);
       })
       setMonthlySalesSumLabels(displayLabels)
       // データの取得
