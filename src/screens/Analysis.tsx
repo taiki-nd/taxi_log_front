@@ -6,7 +6,7 @@ import { AccentColor, BackColor, BasicColor } from '../styles/common/color';
 import axios from 'axios';
 import { auth } from '../auth/firebase';
 import { errorCodeTransition, method } from '../utils/const';
-import { DateTransition } from '../utils/commonFunc/record/DateTranstion';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 export const Analysis = (props: any) => {
   // props
@@ -14,14 +14,21 @@ export const Analysis = (props: any) => {
 
   //state
   const [uid, setUid] = useState('')
+  const [monthlySalesSumYear, setMonthlySalesSumYear] = useState(0)
+  const [monthlySalesSumMonth, setMonthlySalesSumMonth] = useState(0)
   const [monthlySalesSumData, setMonthlySalesSumData] = useState<number[]>([0, 0, 0]);
   const [monthlySalesSumLabels, setMonthlySalesSumLabels] = useState<string[]>(['1', '2', '3']);
 
   const [dialogTitle, setDialogTitle] = useState('');
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
-  console.log(monthlySalesSumData, monthlySalesSumLabels)
+  const [openYear, setOpenYear] = useState(false);
+  const [openMonth, setOpenMonth] = useState(false);
+  const [itemsYear, setItemsYear] = useState<any[]>([]);
+  const [itemsMonth, setItemsMonth] = useState<any[]>([]);
+
   useEffect(() => {
+
     var currentUser = auth.currentUser
     if (currentUser) {
       setUid(currentUser.uid);
@@ -32,6 +39,22 @@ export const Analysis = (props: any) => {
       });
       return
     }
+    var today = new Date();
+    setMonthlySalesSumYear(today.getFullYear());
+    setMonthlySalesSumMonth(today.getMonth()+1);
+
+    var itemsYear: any[] = [];
+    for (var i = 0; i < 10; i++) {
+      itemsYear.push({label: `${today.getFullYear()-i}`, value: today.getFullYear()-i})
+    }
+    setItemsYear(itemsYear);
+
+    var itemsMonth: any[] = [];
+    for (var i = 0; i < 11; i++) {
+      itemsMonth.push({label: `${i+1}`, value: i+1})
+    }
+    setItemsMonth(itemsMonth);
+
     getMonthlySalesSum(currentUser.uid);
   }, []);
 
@@ -49,6 +72,8 @@ export const Analysis = (props: any) => {
       'year': today.getFullYear(),
       'month': today.getMonth()+1
     }
+    setMonthlySalesSumYear(today.getFullYear());
+    setMonthlySalesSumMonth(today.getMonth()+1);
 
     axios({
       method: method.GET,
@@ -82,6 +107,66 @@ export const Analysis = (props: any) => {
     <View style={styles.mainBody}>
       <View>
         <Text variant="titleMedium" style={styles.subTitle}>月次総売上</Text>
+        <View style={{flexDirection: 'row',}}>
+          <DropDownPicker
+            style={{
+              backgroundColor: BasicColor
+            }}
+            containerStyle={{
+              width: '70%',
+              zIndex: 100
+            }}
+            placeholder = "年" 
+            placeholderStyle = {{
+                fontWeight: 'bold',
+                textAlign: 'center',
+                color: AccentColor
+            }}
+            dropDownContainerStyle={{
+              backgroundColor: BasicColor
+            }}
+            textStyle ={{
+              color: AccentColor,
+              fontSize: 14,
+              textAlign: 'left'
+            }}
+            open={openYear}
+            value={monthlySalesSumYear}
+            items={itemsYear}
+            setOpen={setOpenYear}
+            setValue={setMonthlySalesSumYear}
+            setItems={setItemsYear}
+          />
+          <DropDownPicker
+            style={{
+              backgroundColor: BasicColor
+            }}
+            containerStyle={{
+              width: '30%',
+              zIndex: 100
+            }}
+            placeholder = "月" 
+            placeholderStyle = {{
+                fontWeight: 'bold',
+                textAlign: 'center',
+                color: AccentColor
+            }}
+            dropDownContainerStyle={{
+              backgroundColor: BasicColor
+            }}
+            textStyle ={{
+              color: AccentColor,
+              fontSize: 14,
+              textAlign: 'left'
+            }}
+            open={openMonth}
+            value={monthlySalesSumMonth}
+            items={itemsMonth}
+            setOpen={setOpenMonth}
+            setValue={setMonthlySalesSumMonth}
+            setItems={setItemsYear}
+          />
+        </View>
         <LineChart
           data={{
               labels: monthlySalesSumLabels,
@@ -96,6 +181,7 @@ export const Analysis = (props: any) => {
               backgroundColor: BackColor,
               backgroundGradientFrom: BackColor,
               backgroundGradientTo: BackColor,
+              decimalPlaces: 0,
               color: (opacity = 0.5) => `rgba(63, 62, 52, ${opacity})`,
               propsForDots: {
                 r: "2",
