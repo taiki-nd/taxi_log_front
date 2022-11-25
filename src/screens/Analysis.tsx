@@ -7,6 +7,10 @@ import axios from 'axios';
 import { auth } from '../auth/firebase';
 import { errorCodeTransition, method } from '../utils/const';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { Dropdown } from '../components/parts/Dropdown';
+import { StandardSpace } from '../components/parts/Space';
+import { SmallButtonCustom } from '../components/parts/SmallButtonCustom';
+import { SmallButton } from '../components/parts/SmallButton';
 
 export const Analysis = (props: any) => {
   // props
@@ -107,29 +111,10 @@ export const Analysis = (props: any) => {
     <View style={styles.mainBody}>
       <View>
         <Text variant="titleMedium" style={styles.subTitle}>月次総売上</Text>
-        <View style={{flexDirection: 'row',}}>
-          <DropDownPicker
-            style={{
-              backgroundColor: BasicColor
-            }}
-            containerStyle={{
-              width: '70%',
-              zIndex: 100
-            }}
-            placeholder = "年" 
-            placeholderStyle = {{
-                fontWeight: 'bold',
-                textAlign: 'center',
-                color: AccentColor
-            }}
-            dropDownContainerStyle={{
-              backgroundColor: BasicColor
-            }}
-            textStyle ={{
-              color: AccentColor,
-              fontSize: 14,
-              textAlign: 'left'
-            }}
+        <View style={styles.flex}>
+          <Dropdown
+            placeholder='年'
+            width='30%'
             open={openYear}
             value={monthlySalesSumYear}
             items={itemsYear}
@@ -137,34 +122,19 @@ export const Analysis = (props: any) => {
             setValue={setMonthlySalesSumYear}
             setItems={setItemsYear}
           />
-          <DropDownPicker
-            style={{
-              backgroundColor: BasicColor
-            }}
-            containerStyle={{
-              width: '30%',
-              zIndex: 100
-            }}
-            placeholder = "月" 
-            placeholderStyle = {{
-                fontWeight: 'bold',
-                textAlign: 'center',
-                color: AccentColor
-            }}
-            dropDownContainerStyle={{
-              backgroundColor: BasicColor
-            }}
-            textStyle ={{
-              color: AccentColor,
-              fontSize: 14,
-              textAlign: 'left'
-            }}
+          <Dropdown
+            placeholder='月'
+            width='20%'
             open={openMonth}
             value={monthlySalesSumMonth}
             items={itemsMonth}
             setOpen={setOpenMonth}
             setValue={setMonthlySalesSumMonth}
-            setItems={setItemsYear}
+            setItems={setItemsMonth}
+          />
+          <SmallButton
+            displayText='Start Analysis'
+            disabled={false}
           />
         </View>
         <LineChart
@@ -212,4 +182,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textDecorationLine: 'underline',
   },
+  flex: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  }
 });
