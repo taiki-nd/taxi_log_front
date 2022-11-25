@@ -9,7 +9,8 @@ export const Dropdown = (props: any) => {
   return (
     <DropDownPicker
       style={{
-        backgroundColor: BasicColor
+        backgroundColor: BasicColor,
+        borderColor: AccentColor,
       }}
       containerStyle={{
         width: width,
@@ -30,6 +31,7 @@ export const Dropdown = (props: any) => {
         fontSize: 14,
         textAlign: 'left'
       }}
+      autoScroll={true}
       open={open}
       value={value}
       items={items}

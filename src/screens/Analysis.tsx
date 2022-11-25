@@ -25,6 +25,7 @@ export const Analysis = (props: any) => {
 
   const [dialogTitle, setDialogTitle] = useState('');
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const [messageForMonthlySalesSum, setMessageForMonthlySalesSum] = useState<string[]>([]);
 
   const [openYear, setOpenYear] = useState(false);
   const [openMonth, setOpenMonth] = useState(false);
@@ -59,25 +60,33 @@ export const Analysis = (props: any) => {
     }
     setItemsMonth(itemsMonth);
 
-    getMonthlySalesSum(currentUser.uid);
+    getMonthlySalesSum(currentUser.uid, 'first');
   }, []);
 
   /**
    * getMonthlySalesSum
    * 月次総売上データの取得
    */
-  const getMonthlySalesSum = (uid: string) => {
+  const getMonthlySalesSum = (uid: string, status: string) => {
     // headers
     const headers = {'uuid': uid}
 
     // params
-    var today = new Date();
-    const params ={
-      'year': today.getFullYear(),
-      'month': today.getMonth()+1
+    var params: any = {}
+    if (status === 'first'){
+      var today = new Date();
+      params ={
+        'year': today.getFullYear(),
+        'month': today.getMonth()+1
+      }
+      setMonthlySalesSumYear(today.getFullYear());
+      setMonthlySalesSumMonth(today.getMonth()+1);
+    } else if (status === 'second') {
+      params ={
+        'year': monthlySalesSumYear,
+        'month': monthlySalesSumMonth
+      }
     }
-    setMonthlySalesSumYear(today.getFullYear());
-    setMonthlySalesSumMonth(today.getMonth()+1);
 
     axios({
       method: method.GET,
@@ -94,8 +103,12 @@ export const Analysis = (props: any) => {
         const dateOnlyDate = String(date.getDate());
         displayLabels.push(dateOnlyDate);
       })
-      setMonthlySalesSumLabels(displayLabels)
+      // データがからの場合の処理
+      if (response.data.data.length === 0 || displayLabels.length === 0) {
+        setMessageForMonthlySalesSum(['表示するデータがありません']);
+      }
       // データの取得
+      setMonthlySalesSumLabels(displayLabels)
       setMonthlySalesSumData(response.data.data)
     }).catch(error => {
       var errorCode = error.response.data.info.code;
@@ -135,6 +148,7 @@ export const Analysis = (props: any) => {
           <SmallButton
             displayText='Start Analysis'
             disabled={false}
+            onPress={() => getMonthlySalesSum(uid, 'second')}
           />
         </View>
         <LineChart
@@ -185,5 +199,5 @@ const styles = StyleSheet.create({
   flex: {
     flexDirection: 'row',
     alignItems: 'center'
-  }
+  },
 });
