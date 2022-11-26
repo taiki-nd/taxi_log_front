@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { Text } from "react-native-paper";
-import { LineChart } from 'react-native-chart-kit';
+import { BarChart, LineChart } from 'react-native-chart-kit';
 import { AccentColor, BackColor, BasicColor, TomatoColor } from '../styles/common/color';
 import axios from 'axios';
 import { auth } from '../auth/firebase';
@@ -241,6 +241,7 @@ export const Analysis = (props: any) => {
               }}
               width={Dimensions.get("window").width} // from react-native
               height={220}
+              fromZero={true}
               yAxisLabel='¥'
               chartConfig={{
                   backgroundColor: BackColor,
@@ -302,31 +303,28 @@ export const Analysis = (props: any) => {
               )
             })
           ) : (
-            <LineChart
+            <BarChart
               data={{
                   labels: monthlySalesLabels,
                   datasets: [{
                       data: monthlySalesData
                   }]
               }}
-              width={Dimensions.get("window").width} // from react-native
+              width={Dimensions.get("window").width * 0.95} // from react-native
               height={220}
+              fromZero={true}
               yAxisLabel='¥'
+              yAxisSuffix=''
               chartConfig={{
-                  backgroundColor: BackColor,
-                  backgroundGradientFrom: BackColor,
-                  backgroundGradientTo: BackColor,
-                  decimalPlaces: 0,
-                  color: (opacity = 0.5) => `rgba(63, 62, 52, ${opacity})`,
-                  propsForDots: {
-                    r: "2",
-                    strokeWidth: "2",
-                    stroke: BasicColor
-                  }
+                backgroundColor: BackColor,
+                backgroundGradientFrom: BackColor,
+                backgroundGradientTo: BackColor,
+                decimalPlaces: 0,
+                color: (opacity = 0.5) => `rgba(63, 62, 52, ${opacity})`,
+                barPercentage: 0.2
               }}
               style={{
                 marginVertical: 8,
-                borderRadius: 16
               }}
             />
           )
