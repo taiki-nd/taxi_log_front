@@ -34,8 +34,10 @@ export const Analysis = (props: any) => {
   const [messageForMonthlySalesSum, setMessageForMonthlySalesSum] = useState<string[]>([]);
   const [messageForMonthlySales, setMessageForMonthlySales] = useState<string[]>([]);
 
-  const [openYear, setOpenYear] = useState(false);
-  const [openMonth, setOpenMonth] = useState(false);
+  const [openYearForSalesSum, setOpenYearForSalesSum] = useState(false);
+  const [openMonthForSalesSum, setOpenMonthForSalesSum] = useState(false);
+  const [openYearForSales, setOpenYearForSales] = useState(false);
+  const [openMonthForSales, setOpenMonthForSales] = useState(false);
   const [itemsYear, setItemsYear] = useState<any[]>([]);
   const [itemsMonth, setItemsMonth] = useState<any[]>([]);
 
@@ -146,12 +148,12 @@ export const Analysis = (props: any) => {
         'year': today.getFullYear(),
         'month': today.getMonth()+1
       }
-      setMonthlySalesSumYear(today.getFullYear());
-      setMonthlySalesSumMonth(today.getMonth()+1);
+      setMonthlySalesYear(today.getFullYear());
+      setMonthlySalesMonth(today.getMonth()+1);
     } else if (status === 'second') {
       params ={
-        'year': monthlySalesSumYear,
-        'month': monthlySalesSumMonth
+        'year': monthlySalesYear,
+        'month': monthlySalesMonth
       }
     }
 
@@ -184,7 +186,7 @@ export const Analysis = (props: any) => {
       var message: string[] = [];
       message = errorCodeTransition(errorCode);
       setErrorMessages(message);
-      setDialogTitle('月次総売上のデータ取得の失敗')
+      setDialogTitle('月次売上のデータ取得の失敗')
       //setVisibleFailedDialog(true);
     });
   }
@@ -197,20 +199,20 @@ export const Analysis = (props: any) => {
           <Dropdown
             placeholder='年'
             width='30%'
-            open={openYear}
+            open={openYearForSalesSum}
             value={monthlySalesSumYear}
             items={itemsYear}
-            setOpen={setOpenYear}
+            setOpen={setOpenYearForSalesSum}
             setValue={setMonthlySalesSumYear}
             setItems={setItemsYear}
           />
           <Dropdown
             placeholder='月'
             width='20%'
-            open={openMonth}
+            open={openMonthForSalesSum}
             value={monthlySalesSumMonth}
             items={itemsMonth}
-            setOpen={setOpenMonth}
+            setOpen={setOpenMonthForSalesSum}
             setValue={setMonthlySalesSumMonth}
             setItems={setItemsMonth}
           />
@@ -267,32 +269,32 @@ export const Analysis = (props: any) => {
           <Dropdown
             placeholder='年'
             width='30%'
-            open={openYear}
-            value={monthlySalesSumYear}
+            open={openYearForSales}
+            value={monthlySalesYear}
             items={itemsYear}
-            setOpen={setOpenYear}
-            setValue={setMonthlySalesSumYear}
+            setOpen={setOpenYearForSales}
+            setValue={setMonthlySalesYear}
             setItems={setItemsYear}
           />
           <Dropdown
             placeholder='月'
             width='20%'
-            open={openMonth}
-            value={monthlySalesSumMonth}
+            open={openMonthForSales}
+            value={monthlySalesMonth}
             items={itemsMonth}
-            setOpen={setOpenMonth}
-            setValue={setMonthlySalesSumMonth}
+            setOpen={setOpenMonthForSales}
+            setValue={setMonthlySalesMonth}
             setItems={setItemsMonth}
           />
           <SmallButton
             displayText='Start Analysis'
             disabled={false}
-            onPress={() => getMonthlySalesSum(uid, 'second')}
+            onPress={() => getMonthlySales(uid, 'second')}
           />
         </View>
         {
-          messageForMonthlySalesSum.length !== 0 ? (
-            messageForMonthlySalesSum.map((message: string, index: number) => { 
+          messageForMonthlySales.length !== 0 ? (
+            messageForMonthlySales.map((message: string, index: number) => { 
               return(
                 <View style={styles.messageStyle} key={index}>
                   <Text style={styles.messageTextStyle}>{message}</Text>
