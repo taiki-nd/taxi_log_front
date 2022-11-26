@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { Text } from "react-native-paper";
 import { LineChart } from 'react-native-chart-kit';
-import { AccentColor, BackColor, BasicColor } from '../styles/common/color';
+import { AccentColor, BackColor, BasicColor, TomatoColor } from '../styles/common/color';
 import axios from 'axios';
 import { auth } from '../auth/firebase';
 import { errorCodeTransition, method } from '../utils/const';
@@ -104,9 +104,11 @@ export const Analysis = (props: any) => {
         displayLabels.push(dateOnlyDate);
       })
       // データがからの場合の処理
-      if (response.data.data.length === 0 || displayLabels.length === 0) {
+      if (displayLabels.length === 0) {
         setMessageForMonthlySalesSum(['表示するデータがありません']);
+        return;
       }
+      setMessageForMonthlySalesSum([]);
       // データの取得
       setMonthlySalesSumLabels(displayLabels)
       setMonthlySalesSumData(response.data.data)
@@ -151,33 +153,45 @@ export const Analysis = (props: any) => {
             onPress={() => getMonthlySalesSum(uid, 'second')}
           />
         </View>
-        <LineChart
-          data={{
-              labels: monthlySalesSumLabels,
-              datasets: [{
-                  data: monthlySalesSumData
-              }]
-          }}
-          width={Dimensions.get("window").width} // from react-native
-          height={220}
-          yAxisLabel='¥'
-          chartConfig={{
-              backgroundColor: BackColor,
-              backgroundGradientFrom: BackColor,
-              backgroundGradientTo: BackColor,
-              decimalPlaces: 0,
-              color: (opacity = 0.5) => `rgba(63, 62, 52, ${opacity})`,
-              propsForDots: {
-                r: "2",
-                strokeWidth: "2",
-                stroke: BasicColor
-              }
-          }}
-          style={{
-            marginVertical: 8,
-            borderRadius: 16
-          }}
-        />
+        {
+          messageForMonthlySalesSum.length !== 0 ? (
+            messageForMonthlySalesSum.map((message: string, index: number) => { 
+              return(
+                <View style={styles.messageStyle} key={index}>
+                  <Text style={styles.messageTextStyle}>{message}</Text>
+                </View>
+              )
+            })
+          ) : (
+            <LineChart
+              data={{
+                  labels: monthlySalesSumLabels,
+                  datasets: [{
+                      data: monthlySalesSumData
+                  }]
+              }}
+              width={Dimensions.get("window").width} // from react-native
+              height={220}
+              yAxisLabel='¥'
+              chartConfig={{
+                  backgroundColor: BackColor,
+                  backgroundGradientFrom: BackColor,
+                  backgroundGradientTo: BackColor,
+                  decimalPlaces: 0,
+                  color: (opacity = 0.5) => `rgba(63, 62, 52, ${opacity})`,
+                  propsForDots: {
+                    r: "2",
+                    strokeWidth: "2",
+                    stroke: BasicColor
+                  }
+              }}
+              style={{
+                marginVertical: 8,
+                borderRadius: 16
+              }}
+            />
+          )
+        }
       </View>
       
     </View>
@@ -200,4 +214,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center'
   },
+  messageStyle: {
+    height: 220,
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  messageTextStyle: {
+    color: TomatoColor,
+    fontSize: 14,
+  }
 });
