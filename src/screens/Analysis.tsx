@@ -18,14 +18,21 @@ export const Analysis = (props: any) => {
 
   //state
   const [uid, setUid] = useState('')
+
   const [monthlySalesSumYear, setMonthlySalesSumYear] = useState(0)
   const [monthlySalesSumMonth, setMonthlySalesSumMonth] = useState(0)
   const [monthlySalesSumData, setMonthlySalesSumData] = useState<number[]>([0, 0, 0]);
   const [monthlySalesSumLabels, setMonthlySalesSumLabels] = useState<string[]>(['1', '2', '3']);
 
+  const [monthlySalesYear, setMonthlySalesYear] = useState(0)
+  const [monthlySalesMonth, setMonthlySalesMonth] = useState(0)
+  const [monthlySalesData, setMonthlySalesData] = useState<number[]>([0, 0, 0]);
+  const [monthlySalesLabels, setMonthlySalesLabels] = useState<string[]>(['1', '2', '3']);
+
   const [dialogTitle, setDialogTitle] = useState('');
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [messageForMonthlySalesSum, setMessageForMonthlySalesSum] = useState<string[]>([]);
+  const [messageForMonthlySales, setMessageForMonthlySales] = useState<string[]>([]);
 
   const [openYear, setOpenYear] = useState(false);
   const [openMonth, setOpenMonth] = useState(false);
@@ -61,6 +68,7 @@ export const Analysis = (props: any) => {
     setItemsMonth(itemsMonth);
 
     getMonthlySalesSum(currentUser.uid, 'first');
+    getMonthlySales(currentUser.uid, 'first');
   }, []);
 
   /**
@@ -112,6 +120,65 @@ export const Analysis = (props: any) => {
       // データの取得
       setMonthlySalesSumLabels(displayLabels)
       setMonthlySalesSumData(response.data.data)
+    }).catch(error => {
+      var errorCode = error.response.data.info.code;
+      var message: string[] = [];
+      message = errorCodeTransition(errorCode);
+      setErrorMessages(message);
+      setDialogTitle('月次総売上のデータ取得の失敗')
+      //setVisibleFailedDialog(true);
+    });
+  }
+
+  /**
+   * getMonthlySales
+   * 月次売上データの取得
+   */
+  const getMonthlySales = (uid: string, status: string) => {
+    // headers
+    const headers = {'uuid': uid}
+
+    // params
+    var params: any = {}
+    if (status === 'first'){
+      var today = new Date();
+      params ={
+        'year': today.getFullYear(),
+        'month': today.getMonth()+1
+      }
+      setMonthlySalesSumYear(today.getFullYear());
+      setMonthlySalesSumMonth(today.getMonth()+1);
+    } else if (status === 'second') {
+      params ={
+        'year': monthlySalesSumYear,
+        'month': monthlySalesSumMonth
+      }
+    }
+
+    axios({
+      method: method.GET,
+      url: '/analysis/sales',
+      headers: headers,
+      data: null,
+      params: params,
+    }).then((response) => {
+      console.log("data", response.data);
+      // labelsの成形
+      var displayLabels: string[] = [];
+      response.data.labels.forEach((label: string) => {
+        var date = new Date(label);
+        const dateOnlyDate = String(date.getDate());
+        displayLabels.push(dateOnlyDate);
+      })
+      // データがからの場合の処理
+      if (displayLabels.length === 0) {
+        setMessageForMonthlySales(['表示するデータがありません']);
+        return;
+      }
+      setMessageForMonthlySales([]);
+      // データの取得
+      setMonthlySalesLabels(displayLabels)
+      setMonthlySalesData(response.data.data)
     }).catch(error => {
       var errorCode = error.response.data.info.code;
       var message: string[] = [];
@@ -194,6 +261,75 @@ export const Analysis = (props: any) => {
         }
       </View>
       
+      <View>
+        <Text variant="titleMedium" style={styles.subTitle}>月次売上</Text>
+        <View style={styles.flex}>
+          <Dropdown
+            placeholder='年'
+            width='30%'
+            open={openYear}
+            value={monthlySalesSumYear}
+            items={itemsYear}
+            setOpen={setOpenYear}
+            setValue={setMonthlySalesSumYear}
+            setItems={setItemsYear}
+          />
+          <Dropdown
+            placeholder='月'
+            width='20%'
+            open={openMonth}
+            value={monthlySalesSumMonth}
+            items={itemsMonth}
+            setOpen={setOpenMonth}
+            setValue={setMonthlySalesSumMonth}
+            setItems={setItemsMonth}
+          />
+          <SmallButton
+            displayText='Start Analysis'
+            disabled={false}
+            onPress={() => getMonthlySalesSum(uid, 'second')}
+          />
+        </View>
+        {
+          messageForMonthlySalesSum.length !== 0 ? (
+            messageForMonthlySalesSum.map((message: string, index: number) => { 
+              return(
+                <View style={styles.messageStyle} key={index}>
+                  <Text style={styles.messageTextStyle}>{message}</Text>
+                </View>
+              )
+            })
+          ) : (
+            <LineChart
+              data={{
+                  labels: monthlySalesLabels,
+                  datasets: [{
+                      data: monthlySalesData
+                  }]
+              }}
+              width={Dimensions.get("window").width} // from react-native
+              height={220}
+              yAxisLabel='¥'
+              chartConfig={{
+                  backgroundColor: BackColor,
+                  backgroundGradientFrom: BackColor,
+                  backgroundGradientTo: BackColor,
+                  decimalPlaces: 0,
+                  color: (opacity = 0.5) => `rgba(63, 62, 52, ${opacity})`,
+                  propsForDots: {
+                    r: "2",
+                    strokeWidth: "2",
+                    stroke: BasicColor
+                  }
+              }}
+              style={{
+                marginVertical: 8,
+                borderRadius: 16
+              }}
+            />
+          )
+        }
+      </View>
     </View>
   );
 };
