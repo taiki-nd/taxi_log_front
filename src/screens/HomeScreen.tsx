@@ -13,7 +13,7 @@ import { StandardSpace } from '../components/parts/Space';
 
 export const HomeScreen = (props: any) => {
   // props
-  const { navigation, route } = props;
+  const { navigation } = props;
 
   //state
   const [uid, setUid] = useState('')
@@ -248,35 +248,34 @@ export const HomeScreen = (props: any) => {
 
   return (
     <View style={styles.mainBody}>
+      <View style={styles.flex}>
+        <Dropdown
+          placeholder='年'
+          width='30%'
+          open={openYearForSalesSum}
+          value={monthlySalesYear}
+          items={itemsYear}
+          setOpen={setOpenYearForSalesSum}
+          setValue={setMonthlySalesYear}
+          setItems={setItemsYear}
+        />
+        <Dropdown
+          placeholder='月'
+          width='20%'
+          open={openMonthForSalesSum}
+          value={monthlySalesMonth}
+          items={itemsMonth}
+          setOpen={setOpenMonthForSalesSum}
+          setValue={setMonthlySalesMonth}
+          setItems={setItemsMonth}
+        />
+        <SmallButton
+          displayText='Start Analysis'
+          disabled={false}
+          onPress={() => getMonthlySalesData(uid, 'second')}
+        />
+      </View>
       <ScrollView>
-        <View style={styles.flex}>
-          <Dropdown
-            placeholder='年'
-            width='30%'
-            open={openYearForSalesSum}
-            value={monthlySalesYear}
-            items={itemsYear}
-            setOpen={setOpenYearForSalesSum}
-            setValue={setMonthlySalesYear}
-            setItems={setItemsYear}
-          />
-          <Dropdown
-            placeholder='月'
-            width='20%'
-            open={openMonthForSalesSum}
-            value={monthlySalesMonth}
-            items={itemsMonth}
-            setOpen={setOpenMonthForSalesSum}
-            setValue={setMonthlySalesMonth}
-            setItems={setItemsMonth}
-          />
-          <SmallButton
-            displayText='Start Analysis'
-            disabled={false}
-            onPress={() => getMonthlySalesData(uid, 'second')}
-          />
-        </View>
-
         <StandardSpace/>
         <Text variant="titleMedium" style={styles.subTitle}>月次総売上</Text>   
         {
@@ -392,7 +391,6 @@ export const HomeScreen = (props: any) => {
           )
         }
       </ScrollView>
-
     </View>
   );
 };

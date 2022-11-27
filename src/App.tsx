@@ -41,12 +41,7 @@ export default function App() {
           component={HomeScreen}
           options={{
             title: 'HOME',
-            headerStyle: {
-              backgroundColor: BackColor,
-            },
-            headerTitleStyle: {
-              color: BasicColor,
-            },
+            headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <Icon name="home" size={size} color={color} />
             ),
