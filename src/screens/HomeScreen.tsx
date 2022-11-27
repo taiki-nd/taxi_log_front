@@ -16,13 +16,13 @@ export const HomeScreen = (props: any) => {
   //state
   const [uid, setUid] = useState('')
 
-  const [monthlySalesSumYear, setMonthlySalesSumYear] = useState(0)
-  const [monthlySalesSumMonth, setMonthlySalesSumMonth] = useState(0)
+  const [monthlySalesYear, setMonthlySalesYear] = useState(0)
+  const [monthlySalesMonth, setMonthlySalesMonth] = useState(0)
   const [monthlySalesSumData, setMonthlySalesSumData] = useState<number[]>([0, 0, 0]);
   const [monthlySalesSumLabels, setMonthlySalesSumLabels] = useState<string[]>(['1', '2', '3']);
 
-  const [monthlySalesYear, setMonthlySalesYear] = useState(0)
-  const [monthlySalesMonth, setMonthlySalesMonth] = useState(0)
+  //const [monthlySalesYear, setMonthlySalesYear] = useState(0)
+  //const [monthlySalesMonth, setMonthlySalesMonth] = useState(0)
   const [monthlySalesData, setMonthlySalesData] = useState<number[]>([0, 0, 0]);
   const [monthlySalesLabels, setMonthlySalesLabels] = useState<string[]>(['1', '2', '3']);
 
@@ -49,8 +49,8 @@ export const HomeScreen = (props: any) => {
       return
     }
     var today = new Date();
-    setMonthlySalesSumYear(today.getFullYear());
-    setMonthlySalesSumMonth(today.getMonth()+1);
+    setMonthlySalesYear(today.getFullYear());
+    setMonthlySalesMonth(today.getMonth()+1);
 
     var itemsYear: any[] = [];
     for (var i = 0; i < 10; i++) {
@@ -68,6 +68,11 @@ export const HomeScreen = (props: any) => {
     getMonthlySales(currentUser.uid, 'first');
   }, []);
 
+  const getMonthlySalesData = (uid: string, status: string) => {
+    getMonthlySalesSum(uid, status)
+    getMonthlySales(uid, status)
+  }
+
   /**
    * getMonthlySalesSum
    * 月次総売上データの取得
@@ -84,12 +89,12 @@ export const HomeScreen = (props: any) => {
         'year': today.getFullYear(),
         'month': today.getMonth()+1
       }
-      setMonthlySalesSumYear(today.getFullYear());
-      setMonthlySalesSumMonth(today.getMonth()+1);
+      setMonthlySalesYear(today.getFullYear());
+      setMonthlySalesMonth(today.getMonth()+1);
     } else if (status === 'second') {
       params ={
-        'year': monthlySalesSumYear,
-        'month': monthlySalesSumMonth
+        'year': monthlySalesYear,
+        'month': monthlySalesMonth
       }
     }
 
@@ -194,26 +199,26 @@ export const HomeScreen = (props: any) => {
             placeholder='年'
             width='30%'
             open={openYearForSalesSum}
-            value={monthlySalesSumYear}
+            value={monthlySalesYear}
             items={itemsYear}
             setOpen={setOpenYearForSalesSum}
-            setValue={setMonthlySalesSumYear}
+            setValue={setMonthlySalesYear}
             setItems={setItemsYear}
           />
           <Dropdown
             placeholder='月'
             width='20%'
             open={openMonthForSalesSum}
-            value={monthlySalesSumMonth}
+            value={monthlySalesMonth}
             items={itemsMonth}
             setOpen={setOpenMonthForSalesSum}
-            setValue={setMonthlySalesSumMonth}
+            setValue={setMonthlySalesMonth}
             setItems={setItemsMonth}
           />
           <SmallButton
             displayText='Start Analysis'
             disabled={false}
-            onPress={() => getMonthlySalesSum(uid, 'second')}
+            onPress={() => getMonthlySalesData(uid, 'second')}
           />
         </View>
         <Text variant="titleMedium" style={styles.subTitle}>月次総売上</Text>
