@@ -1,8 +1,8 @@
 /**
-   * dateTransition
-   * @param date 
-   * @returns string
-   */
+ * dateTransition
+ * @param date 
+ * @returns string
+ */
 export const DateTransition = (date: string) => {
   var transitionDate = new Date(date);
   return transitionDate.getFullYear() + '/' +('0' + (transitionDate.getMonth()+1)).slice(-2)+ '/' +  ('0' + transitionDate.getDate()).slice(-2);
