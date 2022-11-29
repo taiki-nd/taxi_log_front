@@ -39,36 +39,40 @@ export const HomeScreen = (props: any) => {
   const [records, setRecords] = useState<any>([]);
 
   useEffect(() => {
-
-    var currentUser = auth.currentUser
-    if (currentUser) {
-      setUid(currentUser.uid);
-    } else {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Signin' }]
-      });
-      return
-    }
-    var today = new Date();
-    setMonthlySalesYear(today.getFullYear());
-    setMonthlySalesMonth(today.getMonth()+1);
-
-    var itemsYear: any[] = [];
-    for (var i = 0; i < 10; i++) {
-      itemsYear.push({label: `${today.getFullYear()-i}`, value: today.getFullYear()-i})
-    }
-    setItemsYear(itemsYear);
-
-    var itemsMonth: any[] = [];
-    for (var i = 0; i < 11; i++) {
-      itemsMonth.push({label: `${i+1}`, value: i+1})
-    }
-    setItemsMonth(itemsMonth);
-
-    getMonthlySalesSum(currentUser.uid, 'first');
-    getMonthlySales(currentUser.uid, 'first');
-    recordsIndex(currentUser.uid, 'first')
+    (async () => {
+      var currentUser = auth.currentUser
+      if (currentUser) {
+        setUid(currentUser.uid);
+      } else {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Signin' }]
+        });
+        return
+      }
+  
+      // ドロップダウンリストの作成
+      var day = new Date();
+      setMonthlySalesYear(day.getFullYear());
+      setMonthlySalesMonth(day.getMonth()+1);
+      var today = day.getDay()
+  
+      var itemsYear: any[] = [];
+      for (var i = 0; i < 10; i++) {
+        itemsYear.push({label: `${day.getFullYear()-i}`, value: day.getFullYear()-i})
+      }
+      setItemsYear(itemsYear);
+  
+      var itemsMonth: any[] = [];
+      for (var i = 0; i < 11; i++) {
+        itemsMonth.push({label: `${i+1}`, value: i+1})
+      }
+      setItemsMonth(itemsMonth);
+  
+      getMonthlySalesSum(currentUser.uid, 'first');
+      getMonthlySales(currentUser.uid, 'first');
+      recordsIndex(currentUser.uid, 'first')
+    })()
   }, []);
 
   const getMonthlySalesData = (uid: string, status: string) => {
