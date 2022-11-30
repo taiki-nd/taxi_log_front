@@ -10,19 +10,27 @@ import { Dropdown } from '../components/parts/Dropdown';
 import { SmallButton } from '../components/parts/SmallButton';
 import { Record } from '../models/Record';
 import { StandardSpace } from '../components/parts/Space';
-import { GetYearAndMonth } from '../utils/commonFunc/common';
+import { getMonthlyAnalysisPeriod, GetYearAndMonth } from '../utils/commonFunc/common';
 
 export const HomeScreen = (props: any) => {
   // props
   const { navigation } = props;
 
   //state
-  const [uid, setUid] = useState('')
-  const [closeDay, setCloseDay] = useState(0)
-  const [payDay, setPayDay] = useState(0)
+  const [uid, setUid] = useState('');
+  const [closeDay, setCloseDay] = useState(0);
+  const [payDay, setPayDay] = useState(0);
+  const [toDay, setToDay] = useState(0);
 
-  const [monthlySalesYear, setMonthlySalesYear] = useState(0)
-  const [monthlySalesMonth, setMonthlySalesMonth] = useState(0)
+  const [analysisStartYear, setAnalysisStartYear] = useState(0);
+  const [analysisStartMonth, setAnalysisStartMonth] = useState(0);
+  const [analysisStartDay, setAnalysisStartDay] = useState(0);
+  const [analysisFinishYear, setAnalysisFinishYear] = useState(0);
+  const [analysisFinishMonth, setAnalysisFinishMonth] = useState(0);
+  const [analysisFinishDay, setAnalysisFinishDay] = useState(0);
+
+  const [monthlySalesYear, setMonthlySalesYear] = useState(0);
+  const [monthlySalesMonth, setMonthlySalesMonth] = useState(0);
   const [monthlySalesSumData, setMonthlySalesSumData] = useState<number[]>([0, 0, 0]);
   const [monthlySalesSumLabels, setMonthlySalesSumLabels] = useState<string[]>(['1', '2', '3']);
 
@@ -73,8 +81,6 @@ export const HomeScreen = (props: any) => {
         return "error";
       });
 
-      console.log('user', user);
-
       var close_day = user.close_day
       var pay_day = user.pay_day
       setCloseDay(user.close_day);
@@ -84,6 +90,7 @@ export const HomeScreen = (props: any) => {
       var today = day.getDay()
       var year = day.getFullYear()
       var month = day.getMonth() + 1
+      setToDay(today);
 
       var year_and_month = GetYearAndMonth(year, month, today, close_day, pay_day);
       console.log('year_and_month', year_and_month)
@@ -102,10 +109,11 @@ export const HomeScreen = (props: any) => {
         itemsMonth.push({label: `${i+1}`, value: i+1})
       }
       setItemsMonth(itemsMonth);
-  
+
+      getAnalysisPeriod(year, month, today, close_day);
       getMonthlySalesSum(currentUser.uid, user.close_day, user.pay_day, 'first');
       getMonthlySales(currentUser.uid, user.close_day, user.pay_day, 'first');
-      recordsIndex(currentUser.uid, user.close_day, user.pay_day, 'first')
+      recordsIndex(currentUser.uid, user.close_day, user.pay_day, 'first');
     })()
   }, []);
 
@@ -113,6 +121,20 @@ export const HomeScreen = (props: any) => {
     getMonthlySalesSum(uid, closeDay, payDay, status)
     getMonthlySales(uid, closeDay, payDay, status)
     recordsIndex(uid, closeDay, payDay, status)
+  }
+
+  /**
+   * getAnalysisPeriod
+   */
+  const getAnalysisPeriod = (year: number, month: number, today: number, close_day: number) => {
+    const days = getMonthlyAnalysisPeriod(year, month, today, close_day);
+    console.log('days', days);
+    setAnalysisStartYear(days.start_year);
+    setAnalysisStartMonth(days.start_month);
+    setAnalysisStartDay(days.start_day);
+    setAnalysisFinishYear(days.finish_year);
+    setAnalysisFinishMonth(days.finish_month);
+    setAnalysisFinishDay(days.finish_day);
   }
 
   /**
@@ -330,6 +352,11 @@ export const HomeScreen = (props: any) => {
       </View>
       <ScrollView>
         <StandardSpace/>
+        <View>
+          <Text style={styles.standardTextStyle}>解析期間</Text>
+          <Text style={styles.standardTextStyle}>{`${analysisStartYear}/${analysisStartMonth}/${analysisStartDay} -> ${analysisFinishYear}/${analysisFinishMonth}/${analysisFinishDay}`}</Text>
+        </View>
+        <StandardSpace/>
         <Text variant="titleMedium" style={styles.subTitle}>月次総売上</Text>   
         {
           messageForMonthlySalesSum.length !== 0 ? (
@@ -469,6 +496,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  standardTextStyle: {
+    color: BasicColor,
+    fontSize: 14
   },
   messageTextStyle: {
     color: TomatoColor,
