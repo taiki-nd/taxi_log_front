@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { View, StyleSheet, Dimensions, ScrollView, Platform } from 'react-native';
 import { DataTable, Text } from "react-native-paper";
 import { BarChart, LineChart } from 'react-native-chart-kit';
 import { AccentColor, BackColor, BasicColor, TomatoColor } from '../styles/common/color';
@@ -323,6 +323,16 @@ export const HomeScreen = (props: any) => {
 
   return (
     <View style={styles.mainBody}>
+      {
+        Platform.OS === 'ios'
+        ? 
+          <View>
+            <StandardSpace/>
+            <StandardSpace/>
+          </View>
+        :
+          <View></View>
+      }
       <View style={styles.flex}>
         <Dropdown
           placeholder='年'
