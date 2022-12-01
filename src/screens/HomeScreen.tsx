@@ -141,7 +141,9 @@ export const HomeScreen = (props: any) => {
    * getMonthlySalesSum
    * 月次総売上データの取得
    */
-  const getMonthlySalesSum = (uid: string, close_day: number, pay_day: number, status: string) => {
+  const getMonthlySalesSum = async (uid: string, close_day: number, pay_day: number, status: string) => {
+
+    console.log('getMonthlySalesSum')
     // headers
     const headers = {'uuid': uid}
 
@@ -165,9 +167,8 @@ export const HomeScreen = (props: any) => {
         'month': monthlySalesMonth
       }
     }
-    console.log('params:', params)
 
-    axios({
+    await axios({
       method: method.GET,
       url: '/analysis/sales_sum',
       headers: headers,
@@ -205,7 +206,7 @@ export const HomeScreen = (props: any) => {
    * getMonthlySales
    * 月次売上データの取得
    */
-  const getMonthlySales = (uid: string, close_day: number, pay_day: number, status: string) => {
+  const getMonthlySales = async (uid: string, close_day: number, pay_day: number, status: string) => {
     // headers
     const headers = {'uuid': uid}
 
@@ -230,9 +231,7 @@ export const HomeScreen = (props: any) => {
       }
     }
 
-    console.log('params:', params)
-
-    axios({
+    await axios({
       method: method.GET,
       url: '/analysis/sales',
       headers: headers,
@@ -272,7 +271,7 @@ export const HomeScreen = (props: any) => {
    * @param uid 
    * @param status 
    */
-  const recordsIndex = (uid: string, close_day: number, pay_day: number, status: string) => {
+  const recordsIndex = async (uid: string, close_day: number, pay_day: number, status: string) => {
 
     // headers
     const headers = {'uuid': uid}
@@ -298,7 +297,7 @@ export const HomeScreen = (props: any) => {
       }
     }
 
-    axios({
+    await axios({
       method: method.GET,
       url: '/analysis/records',
       headers: headers,
