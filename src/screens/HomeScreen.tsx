@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { View, StyleSheet, Dimensions, ScrollView, Platform } from 'react-native';
 import { DataTable, Text } from "react-native-paper";
 import { BarChart, LineChart } from 'react-native-chart-kit';
 import { AccentColor, BackColor, BasicColor, TomatoColor } from '../styles/common/color';
@@ -10,16 +10,27 @@ import { Dropdown } from '../components/parts/Dropdown';
 import { SmallButton } from '../components/parts/SmallButton';
 import { Record } from '../models/Record';
 import { StandardSpace } from '../components/parts/Space';
+import { getMonthlyAnalysisPeriod, GetYearAndMonth } from '../utils/commonFunc/common';
 
 export const HomeScreen = (props: any) => {
   // props
   const { navigation } = props;
 
   //state
-  const [uid, setUid] = useState('')
+  const [uid, setUid] = useState('');
+  const [closeDay, setCloseDay] = useState(0);
+  const [payDay, setPayDay] = useState(0);
+  const [toDay, setToDay] = useState(0);
 
-  const [monthlySalesYear, setMonthlySalesYear] = useState(0)
-  const [monthlySalesMonth, setMonthlySalesMonth] = useState(0)
+  const [analysisStartYear, setAnalysisStartYear] = useState(0);
+  const [analysisStartMonth, setAnalysisStartMonth] = useState(0);
+  const [analysisStartDay, setAnalysisStartDay] = useState(0);
+  const [analysisFinishYear, setAnalysisFinishYear] = useState(0);
+  const [analysisFinishMonth, setAnalysisFinishMonth] = useState(0);
+  const [analysisFinishDay, setAnalysisFinishDay] = useState(0);
+
+  const [monthlySalesYear, setMonthlySalesYear] = useState(0);
+  const [monthlySalesMonth, setMonthlySalesMonth] = useState(0);
   const [monthlySalesSumData, setMonthlySalesSumData] = useState<number[]>([0, 0, 0]);
   const [monthlySalesSumLabels, setMonthlySalesSumLabels] = useState<string[]>(['1', '2', '3']);
 
@@ -38,63 +49,118 @@ export const HomeScreen = (props: any) => {
 
   const [records, setRecords] = useState<any>([]);
 
+  console.log('useState', monthlySalesYear, monthlySalesMonth)
+
   useEffect(() => {
-
-    var currentUser = auth.currentUser
-    if (currentUser) {
-      setUid(currentUser.uid);
-    } else {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Signin' }]
+    (async () => {
+      var currentUser = auth.currentUser
+      if (currentUser) {
+        setUid(currentUser.uid);
+      } else {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Signin' }]
+        });
+        return
+      }
+  
+      // ドロップダウンリストの作成
+      const headers = {'uuid': currentUser.uid}
+      const user = await axios({
+        method: method.GET,
+        url: 'user/get_user_form_uid',
+        headers: headers,
+        data: null,
+        params: null,
+      }).then((response) => {
+        var user = response.data.data
+        console.log("user", user);
+        return user;
+      }).catch(error => {
+        console.error("error", error);
+        return "error";
       });
-      return
-    }
-    var today = new Date();
-    setMonthlySalesYear(today.getFullYear());
-    setMonthlySalesMonth(today.getMonth()+1);
 
-    var itemsYear: any[] = [];
-    for (var i = 0; i < 10; i++) {
-      itemsYear.push({label: `${today.getFullYear()-i}`, value: today.getFullYear()-i})
-    }
-    setItemsYear(itemsYear);
+      var close_day = user.close_day
+      var pay_day = user.pay_day
+      setCloseDay(user.close_day);
+      setPayDay(user.pay_days);
 
-    var itemsMonth: any[] = [];
-    for (var i = 0; i < 11; i++) {
-      itemsMonth.push({label: `${i+1}`, value: i+1})
-    }
-    setItemsMonth(itemsMonth);
+      var day = new Date();
+      var today = day.getDay()
+      var year = day.getFullYear()
+      var month = day.getMonth() + 1
+      setToDay(today);
 
-    getMonthlySalesSum(currentUser.uid, 'first');
-    getMonthlySales(currentUser.uid, 'first');
-    recordsIndex(currentUser.uid, 'first')
+      var year_and_month = GetYearAndMonth(year, month, today, close_day, pay_day);
+      console.log('year_and_month', year_and_month)
+
+      setMonthlySalesYear(year_and_month[0]);
+      setMonthlySalesMonth(year_and_month[1]);
+  
+      var itemsYear: any[] = [];
+      for (var i = 0; i < 10; i++) {
+        itemsYear.push({label: `${year-i}`, value: year-i})
+      }
+      setItemsYear(itemsYear);
+  
+      var itemsMonth: any[] = [];
+      for (var i = 0; i < 12; i++) {
+        itemsMonth.push({label: `${i+1}`, value: i+1})
+      }
+      setItemsMonth(itemsMonth);
+
+      getAnalysisPeriod(year, month, today, close_day);
+      getMonthlySalesSum(currentUser.uid, user.close_day, user.pay_day, 'first');
+      getMonthlySales(currentUser.uid, user.close_day, user.pay_day, 'first');
+      recordsIndex(currentUser.uid, user.close_day, user.pay_day, 'first');
+    })()
   }, []);
 
   const getMonthlySalesData = (uid: string, status: string) => {
-    getMonthlySalesSum(uid, status)
-    getMonthlySales(uid, status)
-    recordsIndex(uid, status)
+    getMonthlySalesSum(uid, closeDay, payDay, status)
+    getMonthlySales(uid, closeDay, payDay, status)
+    recordsIndex(uid, closeDay, payDay, status)
+  }
+
+  /**
+   * getAnalysisPeriod
+   */
+  const getAnalysisPeriod = (year: number, month: number, today: number, close_day: number) => {
+    const days = getMonthlyAnalysisPeriod(year, month, today, close_day);
+    console.log('days', days);
+    setAnalysisStartYear(days.start_year);
+    setAnalysisStartMonth(days.start_month);
+    setAnalysisStartDay(days.start_day);
+    setAnalysisFinishYear(days.finish_year);
+    setAnalysisFinishMonth(days.finish_month);
+    setAnalysisFinishDay(days.finish_day);
   }
 
   /**
    * getMonthlySalesSum
    * 月次総売上データの取得
    */
-  const getMonthlySalesSum = (uid: string, status: string) => {
+  const getMonthlySalesSum = async (uid: string, close_day: number, pay_day: number, status: string) => {
+
+    console.log('getMonthlySalesSum')
     // headers
     const headers = {'uuid': uid}
 
     // params
     var params: any = {}
     if (status === 'first'){
-      var today = new Date();
+      var day = new Date();
+      var today = day.getDay()
+      var year = day.getFullYear()
+      var month = day.getMonth() + 1
+
+      var year_and_month = GetYearAndMonth(year, month, today, close_day, pay_day)
+
       params ={
-        'year': today.getFullYear(),
-        'month': today.getMonth()+1
+        'year': year_and_month[0],
+        'month': year_and_month[1]
       }
-      setMonthlySalesYear(today.getFullYear());
-      setMonthlySalesMonth(today.getMonth()+1);
     } else if (status === 'second') {
       params ={
         'year': monthlySalesYear,
@@ -102,7 +168,7 @@ export const HomeScreen = (props: any) => {
       }
     }
 
-    axios({
+    await axios({
       method: method.GET,
       url: '/analysis/sales_sum',
       headers: headers,
@@ -140,20 +206,24 @@ export const HomeScreen = (props: any) => {
    * getMonthlySales
    * 月次売上データの取得
    */
-  const getMonthlySales = (uid: string, status: string) => {
+  const getMonthlySales = async (uid: string, close_day: number, pay_day: number, status: string) => {
     // headers
     const headers = {'uuid': uid}
 
     // params
     var params: any = {}
     if (status === 'first'){
-      var today = new Date();
+      var day = new Date();
+      var today = day.getDay()
+      var year = day.getFullYear()
+      var month = day.getMonth() + 1
+
+      var year_and_month = GetYearAndMonth(year, month, today, close_day, pay_day)
+
       params ={
-        'year': today.getFullYear(),
-        'month': today.getMonth()+1
+        'year': year_and_month[0],
+        'month': year_and_month[1]
       }
-      setMonthlySalesYear(today.getFullYear());
-      setMonthlySalesMonth(today.getMonth()+1);
     } else if (status === 'second') {
       params ={
         'year': monthlySalesYear,
@@ -161,7 +231,7 @@ export const HomeScreen = (props: any) => {
       }
     }
 
-    axios({
+    await axios({
       method: method.GET,
       url: '/analysis/sales',
       headers: headers,
@@ -201,7 +271,7 @@ export const HomeScreen = (props: any) => {
    * @param uid 
    * @param status 
    */
-  const recordsIndex = (uid: string, status: string) => {
+  const recordsIndex = async (uid: string, close_day: number, pay_day: number, status: string) => {
 
     // headers
     const headers = {'uuid': uid}
@@ -209,13 +279,17 @@ export const HomeScreen = (props: any) => {
     // params
     var params: any = {}
     if (status === 'first'){
-      var today = new Date();
+      var day = new Date();
+      var today = day.getDay()
+      var year = day.getFullYear()
+      var month = day.getMonth() + 1
+
+      var year_and_month = GetYearAndMonth(year, month, today, close_day, pay_day)
+
       params ={
-        'year': today.getFullYear(),
-        'month': today.getMonth()+1
+        'year': year_and_month[0],
+        'month': year_and_month[1]
       }
-      setMonthlySalesYear(today.getFullYear());
-      setMonthlySalesMonth(today.getMonth()+1);
     } else if (status === 'second') {
       params ={
         'year': monthlySalesYear,
@@ -223,7 +297,7 @@ export const HomeScreen = (props: any) => {
       }
     }
 
-    axios({
+    await axios({
       method: method.GET,
       url: '/analysis/records',
       headers: headers,
@@ -248,6 +322,16 @@ export const HomeScreen = (props: any) => {
 
   return (
     <View style={styles.mainBody}>
+      {
+        Platform.OS === 'ios'
+        ? 
+          <View>
+            <StandardSpace/>
+            <StandardSpace/>
+          </View>
+        :
+          <View></View>
+      }
       <View style={styles.flex}>
         <Dropdown
           placeholder='年'
@@ -276,6 +360,11 @@ export const HomeScreen = (props: any) => {
         />
       </View>
       <ScrollView>
+        <StandardSpace/>
+        <View>
+          <Text style={styles.standardTextStyle}>解析期間</Text>
+          <Text style={styles.standardTextStyle}>{`${analysisStartYear}/${analysisStartMonth}/${analysisStartDay} -> ${analysisFinishYear}/${analysisFinishMonth}/${analysisFinishDay}`}</Text>
+        </View>
         <StandardSpace/>
         <Text variant="titleMedium" style={styles.subTitle}>月次総売上</Text>   
         {
@@ -416,6 +505,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  standardTextStyle: {
+    color: BasicColor,
+    fontSize: 14
   },
   messageTextStyle: {
     color: TomatoColor,

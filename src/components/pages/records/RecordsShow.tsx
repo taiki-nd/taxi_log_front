@@ -1,7 +1,7 @@
 import axios from "axios";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { Text, DataTable, Dialog, Provider, Portal, RadioButton } from "react-native-paper";
 import { auth } from "../../../auth/firebase";
 import { Detail } from "../../../models/Detail";
@@ -443,6 +443,16 @@ export const RecordsShow = (props: any) => {
   
     return (
       <View style={styles.mainBody}>
+        {
+          Platform.OS === 'ios'
+          ? 
+            <View>
+              <StandardSpace/>
+              <StandardSpace/>
+            </View>
+          :
+            <View></View>
+        }
         <ScrollView>
           <StandardSpace/>
           <Text variant="titleLarge"  style={styles.title}>{DateTransition(String(date))}({DayTransition(day)})の売上記録</Text>
