@@ -93,7 +93,6 @@ export const HomeScreen = (props: any) => {
       setToDay(today);
 
       var year_and_month = GetYearAndMonth(year, month, today, close_day, pay_day);
-      console.log('year_and_month', year_and_month)
 
       setMonthlySalesYear(year_and_month[0]);
       setMonthlySalesMonth(year_and_month[1]);
@@ -118,6 +117,7 @@ export const HomeScreen = (props: any) => {
   }, []);
 
   const getMonthlySalesData = (uid: string, status: string) => {
+    getAnalysisPeriod(monthlySalesYear, monthlySalesMonth, toDay, closeDay);
     getMonthlySalesSum(uid, closeDay, payDay, status)
     getMonthlySales(uid, closeDay, payDay, status)
     recordsIndex(uid, closeDay, payDay, status)
@@ -127,6 +127,7 @@ export const HomeScreen = (props: any) => {
    * getAnalysisPeriod
    */
   const getAnalysisPeriod = (year: number, month: number, today: number, close_day: number) => {
+    console.log('getAnalysisPeriod', year, month, today, close_day)
     const days = getMonthlyAnalysisPeriod(year, month, today, close_day);
     console.log('days', days);
     setAnalysisStartYear(days.start_year);
