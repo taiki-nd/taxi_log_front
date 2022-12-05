@@ -184,8 +184,9 @@ export const RecordsIndex = (props: any) => {
       <FlatList
         data={records}
         extraData={records}
+        keyExtractor={(item) => `${String(item.id)}`}
         renderItem = {({item}: { item: Record }) => (
-          <Card key={item.id} style={styles.cardStyle} onPress={() => navigation.navigate('RecordsShow', {record_id: item.id, user_id: item.user_id})}>
+          <Card style={styles.cardStyle} onPress={() => navigation.navigate('RecordsShow', {record_id: item.id, user_id: item.user_id})}>
             <Card.Content>
               <Title style={styles.textColor}>{DateTransition(item.date)}({DayTransition(item.day_of_week)})</Title>
               <Paragraph style={styles.textColor}>売上：¥{item.daily_sales}  /  実車率：{item.occupancy_rate}%</Paragraph>
