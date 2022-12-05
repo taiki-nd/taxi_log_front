@@ -25,6 +25,8 @@ export const RecordsShow = (props: any) => {
     var record_id = route.params.record_id;
     var user_id = route.params.user_id;
 
+    console.log('params', route)
+    
     // state
     const [userId, setUserId] = useState(Number);
     const [uid, setUid] = useState('');

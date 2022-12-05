@@ -1,4 +1,4 @@
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, Alert } from 'react-native';
@@ -14,7 +14,7 @@ import { errorCodeTransition, method } from '../utils/const';
 
 export const RecordsIndex = (props: any) => {
   // props
-  const { navigation } = props;
+  const { navigation, route } = props;
 
   // state
   const [uid, setUid] = useState('');
@@ -30,6 +30,9 @@ export const RecordsIndex = (props: any) => {
 
   // records取得（初期表示）
   useFocusEffect(useCallback(() => {
+
+    console.log('params', route)
+
     var currentUser = auth.currentUser
     if (currentUser) {
       setUid(currentUser.uid);

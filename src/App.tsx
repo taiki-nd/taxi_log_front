@@ -40,6 +40,7 @@ export default function App() {
           name="Home"
           component={HomeScreen}
           options={{
+            unmountOnBlur:true,
             title: 'HOME',
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
@@ -73,6 +74,7 @@ export default function App() {
           name="Records"
           component={RecordsIndex}
           options={{
+            unmountOnBlur:true,
             title: "Records",
             headerStyle: {
               backgroundColor: BackColor,
@@ -232,6 +234,7 @@ export default function App() {
           name="RecordsShow"
           component={RecordsShow}
           options={{
+            unmountOnBlur:true,
             headerShown: false,
             tabBarButton: () => null,
           }}
