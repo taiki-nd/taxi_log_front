@@ -1,5 +1,6 @@
+import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, Alert } from 'react-native';
 import { Card, Paragraph, Title } from 'react-native-paper';
 import { auth } from '../auth/firebase';
@@ -25,9 +26,10 @@ export const RecordsIndex = (props: any) => {
   const [visibleConfirmDeleteDialog, setVisibleConfirmDeleteDialog] = useState(false);
   const [visibleFailedDialog, setVisibleFailedDialog] = useState(false);
   const [selectedId, setSelectedId] = useState(Number);
+  const [recordInfo, setRecordInfo] = useState<any>({});
 
   // records取得（初期表示）
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     var currentUser = auth.currentUser
     if (currentUser) {
       setUid(currentUser.uid);
@@ -84,7 +86,7 @@ export const RecordsIndex = (props: any) => {
       message = errorCodeTransition(errorCode);
       setErrorMessages(message);
     });
-  }, []);
+  }, []));
 
   const recordsIndex = () => {
     if (page > lastPage) {
@@ -183,7 +185,7 @@ export const RecordsIndex = (props: any) => {
         data={records}
         extraData={records}
         renderItem = {({item}: { item: Record }) => (
-          <Card style={styles.cardStyle} onPress={() => navigation.navigate('RecordsShow', {record_id: item.id, user_id: item.user_id})}>
+          <Card key={item.id} style={styles.cardStyle} onPress={() => navigation.navigate('RecordsShow', {record_id: item.id, user_id: item.user_id})}>
             <Card.Content>
               <Title style={styles.textColor}>{DateTransition(item.date)}({DayTransition(item.day_of_week)})</Title>
               <Paragraph style={styles.textColor}>売上：¥{item.daily_sales}  /  実車率：{item.occupancy_rate}%</Paragraph>
