@@ -1,5 +1,6 @@
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, Alert } from 'react-native';
 import { Card, Paragraph, Title } from 'react-native-paper';
 import { auth } from '../auth/firebase';
@@ -13,7 +14,7 @@ import { errorCodeTransition, method } from '../utils/const';
 
 export const RecordsIndex = (props: any) => {
   // props
-  const { navigation } = props;
+  const { navigation, route } = props;
 
   // state
   const [uid, setUid] = useState('');
@@ -25,9 +26,13 @@ export const RecordsIndex = (props: any) => {
   const [visibleConfirmDeleteDialog, setVisibleConfirmDeleteDialog] = useState(false);
   const [visibleFailedDialog, setVisibleFailedDialog] = useState(false);
   const [selectedId, setSelectedId] = useState(Number);
+  const [recordInfo, setRecordInfo] = useState<any>({});
 
   // records取得（初期表示）
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
+
+    console.log('params', route)
+
     var currentUser = auth.currentUser
     if (currentUser) {
       setUid(currentUser.uid);
@@ -84,7 +89,7 @@ export const RecordsIndex = (props: any) => {
       message = errorCodeTransition(errorCode);
       setErrorMessages(message);
     });
-  }, []);
+  }, []));
 
   const recordsIndex = () => {
     if (page > lastPage) {
@@ -182,6 +187,7 @@ export const RecordsIndex = (props: any) => {
       <FlatList
         data={records}
         extraData={records}
+        keyExtractor={(item) => `${String(item.id)}`}
         renderItem = {({item}: { item: Record }) => (
           <Card style={styles.cardStyle} onPress={() => navigation.navigate('RecordsShow', {record_id: item.id, user_id: item.user_id})}>
             <Card.Content>
