@@ -1,6 +1,7 @@
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import axios from "axios";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { Text, DataTable, Dialog, Provider, Portal, RadioButton } from "react-native-paper";
 import { auth } from "../../../auth/firebase";
@@ -24,6 +25,8 @@ export const RecordsShow = (props: any) => {
     var record_id = route.params.record_id;
     var user_id = route.params.user_id;
 
+    console.log('params', route)
+    
     // state
     const [userId, setUserId] = useState(Number);
     const [uid, setUid] = useState('');
@@ -56,7 +59,7 @@ export const RecordsShow = (props: any) => {
     const [methodFlg, setMethodFlg] = useState('');
     const [description, setDescription] = useState('');
 
-    useEffect(() => {
+    useFocusEffect(useCallback(() => {
       var currentUser = auth.currentUser
       if (currentUser) {
         setUid(currentUser.uid);
@@ -76,7 +79,7 @@ export const RecordsShow = (props: any) => {
 
       // detail一覧の取得
       getDetails(currentUser.uid);
-    }, []);
+    }, []));
 
     /**
      * getUser
