@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions, ScrollView, Platform } from 'react-native';
 import { DataTable, Text } from "react-native-paper";
 import { BarChart, LineChart } from 'react-native-chart-kit';
-import { AccentColor, BackColor, BasicColor, TomatoColor } from '../styles/common/color';
+import { AccentColor, BackColor, BasicColor, SeaColor, TomatoColor } from '../styles/common/color';
 import axios from 'axios';
 import { auth } from '../auth/firebase';
 import { errorCodeTransition, method } from '../utils/const';
@@ -11,6 +11,8 @@ import { SmallButton } from '../components/parts/SmallButton';
 import { Record } from '../models/Record';
 import { StandardSpace } from '../components/parts/Space';
 import { getMonthlyAnalysisPeriod, GetYearAndMonth } from '../utils/commonFunc/common';
+import { DateTransition } from '../utils/commonFunc/record/DateTranstion';
+import { SmallButtonCustom } from '../components/parts/SmallButtonCustom';
 
 export const HomeScreen = (props: any) => {
   // props
@@ -315,12 +317,6 @@ export const HomeScreen = (props: any) => {
     });
   }
 
-  const getOnlyDate = (date: any) => {
-    var d = new Date(date);
-    const onlyDate = d.getDate()
-    return onlyDate;
-  }
-
   return (
     <View style={styles.mainBody}>
       {
@@ -464,14 +460,22 @@ export const HomeScreen = (props: any) => {
               <DataTable.Header style={styles.tableHeader}>
                 <DataTable.Title>Date</DataTable.Title>
                 <DataTable.Title>Sales</DataTable.Title>
+                <DataTable.Title>action</DataTable.Title>
               </DataTable.Header>
               {
                 records.map((record: Record) => {
                   return(
                     <View key={record.id}>
                       <DataTable.Row style={styles.tableRow}>
-                        <DataTable.Cell><Text style={styles.tableCell}>{getOnlyDate(record.date)}</Text></DataTable.Cell>
+                        <DataTable.Cell><Text style={styles.tableCell}>{DateTransition(record.date)}</Text></DataTable.Cell>
                         <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}</Text></DataTable.Cell>
+                        <DataTable.Cell>
+                          <SmallButtonCustom
+                            displayText='dailyReport'
+                            color={SeaColor}
+                            onPress={() => navigation.navigate('RecordsShow', {record_id: record.id, user_id: record.user_id})}
+                          />
+                        </DataTable.Cell>
                       </DataTable.Row>
                     </View>
                   )
