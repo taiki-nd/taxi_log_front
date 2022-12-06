@@ -11,6 +11,7 @@ import { SmallButton } from '../components/parts/SmallButton';
 import { Record } from '../models/Record';
 import { StandardSpace } from '../components/parts/Space';
 import { getMonthlyAnalysisPeriod, GetYearAndMonth } from '../utils/commonFunc/common';
+import { DateTransition } from '../utils/commonFunc/record/DateTranstion';
 
 export const HomeScreen = (props: any) => {
   // props
@@ -315,12 +316,6 @@ export const HomeScreen = (props: any) => {
     });
   }
 
-  const getOnlyDate = (date: any) => {
-    var d = new Date(date);
-    const onlyDate = d.getDate()
-    return onlyDate;
-  }
-
   return (
     <View style={styles.mainBody}>
       {
@@ -470,7 +465,7 @@ export const HomeScreen = (props: any) => {
                   return(
                     <View key={record.id}>
                       <DataTable.Row style={styles.tableRow}>
-                        <DataTable.Cell><Text style={styles.tableCell}>{getOnlyDate(record.date)}</Text></DataTable.Cell>
+                        <DataTable.Cell><Text style={styles.tableCell}>{DateTransition(record.date)}</Text></DataTable.Cell>
                         <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}</Text></DataTable.Cell>
                       </DataTable.Row>
                     </View>
