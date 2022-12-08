@@ -14,7 +14,7 @@ export const Dropdown = (props: any) => {
       }}
       containerStyle={{
         width: width,
-        marginRight: '5%',
+        marginHorizontal: '2%',
         zIndex: 100
       }}
       placeholder = {placeholder} 
