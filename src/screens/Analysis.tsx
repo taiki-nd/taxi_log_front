@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { Text } from "react-native-paper";
-import { BarChart, LineChart } from 'react-native-chart-kit';
-import { AccentColor, BackColor, BasicColor, TomatoColor } from '../styles/common/color';
+import { BarChart } from 'react-native-chart-kit';
+import { BackColor, BasicColor, TomatoColor } from '../styles/common/color';
 import axios from 'axios';
 import { auth } from '../auth/firebase';
 import { errorCodeTransition, method } from '../utils/const';
-import DropDownPicker from 'react-native-dropdown-picker';
 import { Dropdown } from '../components/parts/Dropdown';
 import { StandardSpace } from '../components/parts/Space';
-import { SmallButtonCustom } from '../components/parts/SmallButtonCustom';
 import { SmallButton } from '../components/parts/SmallButton';
 
 export const Analysis = (props: any) => {
@@ -17,27 +15,21 @@ export const Analysis = (props: any) => {
   const { navigation, route } = props;
 
   //state
-  const [uid, setUid] = useState('')
+  const [uid, setUid] = useState('');
 
-  const [startYear, setStartYear] = useState(0)
-  const [startMonth, setStartMonth] = useState(0)
-  const [finishYear, setFinishYear] = useState(0)
-  const [finishMonth, setFinishMonth] = useState(0)
+  const [startYear, setStartYear] = useState(0);
+  const [startMonth, setStartMonth] = useState(0);
+  const [finishYear, setFinishYear] = useState(0);
+  const [finishMonth, setFinishMonth] = useState(0);
 
-  const [averageSales, setAverageSales] = useState<number[]>([0, 0, 0])
-  const [monthlySalesSumMonth, setMonthlySalesSumMonth] = useState(0)
-  const [monthlySalesSumData, setMonthlySalesSumData] = useState<number[]>([0, 0, 0]);
-  const [monthlySalesSumLabels, setMonthlySalesSumLabels] = useState<string[]>(['1', '2', '3']);
-
-  const [monthlySalesYear, setMonthlySalesYear] = useState(0)
-  const [monthlySalesMonth, setMonthlySalesMonth] = useState(0)
-  const [monthlySalesData, setMonthlySalesData] = useState<number[]>([0, 0, 0]);
-  const [monthlySalesLabels, setMonthlySalesLabels] = useState<string[]>(['1', '2', '3']);
+  const [averageSales, setAverageSales] = useState<number[]>([0, 0, 0]);
+  const [averageOccupancyRate, setAverageOccupancyRate] = useState<number[]>([0, 0, 0]);
+  const [dayLabel, setDayLabel] = useState<string[]>(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]);
 
   const [dialogTitle, setDialogTitle] = useState('');
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
-  const [messageForMonthlySalesSum, setMessageForMonthlySalesSum] = useState<string[]>([]);
-  const [messageForMonthlySales, setMessageForMonthlySales] = useState<string[]>([]);
+  const [messageForAverageSales, setMessageForAverageSales] = useState<string[]>([]);
+  const [messageForAverageOccupancyRate, setMessageForAverageOccupancyRate] = useState<string[]>([]);
 
   const [openStartYear, setOpenStartYear] = useState(false);
   const [openStartMonth, setOpenStartMonth] = useState(false);
@@ -81,8 +73,8 @@ export const Analysis = (props: any) => {
   }, []);
 
   /**
-   * getMonthlySalesSum
-   * 月次総売上データの取得
+   * getAnalysisData
+   * 解析データの取得
    */
   const getAnalysisData = (uid: string, status: string) => {
     // headers
@@ -114,29 +106,23 @@ export const Analysis = (props: any) => {
       data: null,
       params: params,
     }).then((response) => {
-      console.log("data", response.data);
-      // labelsの成形
-      var displayLabels: string[] = [];
-      response.data.labels.forEach((label: string) => {
-        var date = new Date(label);
-        const dateOnlyDate = String(date.getDate());
-        displayLabels.push(dateOnlyDate);
-      })
-      // データがからの場合の処理
-      if (displayLabels.length === 0) {
-        setMessageForMonthlySalesSum(['表示するデータがありません']);
-        return;
+      console.log(response.data)
+      if (response.data.average_sales_per_day.length === 0) {
+        setMessageForAverageSales(['表示するデータがありません']);
+      } else {
+        setAverageSales(response.data.average_sales_per_day)
       }
-      setMessageForMonthlySalesSum([]);
-      // データの取得
-      setMonthlySalesSumLabels(displayLabels)
-      setMonthlySalesSumData(response.data.data)
+      if (response.data.average_occupancy_rate_per_day.length === 0) {
+        setMessageForAverageOccupancyRate(['表示するデータがありません']);
+      } else {
+        setAverageOccupancyRate(response.data.average_occupancy_rate_per_day)
+      }
     }).catch(error => {
       var errorCode = error.response.data.info.code;
       var message: string[] = [];
       message = errorCodeTransition(errorCode);
       setErrorMessages(message);
-      setDialogTitle('月次総売上のデータ取得の失敗')
+      setDialogTitle('解析データの取得失敗')
       //setVisibleFailedDialog(true);
     });
   }
@@ -172,7 +158,7 @@ export const Analysis = (props: any) => {
             value={finishYear}
             items={itemsYear}
             setOpen={setOpenFinishYear}
-            setValue={setStartYear}
+            setValue={setFinishYear}
             setItems={setItemsYear}
           />
           <Dropdown
@@ -198,8 +184,8 @@ export const Analysis = (props: any) => {
 
         <Text variant="titleMedium" style={styles.subTitle}>曜日別平均売上</Text>
         {
-          messageForMonthlySales.length !== 0 ? (
-            messageForMonthlySales.map((message: string, index: number) => { 
+          messageForAverageSales.length !== 0 ? (
+            messageForAverageSales.map((message: string, index: number) => { 
               return(
                 <View style={styles.messageStyle} key={index}>
                   <Text style={styles.messageTextStyle}>{message}</Text>
@@ -209,9 +195,9 @@ export const Analysis = (props: any) => {
           ) : (
             <BarChart
               data={{
-                  labels: monthlySalesLabels,
+                  labels: dayLabel,
                   datasets: [{
-                      data: monthlySalesData
+                      data: averageSales
                   }]
               }}
               width={Dimensions.get("window").width * 0.95} // from react-native
@@ -237,8 +223,8 @@ export const Analysis = (props: any) => {
 
         <Text variant="titleMedium" style={styles.subTitle}>曜日別平均実車率</Text>
         {
-          messageForMonthlySales.length !== 0 ? (
-            messageForMonthlySales.map((message: string, index: number) => { 
+          messageForAverageOccupancyRate.length !== 0 ? (
+            messageForAverageOccupancyRate.map((message: string, index: number) => { 
               return(
                 <View style={styles.messageStyle} key={index}>
                   <Text style={styles.messageTextStyle}>{message}</Text>
@@ -248,16 +234,16 @@ export const Analysis = (props: any) => {
           ) : (
             <BarChart
               data={{
-                  labels: monthlySalesLabels,
+                  labels: dayLabel,
                   datasets: [{
-                      data: monthlySalesData
+                      data: averageOccupancyRate
                   }]
               }}
               width={Dimensions.get("window").width * 0.95} // from react-native
               height={220}
               fromZero={true}
-              yAxisLabel='¥'
-              yAxisSuffix=''
+              yAxisLabel=''
+              yAxisSuffix='%'
               chartConfig={{
                 backgroundColor: BackColor,
                 backgroundGradientFrom: BackColor,
@@ -273,44 +259,6 @@ export const Analysis = (props: any) => {
           )
         }
         <StandardSpace />
-
-        <Text variant="titleMedium" style={styles.subTitle}>曜日別平均実車率</Text>
-        {
-          messageForMonthlySales.length !== 0 ? (
-            messageForMonthlySales.map((message: string, index: number) => { 
-              return(
-                <View style={styles.messageStyle} key={index}>
-                  <Text style={styles.messageTextStyle}>{message}</Text>
-                </View>
-              )
-            })
-          ) : (
-            <BarChart
-              data={{
-                  labels: monthlySalesLabels,
-                  datasets: [{
-                      data: monthlySalesData
-                  }]
-              }}
-              width={Dimensions.get("window").width * 0.95} // from react-native
-              height={220}
-              fromZero={true}
-              yAxisLabel='¥'
-              yAxisSuffix=''
-              chartConfig={{
-                backgroundColor: BackColor,
-                backgroundGradientFrom: BackColor,
-                backgroundGradientTo: BackColor,
-                decimalPlaces: 0,
-                color: (opacity = 0.5) => `rgba(63, 62, 52, ${opacity})`,
-                barPercentage: 0.2
-              }}
-              style={{
-                marginVertical: 8,
-              }}
-            />
-          )
-        }
       </ScrollView>
     </View>
   );
