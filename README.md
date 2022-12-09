@@ -9,7 +9,7 @@
 <img src="https://user-images.githubusercontent.com/84260062/201505063-19cd83c0-9977-489f-93e7-5aae83ec4c04.png" width="320px">
 
 ### Home
-// 作成中
+<img src="https://user-images.githubusercontent.com/84260062/206714380-b51277ef-647f-4091-8e38-99f8f2138484.png" width="320px">
 
 ### 設定画面
 // 作成中
