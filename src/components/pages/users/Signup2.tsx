@@ -2,7 +2,7 @@ import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { Text, StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { AccentColor, BackColor } from '../../../styles/common/color';
+import { AccentColor, BackColor, TomatoColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
 import { StandardTextInput } from '../../parts/StandardTextInput';
 import { auth, getUid } from '../../../auth/firebase';
@@ -21,6 +21,7 @@ export const Signup2 = (props: any) => {
   const [company, setCompany] = useState('');
   const [styleFlg, setStyleFlg] = useState('');
   const [closeDay, setCloseDay] = useState(Number);
+  const [payDay, setPayDay] = useState(Number);
   const [dailyTarget, setDailyTarget] = useState(Number);
   const [monthlyTarget, setMonthlyTarget] = useState(Number);
   const [taxFlg, setTaxFlg] = useState('false');
@@ -51,12 +52,13 @@ export const Signup2 = (props: any) => {
       && prefecture !== ''
       && company !== ''
       && styleFlg !== ''
-      && closeDay !== 0) {
+      && closeDay !== 0
+      && payDay !== 0) {
       setButtonDisabled(false);
     } else {
       setButtonDisabled(true);
     }
-  }, [nickname, prefecture, company, styleFlg, closeDay]);
+  }, [nickname, prefecture, company, styleFlg, closeDay, payDay]);
 
   /**
    * createAccount
@@ -88,6 +90,7 @@ export const Signup2 = (props: any) => {
         prefecture: prefecture,
         company: company,
         style_flg: styleFlg,
+        pay_day: Number(payDay),
         close_day: Number(closeDay),
         daily_target: Number(dailyTarget),
         monthly_target: Number(monthlyTarget),
@@ -155,6 +158,8 @@ export const Signup2 = (props: any) => {
                 <RadioButton.Item label="他" value="other" style={styles.radioButtonStyle} color={AccentColor}/>
               </RadioButton.Group>
               <StandardTextInput label="締め日(月末の場合は31)" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setCloseDay(i)}/>
+              <StandardTextInput label="給与日(月末の場合は31)" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setPayDay(i)}/>
+              <Text style={styles.mentionText}>* 月次売上関連のグラフ作成に必要なため</Text>
               <StandardTextInput label="目標売上（1日あたり）" placeholder="65000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailyTarget(i)}/>
               <StandardTextInput label="目標売上（1ヶ月あたり）" placeholder="720000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setMonthlyTarget(i)}/>
               <StandardLabel displayText={"標準入力価格設定"}/>
@@ -190,6 +195,11 @@ const styles = StyleSheet.create({
   radioButtonStyle: {
     marginLeft: 35,
     marginRight: 35,
+  },
+  mentionText:{
+    marginLeft: 70,
+    fontSize: 10,
+    color: TomatoColor
   },
   errorTextStyle: {
     color: 'red',

@@ -94,6 +94,9 @@ export const errorCodeTransition = (codes: string[]) => {
       case 'day_of_week_null_error':
         errorMessage.push('曜日を選択してください');
         break;
+      case 'pay_day_date_error':
+        errorMessage.push('給与日に無効な値が入力されています。1〜31の数値を入力して下さい。');
+        break;
       case 'start_hour_number_error':
         errorMessage.push('業務開始時刻に無効な値が入力されています。0〜24の数値を入力して下さい。');
         break;

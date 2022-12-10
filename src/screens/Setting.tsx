@@ -13,7 +13,8 @@ export const Setting = (props: any) => {
   }
   return (
     <View style={styles.mainBody}>
-      <StandardButton displayText={"SIGNOUT"} onPress={funcSignout}/>
+    <StandardButton displayText={"SIGNOUT"} onPress={funcSignout}/>
+      <StandardButton displayText={"SIGNUP2"} onPress={() => {props.navigation.navigate('Signup2')}}/>
     </View>
   );
 };
