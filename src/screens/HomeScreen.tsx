@@ -101,7 +101,7 @@ export const HomeScreen = (props: any) => {
   
       var itemsYear: any[] = [];
       for (var i = 0; i < 10; i++) {
-        itemsYear.push({label: `${year-i}`, value: year-i})
+        itemsYear.push({label: `${year+1-i}`, value: year+1-i})
       }
       setItemsYear(itemsYear);
   
@@ -491,7 +491,7 @@ export const HomeScreen = (props: any) => {
 
 const styles = StyleSheet.create({
   mainBody: {
-    padding: 10,
+    padding: '3%',
     flex: 1,
     backgroundColor: BackColor,
     alignContent: 'center',
