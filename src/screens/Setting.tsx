@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { deleteUser, reauthenticateWithCredential } from 'firebase/auth';
 import { EmailAuthProvider } from 'firebase/auth/react-native';
 import { useState } from 'react';
@@ -11,8 +12,11 @@ import { StandardButton } from '../components/parts/StandardButton';
 import { StandardTextInput } from '../components/parts/StandardTextInput';
 import { BackColor, BasicColor, CoverColor, SeaColor, TomatoColor } from '../styles/common/color';
 import { FuncSignout } from '../utils/commonFunc/user/Signout';
+import { method } from '../utils/const';
 
 export const Setting = (props: any) => {
+  // props
+  const { navigation } = props;
 
   // state
   const [password, setPassword] = useState('');
@@ -46,19 +50,57 @@ export const Setting = (props: any) => {
    * deleteAccount
    * アカウント削除
    */
-  const deleteAccount = () => {
+  const deleteAccount = async () => {
     const user = auth.currentUser;
     const uid = user?.uid;
     var credential
+      
+    const headers = {'uuid': String(uid)}
+    // user情報取得
+    const user_info = await axios({
+      method: method.GET,
+      url: 'user/get_user_form_uid',
+      headers: headers,
+      data: null,
+      params: null,
+    }).then((response) => {
+      var user = response.data.data
+      console.log("user", user);
+      return user;
+    }).catch(error => {
+      console.error("error", error);
+      return "error";
+    });
+
     if (user?.email) {
       credential = EmailAuthProvider.credential(user.email, password);
       // firebaseアカウントの再認証
       reauthenticateWithCredential(user, credential).then(() => {
         deleteUser(user).then(() => {
-          // サーバーサイドのユーザー削除処理
-          // user情報の取得
-          
+          console.log('success delete user form firebase:', user.email);
+          // user削除
+          console.log('user_id', user_info.id)
+          var params = {
+            user_id: user_info.id
+          }
+          axios({
+            method: method.DELETE,
+            url: `users/${user_info.id}`,
+            headers: headers,
+            data: null,
+            params: params,
+          }).then((response) => {
+            console.log("success delete user from server:", user_info.nickname);
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Home' }]
+            });
+          }).catch(error => {
+            console.error("server user error", error);
+            return "error";
+          });
         }).catch((error) => {
+          console.error("firebase user error", error);
           // An error ocurred
           // ...
         });
@@ -66,10 +108,13 @@ export const Setting = (props: any) => {
         // An error ocurred
         // ...
       });
+
+      
     } else {
       // todo
       // サインイン処理を再度実行させる
     }
+    
   }
 
   return (
