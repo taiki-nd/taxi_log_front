@@ -31,13 +31,15 @@ export const Signin = (props: any) => {
 
   // signin状態の監視
   useEffect(() => {
-    var user = auth.currentUser
-    if (user) {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Home' }]
-      });
-    }
+    const unsubscribe = onAuthStateChanged(auth, (user: any) => {
+      if (user) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }]
+        });
+      }
+    });
+    return unsubscribe;
   }, []);
 
   /**
