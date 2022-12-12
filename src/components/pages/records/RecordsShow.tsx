@@ -687,7 +687,7 @@ export const RecordsShow = (props: any) => {
       textDecorationLine: 'underline',
     },
     errorTextStyle: {
-      color: 'red',
+      color: TomatoColor,
       textAlign: 'center',
       fontSize: 14,
     },
