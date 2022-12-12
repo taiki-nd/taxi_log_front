@@ -6,10 +6,9 @@ import { View, StyleSheet } from 'react-native';
 import { Text, Provider, Portal, Dialog, Paragraph, Button } from "react-native-paper";
 import { auth } from '../auth/firebase';
 import { DialogTextInput } from '../components/parts/DialogTextInput';
-import { DialogTwoButton } from '../components/parts/DialogTwoButton';
 import { ExtraButton } from '../components/parts/ExtraButton';
+import { StandardSpace } from '../components/parts/Space';
 import { StandardButton } from '../components/parts/StandardButton';
-import { StandardTextInput } from '../components/parts/StandardTextInput';
 import { BackColor, BasicColor, CoverColor, SeaColor, TomatoColor } from '../styles/common/color';
 import { FuncSignout } from '../utils/commonFunc/user/Signout';
 import { method } from '../utils/const';
@@ -119,11 +118,18 @@ export const Setting = (props: any) => {
 
   return (
     <View style={styles.mainBody}>
+      
+      <Text variant="titleLarge" style={styles.subTitle}>アカウント情報編集</Text>
+      <StandardSpace />
+
+      <Text variant="titleLarge" style={styles.subTitle}>Signout</Text>
       <StandardButton displayText={"SIGNOUT"} onPress={funcSignout}/>
+      <StandardSpace />
+
       <Text variant="titleLarge" style={styles.subTitleExtra}>Delete Account</Text>
       <Text>一度アカウントを削除するとデータの復元はできません。</Text>
       <ExtraButton displayText={"Delete Account"} onPress={() => deleteAccountConfirm()}/>
-      <StandardButton displayText={"SIGNUP2"} onPress={() => {props.navigation.navigate('Signup2')}}/>
+
       <Provider>
         <View>
           <Portal>
