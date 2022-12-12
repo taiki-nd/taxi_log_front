@@ -31,15 +31,13 @@ export const Signin = (props: any) => {
 
   // signin状態の監視
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user: any) => {
-      if (user) {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Home' }]
-        });
-      }
-    });
-    return unsubscribe;
+    var user = auth.currentUser
+    if (user) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Home' }]
+      });
+    }
   }, []);
 
   /**
@@ -104,7 +102,7 @@ export const Signin = (props: any) => {
       console.log("data", response.data);
       status = true;
     }).catch(error => {
-      console.log("error", error);
+      console.log("error check isUserRegistered", error);
       status = false;
     });
     return status
