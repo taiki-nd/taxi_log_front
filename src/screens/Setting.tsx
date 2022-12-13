@@ -32,7 +32,7 @@ export const Setting = (props: any) => {
   const [taxFlg, setTaxFlg] = useState('');
   const [openFlg, setOpenFlg] = useState('');
   const [admin, setAdmin] = useState(false);
-  const [visibleEditAccountDialog, setVisibleEditAccountDialog] = useState(true);
+  const [visibleEditAccountDialog, setVisibleEditAccountDialog] = useState(false);
   const [visibleConfirmDeleteDialog, setVisibleConfirmDeleteDialog] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -166,14 +166,26 @@ export const Setting = (props: any) => {
   }
 
   /**
+   * openEditAccountDialog
+   */
+  const openEditAccountDialog = () => {
+    setVisibleEditAccountDialog(true);
+  }
+
+  /**
    * updateAccount
    */
   const updateAccount = () => {}
+
+  const cancelEditAccount = () => {
+    setVisibleEditAccountDialog(false);
+  }
 
   return (
     <View style={styles.mainBody}>
       
       <Text variant="titleLarge" style={styles.subTitle}>Edit Account</Text>
+      <StandardButton displayText="Edit Account" onPress={() => openEditAccountDialog()}/>
       <StandardSpace />
 
       <Text variant="titleLarge" style={styles.subTitle}>Signout</Text>
@@ -187,7 +199,7 @@ export const Setting = (props: any) => {
       <Provider>
         <View>
           <Portal>
-            <Dialog visible={visibleEditAccountDialog} style={styles.updateAccountDialog}>
+            <Dialog visible={visibleEditAccountDialog} style={styles.updateAccountDialog} onDismiss={() => cancelEditAccount()}>
               <Dialog.Title>Edit Account</Dialog.Title>
               <ScrollView>
                 <Dialog.Content>
@@ -219,7 +231,8 @@ export const Setting = (props: any) => {
                         </Text>
                       )})
                   ) : null}
-                  <StandardButton displayText="Update Account" disabled={buttonDisabled} onPress={updateAccount}/>
+                  <Button onPress={() => updateAccount()} textColor={SeaColor}>Update Account</Button>
+                  <Button onPress={() => cancelEditAccount()} textColor={TomatoColor}>cancel</Button>
                 </Dialog.Content>
               </ScrollView>
             </Dialog>
