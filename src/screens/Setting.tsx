@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Text, Provider, Portal, Dialog, Paragraph, Button, RadioButton } from "react-native-paper";
 import { auth } from '../auth/firebase';
+import { DialogOneButton } from '../components/parts/DialogOneButton';
 import { DialogTextInput } from '../components/parts/DialogTextInput';
 import { ExtraButton } from '../components/parts/ExtraButton';
 import { StandardSpace } from '../components/parts/Space';
@@ -12,7 +13,7 @@ import { StandardButton } from '../components/parts/StandardButton';
 import { StandardLabel } from '../components/parts/StandardLabel';
 import { AccentColor, BackColor, BasicColor, CoverColor, SeaColor, TomatoColor } from '../styles/common/color';
 import { FuncSignout } from '../utils/commonFunc/user/Signout';
-import { method } from '../utils/const';
+import { errorCodeTransition, method } from '../utils/const';
 
 export const Setting = (props: any) => {
   // props
@@ -35,7 +36,10 @@ export const Setting = (props: any) => {
   const [admin, setAdmin] = useState(false);
   const [visibleEditAccountDialog, setVisibleEditAccountDialog] = useState(false);
   const [visibleConfirmDeleteDialog, setVisibleConfirmDeleteDialog] = useState(false);
+  const [visibleDialog, setVisibleDialog] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogMessage, setDialogMessage] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
     // 必須項目チェックによるボタン活性化処理
@@ -215,8 +219,16 @@ export const Setting = (props: any) => {
       params: params,
     }).then((response) => {
       console.log('data', response.data.data);
+      setVisibleEditAccountDialog(false);
+      setDialogTitle('アカウント更新成功')
+      setDialogMessage('アカウントの更新に成功しました。')
+      setVisibleDialog(true);
     }).catch((error) => {
       console.error(error)
+      var errorCode = error.response.data.info.code;
+      var message: string[] = [];
+      message = errorCodeTransition(errorCode);
+      setErrorMessages(message);
     })
   }
 
@@ -296,6 +308,14 @@ export const Setting = (props: any) => {
           </Portal>
         </View>
       </Provider>
+      <DialogOneButton
+        title={dialogTitle}
+        description={dialogMessage}
+        displayButton1="OK"
+        visible={visibleDialog}
+        funcButton1={() => setVisibleDialog(false)}
+        onDismiss={() => setVisibleDialog(false)}
+      />
     </View>
 
   );
