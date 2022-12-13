@@ -20,6 +20,7 @@ export const Setting = (props: any) => {
 
   // state
   const [password, setPassword] = useState('');
+  const [uid, setUid] = useState('');
   const [userId, setUserId] = useState(Number);
   const [nickname, setNickname] = useState('');
   const [prefecture, setPrefecture] = useState('');
@@ -55,6 +56,7 @@ export const Setting = (props: any) => {
   useEffect(() => {
     const user = auth.currentUser;
     const uid = user?.uid;
+    setUid(String(uid));
     const headers = {'uuid': String(uid)}
 
     // user情報取得
@@ -175,8 +177,52 @@ export const Setting = (props: any) => {
   /**
    * updateAccount
    */
-  const updateAccount = () => {}
+  const updateAccount = () => {
+    // headers
+    const headers = {'uuid': uid}
 
+    // params
+    const params = {
+      user_id: userId
+    }
+
+    // taxFlg変換
+    var isTax = false;
+    if (taxFlg === "true") {
+      isTax = true;
+    }
+
+    const jsonData ={
+      uuid: uid,
+      nickname: nickname,
+      prefecture: prefecture,
+      company: company,
+      style_flg: styleFlg,
+      pay_day: Number(payDay),
+      close_day: Number(closeDay),
+      daily_target: Number(dailyTarget),
+      monthly_target: Number(monthlyTarget),
+      is_tax: isTax,
+      open_flg: openFlg,
+      is_admin: admin,
+    }
+
+    axios({
+      method: method.PUT,
+      url: `users/${userId}`,
+      headers: headers,
+      data: jsonData,
+      params: params,
+    }).then((response) => {
+      console.log('data', response.data.data);
+    }).catch((error) => {
+      console.error(error)
+    })
+  }
+
+  /**
+   * cancelEditAccount
+   */
   const cancelEditAccount = () => {
     setVisibleEditAccountDialog(false);
   }
