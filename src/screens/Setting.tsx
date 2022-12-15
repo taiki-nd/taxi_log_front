@@ -34,6 +34,10 @@ export const Setting = (props: any) => {
   const [taxFlg, setTaxFlg] = useState('');
   const [openFlg, setOpenFlg] = useState('');
   const [admin, setAdmin] = useState(false);
+  const [closeDayMessage, setCloseDayMessage] = useState('');
+  const [payDayMessage, setPayDayMessage] = useState('');
+  const [dailyTargetMessage, setDailyTargetMessage] = useState('');
+  const [monthlyTargetMessage, setMonthlyTargetMessage] = useState('');
   const [visibleEditAccountDialog, setVisibleEditAccountDialog] = useState(false);
   const [visibleConfirmDeleteDialog, setVisibleConfirmDeleteDialog] = useState(false);
   const [visibleDialog, setVisibleDialog] = useState(false);
@@ -55,6 +59,46 @@ export const Setting = (props: any) => {
         setButtonDisabled(true);
       }
     }, [nickname, prefecture, company, styleFlg, closeDay, payDay]);
+
+    /**
+     * 小数入力時の対応
+     */
+    useEffect(() => {
+      console.log(closeDay)
+      console.log('closeDay int or not', Number.isInteger(closeDay));
+      if (Number.isInteger(closeDay)) {
+        console.log('here int', closeDay)
+        setCloseDayMessage('')
+      } else {
+        console.log('here float', closeDay)
+        setCloseDayMessage('締め日に無効な値が入力されています。1〜31の整数を入力して下さい。')
+      
+      }
+    }, [closeDay])
+
+    useEffect(() => {
+      if (Number.isInteger(payDay)) {
+        setPayDayMessage('')
+      } else {
+        setPayDayMessage('給与日に無効な値が入力されています。1〜31の整数を入力して下さい。')
+      }
+    }, [payDay])
+
+    useEffect(() => {
+      if (Number.isInteger(dailyTarget)) {
+        setDailyTargetMessage('')
+      } else {
+        setDailyTargetMessage('日額売上目標に無効な値が入力されています。0以上の整数を入力して下さい。')
+      }
+    }, [dailyTarget])
+
+    useEffect(() => {
+      if (Number.isInteger(monthlyTarget)) {
+        setMonthlyTargetMessage('')
+      } else {
+        setMonthlyTargetMessage('月額売上目標に無効な値が入力されています。0以上の整数を入力して下さい。')
+      }
+    }, [monthlyTarget])
 
     
   useEffect(() => {
@@ -272,10 +316,22 @@ export const Setting = (props: any) => {
                     <RadioButton.Item label="他" value="other" style={styles.radioButtonStyle} color={AccentColor}/>
                   </RadioButton.Group>
                   <DialogTextInput defaultValue={String(closeDay)} label="締め日(月末の場合は31)" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setCloseDay(i)}/>
+                  {
+                    closeDayMessage !== '' ? <Text style={styles.dialogWarn}>{closeDayMessage}</Text> : <View></View>
+                  }
                   <DialogTextInput defaultValue={String(payDay)} label="給与日(月末の場合は31)" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setPayDay(i)}/>
                   <Text style={styles.mentionText}>* 月次売上関連のグラフ作成に必要なため</Text>
+                  {
+                    payDayMessage !== '' ? <Text style={styles.dialogWarn}>{payDayMessage}</Text> : <View></View>
+                  }
                   <DialogTextInput defaultValue={String(dailyTarget)} label="目標売上（1日あたり）" placeholder="65000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailyTarget(i)}/>
+                  {
+                    dailyTargetMessage !== '' ? <Text style={styles.dialogWarn}>{dailyTargetMessage}</Text> : <View></View>
+                  }
                   <DialogTextInput defaultValue={String(monthlyTarget)} label="目標売上（1ヶ月あたり）" placeholder="720000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setMonthlyTarget(i)}/>
+                  {
+                    monthlyTargetMessage !== '' ? <Text style={styles.dialogWarn}>{monthlyTargetMessage}</Text> : <View></View>
+                  }
                   <StandardLabel displayText={"標準入力価格設定"}/>
                   <RadioButton.Group onValueChange={value => setTaxFlg(value)} value={taxFlg}>
                     <RadioButton.Item label="税込みで入力" value="true" style={styles.radioButtonStyle} color={AccentColor}/>
@@ -362,4 +418,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 14,
   },
+  dialogWarn: {
+    color: TomatoColor,
+    textAlign: 'center',
+    fontSize: 10,
+  }
 });
