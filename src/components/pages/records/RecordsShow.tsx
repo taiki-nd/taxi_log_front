@@ -4,6 +4,7 @@ import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { Text, DataTable, Dialog, Provider, Portal, RadioButton } from "react-native-paper";
+import Icon from 'react-native-vector-icons/AntDesign';
 import { auth } from "../../../auth/firebase";
 import { Detail } from "../../../models/Detail";
 import { AccentColor, BackColor, BasicColor, CoverColor, SeaColor, TomatoColor } from "../../../styles/common/color";
@@ -459,6 +460,11 @@ export const RecordsShow = (props: any) => {
         <ScrollView>
           <StandardSpace/>
           <Text variant="titleLarge"  style={styles.title}>{DateTransition(String(date))}({DayTransition(day)})の売上記録</Text>
+          <StandardSpace/>
+          <View style={styles.flex}>
+            <Icon name = "edit" size={25} color={SeaColor}/>
+            <Icon name = "delete" size={25} color={TomatoColor}/>
+          </View>
 
           <StandardSpace/>
           <Text variant="titleMedium" style={styles.subTitle}>総括</Text>
@@ -661,6 +667,11 @@ export const RecordsShow = (props: any) => {
       flex: 1,
       backgroundColor: BackColor,
       alignContent: 'center',
+    },
+    flex: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-around',
     },
     tableHeader: {
       borderBottomColor: AccentColor,
