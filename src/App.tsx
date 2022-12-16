@@ -16,6 +16,7 @@ import { server } from './utils/constHide';
 import { SignupEmail } from './components/pages/users/SignupEmail';
 import { RecordsEdit } from './components/pages/records/RecordsEdit';
 import { RecordsShow } from './components/pages/records/RecordsShow';
+import { Ranking } from './screens/Ranking';
 
 axios.defaults.baseURL = server.baseUrl;
 
@@ -24,7 +25,7 @@ const Tab = createBottomTabNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Tab.Navigator 
+      <Tab.Navigator
         screenOptions={() => ({
           tabBarActiveTintColor: AccentColor,
           tabBarInactiveTintColor: DisabledColor,
@@ -84,6 +85,26 @@ export default function App() {
             },
             tabBarIcon: ({ color, size}) => (
               <Icon name="bars" size={size} color={color} />
+            )
+          }}
+        />
+        {/*
+        // Ranking
+        */}
+        <Tab.Screen
+          name="Ranking"
+          component={Ranking}
+          options={{
+            unmountOnBlur:true,
+            title: "Ranking",
+            headerStyle: {
+              backgroundColor: BackColor,
+            },
+            headerTitleStyle: {
+              color: BasicColor,
+            },
+            tabBarIcon: ({ color, size}) => (
+              <Icon name="Trophy" size={size} color={color} />
             )
           }}
         />

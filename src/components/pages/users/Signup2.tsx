@@ -31,6 +31,12 @@ export const Signup2 = (props: any) => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [visibleCompleteDialog, setVisibleCompleteDialog] = useState(false);
   const [visibleFailedDialog, setVisibleFailedDialog] = useState(false);
+  const [closeDayMessage, setCloseDayMessage] = useState('');
+  const [payDayMessage, setPayDayMessage] = useState('');
+  const [dailyTargetMessage, setDailyTargetMessage] = useState('');
+  const [monthlyTargetMessage, setMonthlyTargetMessage] = useState('');
+
+  var int_pattern = /^([1-9]\d*|0)$/
 
   useEffect(() => {
     var currentUser = auth.currentUser;
@@ -59,6 +65,42 @@ export const Signup2 = (props: any) => {
       setButtonDisabled(true);
     }
   }, [nickname, prefecture, company, styleFlg, closeDay, payDay]);
+
+  /**
+   * 小数入力時の対応
+   */
+  useEffect(() => {
+    if (int_pattern.test(String(closeDay))) {
+      setCloseDayMessage('')
+    } else {
+      setCloseDayMessage('締め日に無効な値が入力されています。1〜31の整数を入力して下さい。')
+    
+    }
+  }, [closeDay])
+
+  useEffect(() => {
+    if (int_pattern.test(String(payDay))) {
+      setPayDayMessage('')
+    } else {
+      setPayDayMessage('給与日に無効な値が入力されています。1〜31の整数を入力して下さい。')
+    }
+  }, [payDay])
+
+  useEffect(() => {
+    if (int_pattern.test(String(dailyTarget))) {
+      setDailyTargetMessage('')
+    } else {
+      setDailyTargetMessage('日額売上目標に無効な値が入力されています。0以上の整数を入力して下さい。')
+    }
+  }, [dailyTarget])
+
+  useEffect(() => {
+    if (int_pattern.test(String(monthlyTarget))) {
+      setMonthlyTargetMessage('')
+    } else {
+      setMonthlyTargetMessage('月額売上目標に無効な値が入力されています。0以上の整数を入力して下さい。')
+    }
+  }, [monthlyTarget])
 
   /**
    * createAccount
@@ -158,10 +200,22 @@ export const Signup2 = (props: any) => {
                 <RadioButton.Item label="他" value="other" style={styles.radioButtonStyle} color={AccentColor}/>
               </RadioButton.Group>
               <StandardTextInput label="締め日(月末の場合は31)" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setCloseDay(i)}/>
+              {
+                closeDayMessage !== '' ? <Text style={styles.dialogWarn}>{closeDayMessage}</Text> : <View></View>
+              }
               <StandardTextInput label="給与日(月末の場合は31)" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setPayDay(i)}/>
               <Text style={styles.mentionText}>* 月次売上関連のグラフ作成に必要なため</Text>
+              {
+                payDayMessage !== '' ? <Text style={styles.dialogWarn}>{payDayMessage}</Text> : <View></View>
+              }
               <StandardTextInput label="目標売上（1日あたり）" placeholder="65000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailyTarget(i)}/>
+              {
+                dailyTargetMessage !== '' ? <Text style={styles.dialogWarn}>{dailyTargetMessage}</Text> : <View></View>
+              }
               <StandardTextInput label="目標売上（1ヶ月あたり）" placeholder="720000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setMonthlyTarget(i)}/>
+              {
+                monthlyTargetMessage !== '' ? <Text style={styles.dialogWarn}>{monthlyTargetMessage}</Text> : <View></View>
+              }
               <StandardLabel displayText={"標準入力価格設定"}/>
               <RadioButton.Group onValueChange={value => setTaxFlg(value)} value={taxFlg}>
                 <RadioButton.Item label="税込みで入力" value="true" style={styles.radioButtonStyle} color={AccentColor}/>
@@ -206,4 +260,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 14,
   },
+  dialogWarn: {
+    color: TomatoColor,
+    textAlign: 'center',
+    fontSize: 10,
+  }
 });

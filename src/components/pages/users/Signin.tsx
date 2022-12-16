@@ -104,7 +104,7 @@ export const Signin = (props: any) => {
       console.log("data", response.data);
       status = true;
     }).catch(error => {
-      console.log("error", error);
+      console.log("error check isUserRegistered", error);
       status = false;
     });
     return status

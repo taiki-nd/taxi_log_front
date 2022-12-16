@@ -6,7 +6,7 @@ import { StyleSheet, View, Text, TouchableWithoutFeedback, Keyboard } from "reac
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { RadioButton } from "react-native-paper";
 import { auth } from "../../../auth/firebase";
-import { AccentColor, BackColor, BasicColor } from "../../../styles/common/color";
+import { AccentColor, BackColor, BasicColor, TomatoColor } from "../../../styles/common/color";
 import { errorCodeTransition, method } from "../../../utils/const";
 import { StandardButton } from "../../parts/StandardButton";
 import { StandardLabel } from "../../parts/StandardLabel";
@@ -36,6 +36,13 @@ export const RecordsEdit = (props: any) => {
   const [dailySales, setDailySales] = useState(Number);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
+
+  const [startHourMessage, setStartHourMessage] = useState('');
+  const [runningTimeMessage, setRunningTimeMessage] = useState('');
+  const [runningKmMessage, setRunningKmMessage] = useState('');
+  const [numberOfTimeMessage, setNumberOfTimeMessage] = useState('');
+
+  var int_pattern = /^([1-9]\d*|0)$/
 
   // signinユーザー情報の取得
   useEffect(() => {
@@ -107,6 +114,42 @@ export const RecordsEdit = (props: any) => {
       setButtonDisabled(true);
     }
   }, [date, day, styleFlg, startHour, runningTime, runningKm ,occupancyRate, numberOfTime, dailySales, taxFlg]);
+
+  /**
+   * 小数入力時の対応
+   */
+  useEffect(() => {
+    if (int_pattern.test(String(startHour))) {
+      setStartHourMessage('')
+    } else {
+      setStartHourMessage('業務開始時刻に無効な値が入力されています。1〜31の整数を入力して下さい。')
+    
+    }
+  }, [startHour])
+
+  useEffect(() => {
+    if (int_pattern.test(String(runningTime))) {
+      setRunningTimeMessage('')
+    } else {
+      setRunningTimeMessage('走行時間に無効な値が入力されています。1〜31の整数を入力して下さい。')
+    }
+  }, [runningTime])
+
+  useEffect(() => {
+    if (int_pattern.test(String(runningKm))) {
+      setRunningKmMessage('')
+    } else {
+      setRunningKmMessage('走行距離に無効な値が入力されています。1以上の整数を入力して下さい。')
+    }
+  }, [runningKm])
+
+  useEffect(() => {
+    if (int_pattern.test(String(numberOfTime))) {
+      setNumberOfTimeMessage('')
+    } else {
+      setNumberOfTimeMessage('乗車回数に無効な値が入力されています。0以上の整数を入力して下さい。')
+    }
+  }, [numberOfTime])
 
   /**
    * updateRecord
@@ -232,10 +275,22 @@ export const RecordsEdit = (props: any) => {
                 <RadioButton.Item label="他" value="other" style={styles.radioButtonStyle} color={AccentColor}/>
               </RadioButton.Group>
               <StandardTextInput label="始業開始時刻" defaultValue={String(startHour)} placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setStartHour(i)}/>
+              {
+                startHourMessage !== '' ? <Text style={styles.dialogWarn}>{startHourMessage}</Text> : <View></View>
+              }
               <StandardTextInput label="走行時間" defaultValue={String(runningTime)} placeholder="17" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setRunningTime(i)}/>
+              {
+                runningTimeMessage !== '' ? <Text style={styles.dialogWarn}>{runningTimeMessage}</Text> : <View></View>
+              }
               <StandardTextInput label="走行距離" defaultValue={String(runningKm)} placeholder="285" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setRunningKm(i)}/>
+              {
+                runningKmMessage !== '' ? <Text style={styles.dialogWarn}>{runningKmMessage}</Text> : <View></View>
+              }
               <StandardTextInput label="乗車率" defaultValue={String(occupancyRate)} placeholder="55.8" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setOccupancyRate(i)}/>
               <StandardTextInput label="乗車回数" defaultValue={String(numberOfTime)} placeholder="38" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setNumberOfTime(i)}/>
+              {
+                numberOfTimeMessage !== '' ? <Text style={styles.dialogWarn}>{numberOfTimeMessage}</Text> : <View></View>
+              }
               <StandardTextInput label="売上" defaultValue={String(dailySales)} placeholder="58000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailySales(i)}/>
               <StandardLabel displayText={"標準入力価格設定"}/>
               <RadioButton.Group onValueChange={value => setTaxFlg(value)} value={taxFlg}>
@@ -276,4 +331,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 14,
   },
+  dialogWarn: {
+    color: TomatoColor,
+    textAlign: 'center',
+    fontSize: 10,
+  }
 });
