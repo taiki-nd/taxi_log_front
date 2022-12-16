@@ -51,8 +51,6 @@ export const HomeScreen = (props: any) => {
 
   const [records, setRecords] = useState<any>([]);
 
-  console.log('useState', monthlySalesYear, monthlySalesMonth)
-
   useEffect(() => {
     (async () => {
       var currentUser = auth.currentUser
