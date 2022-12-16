@@ -46,6 +46,8 @@ export const Setting = (props: any) => {
   const [dialogMessage, setDialogMessage] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
+  var int_pattern = /^([1-9]\d*|0)$/
+
     // 必須項目チェックによるボタン活性化処理
     useEffect(() => {
       if (nickname !== ''
@@ -64,20 +66,16 @@ export const Setting = (props: any) => {
      * 小数入力時の対応
      */
     useEffect(() => {
-      console.log(closeDay)
-      console.log('closeDay int or not', Number.isInteger(closeDay));
-      if (Number.isInteger(closeDay)) {
-        console.log('here int', closeDay)
+      if (int_pattern.test(String(closeDay))) {
         setCloseDayMessage('')
       } else {
-        console.log('here float', closeDay)
         setCloseDayMessage('締め日に無効な値が入力されています。1〜31の整数を入力して下さい。')
       
       }
     }, [closeDay])
 
     useEffect(() => {
-      if (Number.isInteger(payDay)) {
+      if (int_pattern.test(String(payDay))) {
         setPayDayMessage('')
       } else {
         setPayDayMessage('給与日に無効な値が入力されています。1〜31の整数を入力して下さい。')
@@ -85,7 +83,7 @@ export const Setting = (props: any) => {
     }, [payDay])
 
     useEffect(() => {
-      if (Number.isInteger(dailyTarget)) {
+      if (int_pattern.test(String(dailyTarget))) {
         setDailyTargetMessage('')
       } else {
         setDailyTargetMessage('日額売上目標に無効な値が入力されています。0以上の整数を入力して下さい。')
@@ -93,7 +91,7 @@ export const Setting = (props: any) => {
     }, [dailyTarget])
 
     useEffect(() => {
-      if (Number.isInteger(monthlyTarget)) {
+      if (int_pattern.test(String(monthlyTarget))) {
         setMonthlyTargetMessage('')
       } else {
         setMonthlyTargetMessage('月額売上目標に無効な値が入力されています。0以上の整数を入力して下さい。')
