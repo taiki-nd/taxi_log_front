@@ -47,6 +47,7 @@ export const RecordsShow = (props: any) => {
     const [visibleConfirmDeleteDialog, setVisibleConfirmDeleteDialog] = useState(false);
     const [visibleCreateDetailsDialog, setVisibleCreateDetailsDialog] = useState(false);
     const [visibleEditDetailsDialog, setVisibleEditDetailsDialog] = useState(false);
+    const [visibleConfirmDeleteRecordDialog, setVisibleConfirmDeleteRecordDialog] = useState(false);
     const [detailCreateButtonDisabled, setDetailCreateButtonDisabled] = useState(true);
     const [detailEditButtonDisabled, setDetailEditButtonDisabled] = useState(true);
     const [dialogTitle, setDialogTitle] = useState('');
@@ -360,9 +361,9 @@ export const RecordsShow = (props: any) => {
     }
 
     /**
-     * deleteRecord
+     * deleteDetail
      */
-    const deleteRecord = () => {
+    const deleteDetail = () => {
       // headers
       const headers = {'uuid': uid}
 
@@ -444,7 +445,56 @@ export const RecordsShow = (props: any) => {
     const cancelDeleteDetail = () => {
       setVisibleConfirmDeleteDialog(false);
     }
+
+  /**
+   * deleteRecordConfirm
+   * @param id number
+   * @param user_id number
+   */
+  const deleteRecordConfirm = (id: number, user_id: number) => {
+    setVisibleConfirmDeleteRecordDialog(true);
+  }
+
+  /**
+   * cancelDeleteRecord
+   */
+  const cancelDeleteRecord = () => {
+    setVisibleConfirmDeleteRecordDialog(false);
+  }
   
+  /** 
+   * deleteRecord
+   */
+  const deleteRecord = () => {
+    // headers
+    const headers = {'uuid': uid}
+
+    // params
+    const params = {'user_id': user_id}
+
+    axios({
+      method: method.DELETE,
+      url: `/records/${record_id}`,
+      headers: headers,
+      data: null,
+      params: params,
+    }).then((response) => {
+      console.log("data", response.data);
+      setVisibleConfirmDeleteRecordDialog(false);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Home' }]
+      });
+    }).catch((error) => {
+      var errorCode = error.response.data.info.code;
+      var message: string[] = [];
+      message = errorCodeTransition(errorCode);
+      setVisibleConfirmDeleteDialog(false);
+      setVisibleFailedDialog(true);
+      setErrorMessages(message);
+    })
+  }
+
     return (
       <View style={styles.mainBody}>
         {
@@ -462,8 +512,8 @@ export const RecordsShow = (props: any) => {
           <Text variant="titleLarge"  style={styles.title}>{DateTransition(String(date))}({DayTransition(day)})の売上記録</Text>
           <StandardSpace/>
           <View style={styles.flex}>
-            <Icon name = "edit" size={25} color={SeaColor}/>
-            <Icon name = "delete" size={25} color={TomatoColor}/>
+            <Icon name = "edit" size={25} color={SeaColor} onPress={() => {navigation.navigate('RecordsEdit', {record_id: record_id, user_id: user_id})}}/>
+            <Icon name = "delete" size={25} color={TomatoColor} onPress={() => deleteRecordConfirm(record_id, user_id)}/>
           </View>
 
           <StandardSpace/>
@@ -652,9 +702,20 @@ export const RecordsShow = (props: any) => {
           description='選択した詳細走行情報を削除しますか？'
           displayButton1='削除'
           displayButton2='キャンセル'
-          funcButton1={deleteRecord}
+          funcButton1={deleteDetail}
           funcButton2={cancelDeleteDetail}
           onDismiss={cancelDeleteDetail}
+        />
+
+        <DialogTwoButton
+          visible={visibleConfirmDeleteRecordDialog}
+          title='削除確認'
+          description='日報を削除しますか？'
+          displayButton1='削除'
+          displayButton2='キャンセル'
+          funcButton1={deleteRecord}
+          funcButton2={cancelDeleteRecord}
+          onDismiss={cancelDeleteRecord}
         />
 
       </View>
