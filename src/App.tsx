@@ -71,6 +71,7 @@ export default function App() {
         {/*
         // Records
         */}
+        {/*
         <Tab.Screen
           name="Records"
           component={RecordsIndex}
@@ -88,6 +89,7 @@ export default function App() {
             )
           }}
         />
+        */}
         {/*
         // Ranking
         */}
