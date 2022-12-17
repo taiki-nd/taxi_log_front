@@ -13,6 +13,7 @@ import { StandardSpace } from '../components/parts/Space';
 import { getMonthlyAnalysisPeriod, GetYearAndMonth } from '../utils/commonFunc/common';
 import { DateTransition } from '../utils/commonFunc/record/DateTranstion';
 import { SmallButtonCustom } from '../components/parts/SmallButtonCustom';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 export const HomeScreen = (props: any) => {
   // props
@@ -23,6 +24,8 @@ export const HomeScreen = (props: any) => {
   const [closeDay, setCloseDay] = useState(0);
   const [payDay, setPayDay] = useState(0);
   const [toDay, setToDay] = useState(0);
+  const [monthlyTarget, setMonthlyTarget] = useState(0);
+  const [monthlySalesSumLast, setMonthlySalesSumLast] = useState(0);
 
   const [analysisStartYear, setAnalysisStartYear] = useState(0);
   const [analysisStartMonth, setAnalysisStartMonth] = useState(0);
@@ -91,6 +94,8 @@ export const HomeScreen = (props: any) => {
       var year = day.getFullYear()
       var month = day.getMonth() + 1
       setToDay(today);
+
+      setMonthlyTarget(user.monthly_target)
 
       var year_and_month = GetYearAndMonth(year, month, today, close_day, pay_day);
 
@@ -191,14 +196,17 @@ export const HomeScreen = (props: any) => {
       }
       setMessageForMonthlySalesSum([]);
       // データの取得
-      setMonthlySalesSumLabels(displayLabels)
-      setMonthlySalesSumData(response.data.data)
+      setMonthlySalesSumLabels(displayLabels);
+      setMonthlySalesSumData(response.data.data);
+
+      // 
+      setMonthlySalesSumLast(response.data.data.slice(-1)[0]);
     }).catch(error => {
       var errorCode = error.response.data.info.code;
       var message: string[] = [];
       message = errorCodeTransition(errorCode);
       setErrorMessages(message);
-      setDialogTitle('月次総売上のデータ取得の失敗')
+      setDialogTitle('月次総売上のデータ取得の失敗');
       //setVisibleFailedDialog(true);
     });
   }
@@ -372,34 +380,48 @@ export const HomeScreen = (props: any) => {
               )
             })
           ) : (
-            <LineChart
-              data={{
-                  labels: monthlySalesSumLabels,
-                  datasets: [{
-                      data: monthlySalesSumData
-                  }]
-              }}
-              width={Dimensions.get("window").width} // from react-native
-              height={220}
-              fromZero={true}
-              yAxisLabel='¥'
-              chartConfig={{
-                  backgroundColor: BackColor,
-                  backgroundGradientFrom: BackColor,
-                  backgroundGradientTo: BackColor,
-                  decimalPlaces: 0,
-                  color: (opacity = 0.5) => `rgba(63, 62, 52, ${opacity})`,
-                  propsForDots: {
-                    r: "2",
-                    strokeWidth: "2",
-                    stroke: BasicColor
-                  }
-              }}
-              style={{
-                marginVertical: 8,
-                borderRadius: 16
-              }}
-            />
+            <View>
+              <LineChart
+                data={{
+                    labels: monthlySalesSumLabels,
+                    datasets: [{
+                        data: monthlySalesSumData
+                    }]
+                }}
+                width={Dimensions.get("window").width} // from react-native
+                height={220}
+                fromZero={true}
+                yAxisLabel='¥'
+                chartConfig={{
+                    backgroundColor: BackColor,
+                    backgroundGradientFrom: BackColor,
+                    backgroundGradientTo: BackColor,
+                    decimalPlaces: 0,
+                    color: (opacity = 0.5) => `rgba(63, 62, 52, ${opacity})`,
+                    propsForDots: {
+                      r: "2",
+                      strokeWidth: "2",
+                      stroke: BasicColor
+                    }
+                }}
+                style={{
+                  marginVertical: 8,
+                  borderRadius: 16
+                }}
+              />
+              <DataTable>
+                <DataTable.Header style={styles.tableHeader}>
+                  <DataTable.Title>月額目標</DataTable.Title>
+                  <DataTable.Title>月額総売上</DataTable.Title>
+                  <DataTable.Title>達成率</DataTable.Title>
+                </DataTable.Header>
+                  <DataTable.Row style={styles.tableRow}>
+                    <DataTable.Cell><Text style={styles.tableCell}>{monthlyTarget}円</Text></DataTable.Cell>
+                    <DataTable.Cell><Text style={styles.tableCell}>{monthlySalesSumLast}円</Text></DataTable.Cell>
+                    <DataTable.Cell><Text style={styles.tableCell}>{Math.round((monthlySalesSumLast/monthlyTarget)*100)}%</Text></DataTable.Cell>
+                  </DataTable.Row>
+              </DataTable>
+            </View>
           )
         }
 
@@ -468,8 +490,9 @@ export const HomeScreen = (props: any) => {
                         <DataTable.Cell><Text style={styles.tableCell}>{DateTransition(record.date)}</Text></DataTable.Cell>
                         <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}</Text></DataTable.Cell>
                         <DataTable.Cell>
-                          <SmallButtonCustom
-                            displayText='dailyReport'
+                          <Icon
+                            name="export"
+                            size={25}
                             color={SeaColor}
                             onPress={() => navigation.navigate('RecordsShow', {record_id: record.id, user_id: record.user_id})}
                           />

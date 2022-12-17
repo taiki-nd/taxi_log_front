@@ -199,10 +199,7 @@ export const RecordsEdit = (props: any) => {
         // ボタンの活性化
         setButtonDisabled(false);
         // ユーザー登録画面への遷移
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Records' }]
-        });
+        navigation.navigate('RecordsShow', {record_id: record_id, user_id: user_id})
       }).catch(error => {
         var errorCode = error.response.data.info.code;
         var message: string[] = [];

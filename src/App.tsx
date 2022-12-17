@@ -64,13 +64,14 @@ export default function App() {
               color: BasicColor,
             },
             tabBarIcon: ({ color, size}) => (
-              <Icon name="pluscircle" size={size} color={color} />
+              <Icon name="addfile" size={size} color={color} />
             )
           }}
         />
         {/*
         // Records
         */}
+        {/*
         <Tab.Screen
           name="Records"
           component={RecordsIndex}
@@ -88,6 +89,7 @@ export default function App() {
             )
           }}
         />
+        */}
         {/*
         // Ranking
         */}
