@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react"
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { DataTable, Text } from "react-native-paper";
 import { StandardSpace } from "../components/parts/Space";
 import { AccentColor, BackColor, BasicColor } from "../styles/common/color";
@@ -41,7 +41,7 @@ export const Ranking =  () => {
   }, [])
 
   return (
-    <View style={styles.mainBody}>
+    <ScrollView style={styles.mainBody}>
       <Text variant="titleLarge" style={styles.subTitle} >Daily Ranking</Text>
       <StandardSpace />
       <Text variant="titleMedium" style={styles.subTitle} >隔日勤務</Text>
@@ -103,7 +103,133 @@ export const Ranking =  () => {
           })
         }
       </DataTable>
-    </View>
+
+      <StandardSpace />
+      <Text variant="titleLarge" style={styles.subTitle} >Weekly Ranking</Text>
+      <StandardSpace />
+      <Text variant="titleMedium" style={styles.subTitle} >隔日勤務</Text>
+      <DataTable>
+        <DataTable.Header style={styles.tableHeader}>
+          <DataTable.Title>順位</DataTable.Title>
+          <DataTable.Title>売上</DataTable.Title>
+        </DataTable.Header>
+        {
+          weeklyRankingEveryOtherDayRecords.map((record: any, index: number) => {
+            return(
+              <View key={index}>
+                <DataTable.Row style={styles.tableRow}>
+                  <DataTable.Cell><Text style={styles.tableCell}>{index+1}位</Text></DataTable.Cell>
+                  <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}円</Text></DataTable.Cell>
+                </DataTable.Row>
+              </View>
+            )
+          })
+        }
+      </DataTable>
+      <StandardSpace />
+      <Text variant="titleMedium" style={styles.subTitle} >昼日勤</Text>
+      <DataTable>
+        <DataTable.Header style={styles.tableHeader}>
+          <DataTable.Title>順位</DataTable.Title>
+          <DataTable.Title>売上</DataTable.Title>
+        </DataTable.Header>
+        {
+          weeklyRankingDayRecords.map((record: any, index: number) => {
+            return(
+              <View key={index}>
+                <DataTable.Row style={styles.tableRow}>
+                  <DataTable.Cell><Text style={styles.tableCell}>{index+1}位</Text></DataTable.Cell>
+                  <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}円</Text></DataTable.Cell>
+                </DataTable.Row>
+              </View>
+            )
+          })
+        }
+      </DataTable>
+      <StandardSpace />
+      <Text variant="titleMedium" style={styles.subTitle} >夜日勤</Text>
+      <DataTable>
+        <DataTable.Header style={styles.tableHeader}>
+          <DataTable.Title>順位</DataTable.Title>
+          <DataTable.Title>売上</DataTable.Title>
+        </DataTable.Header>
+        {
+          weeklyRankingNightRecords.map((record: any, index: number) => {
+            return(
+              <View key={index}>
+                <DataTable.Row style={styles.tableRow}>
+                  <DataTable.Cell><Text style={styles.tableCell}>{index+1}位</Text></DataTable.Cell>
+                  <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}円</Text></DataTable.Cell>
+                </DataTable.Row>
+              </View>
+            )
+          })
+        }
+      </DataTable>
+
+      <StandardSpace />
+      <Text variant="titleLarge" style={styles.subTitle} >Monthly Ranking</Text>
+      <StandardSpace />
+      <Text variant="titleMedium" style={styles.subTitle} >隔日勤務</Text>
+      <DataTable>
+        <DataTable.Header style={styles.tableHeader}>
+          <DataTable.Title>順位</DataTable.Title>
+          <DataTable.Title>売上</DataTable.Title>
+        </DataTable.Header>
+        {
+          monthlyRankingEveryOtherDayRecords.map((record: any, index: number) => {
+            return(
+              <View key={index}>
+                <DataTable.Row style={styles.tableRow}>
+                  <DataTable.Cell><Text style={styles.tableCell}>{index+1}位</Text></DataTable.Cell>
+                  <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}円</Text></DataTable.Cell>
+                </DataTable.Row>
+              </View>
+            )
+          })
+        }
+      </DataTable>
+      <StandardSpace />
+      <Text variant="titleMedium" style={styles.subTitle} >昼日勤</Text>
+      <DataTable>
+        <DataTable.Header style={styles.tableHeader}>
+          <DataTable.Title>順位</DataTable.Title>
+          <DataTable.Title>売上</DataTable.Title>
+        </DataTable.Header>
+        {
+          monthlyRankingDayRecords.map((record: any, index: number) => {
+            return(
+              <View key={index}>
+                <DataTable.Row style={styles.tableRow}>
+                  <DataTable.Cell><Text style={styles.tableCell}>{index+1}位</Text></DataTable.Cell>
+                  <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}円</Text></DataTable.Cell>
+                </DataTable.Row>
+              </View>
+            )
+          })
+        }
+      </DataTable>
+      <StandardSpace />
+      <Text variant="titleMedium" style={styles.subTitle} >夜日勤</Text>
+      <DataTable>
+        <DataTable.Header style={styles.tableHeader}>
+          <DataTable.Title>順位</DataTable.Title>
+          <DataTable.Title>売上</DataTable.Title>
+        </DataTable.Header>
+        {
+          monthlyRankingNightRecords.map((record: any, index: number) => {
+            return(
+              <View key={index}>
+                <DataTable.Row style={styles.tableRow}>
+                  <DataTable.Cell><Text style={styles.tableCell}>{index+1}位</Text></DataTable.Cell>
+                  <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}円</Text></DataTable.Cell>
+                </DataTable.Row>
+              </View>
+            )
+          })
+        }
+      </DataTable>
+    </ScrollView>
   );
 }
 
