@@ -132,9 +132,7 @@ export const HomeScreen = (props: any) => {
    * getAnalysisPeriod
    */
   const getAnalysisPeriod = (year: number, month: number, today: number, close_day: number) => {
-    console.log('getAnalysisPeriod', year, month, today, close_day)
     const days = getMonthlyAnalysisPeriod(year, month, today, close_day);
-    console.log('days', days);
     setAnalysisStartYear(days.start_year);
     setAnalysisStartMonth(days.start_month);
     setAnalysisStartDay(days.start_day);
