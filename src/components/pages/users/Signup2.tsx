@@ -10,7 +10,6 @@ import {  errorCodeTransition, method } from '../../../utils/const';
 import { StandardLabel } from '../../parts/StandardLabel';
 import axios from 'axios';
 import { StandardTextLink } from '../../parts/StandardTextLink';
-import { Dropdown } from '../../parts/Dropdown';
 
 export const Signup2 = (props: any) => {
   // props
@@ -44,7 +43,6 @@ export const Signup2 = (props: any) => {
   const [visibleAreaDialog, setVisibleAreaDialog] = useState(false);
   const [areas, setAreas] = useState<any[]>([])
   const [areaDisabled, setAreaDisabled] = useState(true);
-
 
   var int_pattern = /^([1-9]\d*|0)$/
 
@@ -127,6 +125,7 @@ export const Signup2 = (props: any) => {
   useEffect(() =>{
     if (prefecture !== '都道府県') {
       setAreaDisabled(false);
+      // 営業区域のリセット処理
       setArea('営業区域')
     } else {
       setAreaDisabled(true);
@@ -163,7 +162,6 @@ export const Signup2 = (props: any) => {
    * selectArea
    */
   const selectArea = (value: string) => {
-    console.log(value)
     setArea(value);
     setVisibleAreaDialog(false);
   }
@@ -196,6 +194,7 @@ export const Signup2 = (props: any) => {
         uuid: uid,
         nickname: nickname,
         prefecture: prefecture,
+        area: area,
         company: company,
         style_flg: styleFlg,
         pay_day: Number(payDay),
@@ -208,8 +207,6 @@ export const Signup2 = (props: any) => {
       }
 
       // apiメソッドの呼び出し
-      // const resp = await apiVerOne(method.POST, '/users', headers, null, jsonData);
-      // console.log("resp", resp);
       await axios({
         method: method.POST,
         url: '/users',
@@ -378,7 +375,7 @@ const styles = StyleSheet.create({
     color: TomatoColor
   },
   errorTextStyle: {
-    color: 'red',
+    color: TomatoColor,
     textAlign: 'center',
     fontSize: 14,
   },
