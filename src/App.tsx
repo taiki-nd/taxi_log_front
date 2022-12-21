@@ -17,6 +17,7 @@ import { SignupEmail } from './components/pages/users/SignupEmail';
 import { RecordsEdit } from './components/pages/records/RecordsEdit';
 import { RecordsShow } from './components/pages/records/RecordsShow';
 import { Ranking } from './screens/Ranking';
+import { EditAccount } from './components/pages/users/ EditAccount';
 
 axios.defaults.baseURL = server.baseUrl;
 
@@ -218,6 +219,26 @@ export default function App() {
           component={Signin}
           options={{
             title: "Signin",
+            headerStyle: {
+              backgroundColor: BackColor,
+            },
+            headerTitleStyle: {
+              color: BasicColor,
+            },
+            tabBarButton: () => null,
+            tabBarStyle: {
+              display: 'none',
+            }
+          }}
+        />
+        {/*
+        // EditAccount
+        */}
+        <Tab.Screen
+          name="EditAccount"
+          component={EditAccount}
+          options={{
+            title: "Edit Account",
             headerStyle: {
               backgroundColor: BackColor,
             },

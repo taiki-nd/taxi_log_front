@@ -11,11 +11,13 @@ import { StandardLabel } from '../../parts/StandardLabel';
 import axios from 'axios';
 import { StandardTextLink } from '../../parts/StandardTextLink';
 
-export const Signup2 = (props: any) => {
+export const EditAccount = (props: any) => {
   // props
   const { navigation } = props;
 
   // state
+  const [userId, setUserId] = useState(Number);
+  const [uid, setUid] = useState('');
   const [nickname, setNickname] = useState('');
   const [prefecture, setPrefecture] = useState('都道府県');
   const [area, setArea] = useState('営業区域');
@@ -67,6 +69,40 @@ export const Signup2 = (props: any) => {
       "徳島県","香川県","愛媛県","高知県","福岡県","佐賀県","長崎県",
       "熊本県","大分県","宮崎県","鹿児島県","沖縄県"
     ])
+
+    const user = auth.currentUser;
+    const uid = user?.uid;
+    setUid(String(uid));
+    const headers = {'uuid': String(uid)}
+
+    // user情報取得
+    const user_info = axios({
+      method: method.GET,
+      url: 'user/get_user_form_uid',
+      headers: headers,
+      data: null,
+      params: null,
+    }).then((response) => {
+      var user = response.data.data
+      console.log("user", user);
+      setUserId(user.id);
+      setNickname(user.nickname);
+      setPrefecture(user.prefecture);
+      setArea(user.area);
+      setCompany(user.company);
+      setStyleFlg(String(user.style_flg));
+      setCloseDay(user.close_day);
+      setPayDay(user.pay_day);
+      setDailyTarget(user.daily_target);
+      setMonthlyTarget(user.monthly_target);
+      setTaxFlg(String(user.is_tax));
+      setOpenFlg(user.open_flg);
+      setAdmin(user.admin)
+      return user;
+    }).catch(error => {
+      console.error("error", error);
+      return "error";
+    });
   }, []);
 
   // 必須項目チェックによるボタン活性化処理
@@ -167,9 +203,9 @@ export const Signup2 = (props: any) => {
   }
 
   /**
-   * createAccount
+   * updateAccount
    */
-  const createAccount = useCallback( async (e: SyntheticEvent) => {
+  const updateAccount = useCallback( async (e: SyntheticEvent) => {
     e.preventDefault();
     
     // ボタンの非活性化
@@ -188,6 +224,17 @@ export const Signup2 = (props: any) => {
 
       // headers
       const headers = {'uuid': uid}
+
+      // params
+      const params = {
+        user_id: userId
+      }
+
+      // taxFlg変換
+      var isTax = false;
+      if (taxFlg === "true") {
+        isTax = true;
+      }
 
       // jsonDataの作成
       var jsonData = {
@@ -208,19 +255,19 @@ export const Signup2 = (props: any) => {
 
       // apiメソッドの呼び出し
       await axios({
-        method: method.POST,
-        url: '/users',
+        method: method.PUT,
+        url: `users/${userId}`,
         headers: headers,
         data: jsonData,
-        params: null,
+        params: params,
       }).then((response) => {
         console.log("data", response.data);
         // ボタンの活性化
         setButtonDisabled(true);
-        // ユーザー登録画面への遷移
+        // 設定への遷移
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Home' }]
+          routes: [{ name: 'Setting' }]
         });
       }).catch(error => {
         var errorCode = error.response.data.info.code;
@@ -235,24 +282,13 @@ export const Signup2 = (props: any) => {
     }
   }, [nickname, prefecture, area, company, styleFlg, closeDay, dailyTarget, monthlyTarget, taxFlg]);
 
-  /**
-   * moveScreen
-   * @param screen 
-   */
-  const moveScreen = (screen: any) => {
-    navigation.reset({
-      index: 0,
-      routes: [{ name: screen }]
-    });
-  }
-
   return (
     <View style={styles.mainBody}>
       <View>
         <KeyboardAwareScrollView>
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View>
-              <StandardTextInput label="ニックネーム" placeholder="3〜30文字" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setNickname(text)}/>
+              <StandardTextInput defaultValue={nickname} label="ニックネーム" placeholder="3〜30文字" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setNickname(text)}/>
               
               <StandardLabel displayText={"営業区域"}/>
               <ScrollView style={styles.flex} horizontal={true}>
@@ -260,7 +296,7 @@ export const Signup2 = (props: any) => {
                 <StandardButton displayText={area} onPress={() => setVisibleAreaDialog(true)} disabled={areaDisabled}/>
               </ScrollView>
 
-              <StandardTextInput label="所属会社" placeholder="株式会社〇〇" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setCompany(text)}/>
+              <StandardTextInput defaultValue={company} label="所属会社" placeholder="株式会社〇〇" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setCompany(text)}/>
               <StandardLabel displayText={"勤務形態"}/>
               <RadioButton.Group onValueChange={value => setStyleFlg(value)} value={styleFlg}>
                 <RadioButton.Item label="隔日勤務" value="every_other_day" style={styles.radioButtonStyle} color={AccentColor}/>
@@ -268,20 +304,20 @@ export const Signup2 = (props: any) => {
                 <RadioButton.Item label="夜勤" value="night" style={styles.radioButtonStyle} color={AccentColor}/>
                 <RadioButton.Item label="他" value="other" style={styles.radioButtonStyle} color={AccentColor}/>
               </RadioButton.Group>
-              <StandardTextInput label="締め日(月末の場合は31)" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setCloseDay(i)}/>
+              <StandardTextInput defaultValue={String(closeDay)} label="締め日(月末の場合は31)" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setCloseDay(i)}/>
               {
                 closeDayMessage !== '' ? <Text style={styles.dialogWarn}>{closeDayMessage}</Text> : <View></View>
               }
-              <StandardTextInput label="給与日(月末の場合は31)" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setPayDay(i)}/>
+              <StandardTextInput defaultValue={String(payDay)} label="給与日(月末の場合は31)" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setPayDay(i)}/>
               <Text style={styles.mentionText}>* 月次売上関連のグラフ作成に必要なため</Text>
               {
                 payDayMessage !== '' ? <Text style={styles.dialogWarn}>{payDayMessage}</Text> : <View></View>
               }
-              <StandardTextInput label="目標売上（1日あたり）" placeholder="65000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailyTarget(i)}/>
+              <StandardTextInput defaultValue={String(dailyTarget)} label="目標売上（1日あたり）" placeholder="65000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailyTarget(i)}/>
               {
                 dailyTargetMessage !== '' ? <Text style={styles.dialogWarn}>{dailyTargetMessage}</Text> : <View></View>
               }
-              <StandardTextInput label="目標売上（1ヶ月あたり）" placeholder="720000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setMonthlyTarget(i)}/>
+              <StandardTextInput defaultValue={String(monthlyTarget)} label="目標売上（1ヶ月あたり）" placeholder="720000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setMonthlyTarget(i)}/>
               {
                 monthlyTargetMessage !== '' ? <Text style={styles.dialogWarn}>{monthlyTargetMessage}</Text> : <View></View>
               }
@@ -298,8 +334,8 @@ export const Signup2 = (props: any) => {
                     </Text>
                   )})
               ) : null}
-              <StandardButton displayText="Create Account" disabled={buttonDisabled} onPress={createAccount}/>
-              <StandardTextLink displayText="Signin here" onPress={() => moveScreen("Signin")}/>
+              <StandardButton displayText="Update Account" disabled={buttonDisabled} onPress={updateAccount}/>
+              <StandardTextLink displayText="Cancel" onPress={() => navigation.navigate('Setting')}/>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAwareScrollView>
