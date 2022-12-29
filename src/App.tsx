@@ -238,6 +238,7 @@ export default function App() {
           name="EditAccount"
           component={EditAccount}
           options={{
+            unmountOnBlur:true,
             title: "Edit Account",
             headerStyle: {
               backgroundColor: BackColor,

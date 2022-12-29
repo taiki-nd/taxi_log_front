@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import axios from "axios";
 import moment from "moment";
@@ -9,6 +10,7 @@ import { auth } from "../../../auth/firebase";
 import { Detail } from "../../../models/Detail";
 import { AccentColor, BackColor, BasicColor, CoverColor, SeaColor, TomatoColor } from "../../../styles/common/color";
 import { DateTransition, DayTransition } from "../../../utils/commonFunc/record/DateTranstion";
+import { GetSigninUser } from "../../../utils/commonFunc/user/GetSigninUser";
 import { errorCodeTransition, method } from "../../../utils/const";
 import { DialogOneButton } from "../../parts/DialogOneButton";
 import { DialogTextInput } from "../../parts/DialogTextInput";
@@ -27,6 +29,7 @@ export const RecordsShow = (props: any) => {
     var user_id = route.params.user_id;
     
     // state
+    const [id, setId] = useState('');
     const [userId, setUserId] = useState(Number);
     const [uid, setUid] = useState('');
     const [date, setDate] = useState(moment);
@@ -60,47 +63,49 @@ export const RecordsShow = (props: any) => {
     const [description, setDescription] = useState('');
 
     useFocusEffect(useCallback(() => {
-      var currentUser = auth.currentUser
-      if (currentUser) {
-        setUid(currentUser.uid);
-      } else {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Signin' }]
-        });
-        return
-      }
+      (async () => {
+        const id = await AsyncStorage.getItem("taxi_log_user_id")
+        console.log("id レコード詳細ページ初期表示", id)
+        if (id === null) {
+          const status = await GetSigninUser();
+          if (status === false) {
+            navigation.navigate("Signin");
+          }
+        } else {
+          setId(id);
+        }
 
-      // user情報の取得
-      getUser(currentUser.uid);
-  
-      // レコード詳細の取得
-      getRecords(currentUser.uid);
+        // user情報の取得
+        getUser(id);
+    
+        // レコード詳細の取得
+        getRecords(id);
 
-      // detail一覧の取得
-      getDetails(currentUser.uid);
+        // detail一覧の取得
+        getDetails(id);
+      })()
     }, []));
 
     /**
      * getUser
      */
-    const getUser = (uid: string) => {
+    const getUser = (id: any) => {
   
       // headers
-      const headers = {'uuid': uid}
+      const headers = {'id': String(id)}
   
       // params
       const params = {
-        user_id: user_id,
+        id: id,
       }
 
       // user情報の取得
       axios({
         method: method.GET,
-        url: 'user/get_user_form_uid',
+        url: `users/${id}`,
         headers: headers,
         data: null,
-        params: null,
+        params: params,
       }).then((response) => {
         console.log("data", response.data);
         setDailyTarget(response.data.data.daily_target);
@@ -117,14 +122,14 @@ export const RecordsShow = (props: any) => {
     /**
      * getRecords
      */
-    const getRecords = (uid: string) => {
+    const getRecords = (id: any) => {
 
       // headers
-      const headers = {'uuid': uid}
+      const headers = {'id': String(id)}
   
       // params
       const params = {
-        user_id: user_id,
+        user_id: id,
       }
 
       axios({
@@ -165,14 +170,14 @@ export const RecordsShow = (props: any) => {
      * getDetails
      * @param {string}
      */
-    const getDetails = (uid: string) => {
+    const getDetails = (id: any) => {
 
       // headers
-      const headers = {'uuid': uid}
+      const headers = {'id': String(id)}
 
       // params
       var params = {
-        user_id: user_id,
+        user_id: id,
         record_id: record_id,
       }
 
@@ -223,7 +228,7 @@ export const RecordsShow = (props: any) => {
       console.log(uid);
 
       // headers
-      const headers = {'uuid': uid}
+      const headers = {'id': String(id)}
 
       // taxFlg変換
       var isTax = false;
@@ -279,7 +284,7 @@ export const RecordsShow = (props: any) => {
      */
     const getDetail = (detail_id: number) => {
       // headers
-      const headers = {'uuid': uid}
+      const headers = {'id': String(id)}
 
       // params
       var params = {
@@ -328,7 +333,7 @@ export const RecordsShow = (props: any) => {
     const updateDetail = () => {
       console.log(detailId);
       // headers
-      const headers = {'uuid': uid}
+      const headers = {'id': String(id)}
 
       // jsonData
       var jsonData = {
@@ -363,7 +368,7 @@ export const RecordsShow = (props: any) => {
      */
     const deleteDetail = () => {
       // headers
-      const headers = {'uuid': uid}
+      const headers = {'id': String(id)}
 
       // params
       const params = {'user_id': user_id}
@@ -425,7 +430,7 @@ export const RecordsShow = (props: any) => {
       }
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Records' }]
+        routes: [{ name: 'Home' }]
       });
     }
 
@@ -465,7 +470,7 @@ export const RecordsShow = (props: any) => {
    */
   const deleteRecord = () => {
     // headers
-    const headers = {'uuid': uid}
+    const headers = {'id': String(id)}
 
     // params
     const params = {'user_id': user_id}

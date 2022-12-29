@@ -58,16 +58,6 @@ export const RecordsCreate = (props: any) => {
       } else {
         setId(id);
       }
-      var currentUser = auth.currentUser
-      if (currentUser) {
-        setUid(currentUser.uid);
-      } else {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Signin' }]
-        });
-        return
-      }
 
       // headers
       const headers = {'id': String(id)}
@@ -163,7 +153,6 @@ export const RecordsCreate = (props: any) => {
     console.log("pressed createRecord button");
 
     setButtonDisabled(true);
-    console.log(uid);
 
     // taxFlg変換
     var isTax = false;
