@@ -184,7 +184,7 @@ export const Ranking =  (props: any) => {
           <StandardButton displayText={area} onPress={() => setVisibleAreaDialog(true)} disabled={areaDisabled}/>
         </ScrollView>
         <SmallButton
-          displayText='Start Analysis'
+          displayText='Show Ranking'
           disabled={false}
           onPress={() => getRankingData(id, prefecture, area, 'second')}
         />
