@@ -14,6 +14,8 @@ import { getMonthlyAnalysisPeriod, GetYearAndMonth } from '../utils/commonFunc/c
 import { DateTransition } from '../utils/commonFunc/record/DateTranstion';
 import { SmallButtonCustom } from '../components/parts/SmallButtonCustom';
 import Icon from 'react-native-vector-icons/AntDesign';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GetSigninUser } from '../utils/commonFunc/user/GetSigninUser';
 
 export const HomeScreen = (props: any) => {
   // props
@@ -21,6 +23,7 @@ export const HomeScreen = (props: any) => {
 
   //state
   const [uid, setUid] = useState('');
+  const [id, setId] = useState('');
   const [closeDay, setCloseDay] = useState(0);
   const [payDay, setPayDay] = useState(0);
   const [toDay, setToDay] = useState(0);
@@ -56,6 +59,16 @@ export const HomeScreen = (props: any) => {
 
   useEffect(() => {
     (async () => {
+      const id = await AsyncStorage.getItem("taxi_log_user_id")
+      console.log("id ホーム画面初期起動", id)
+      if (id === null) {
+        const status = await GetSigninUser();
+        if (status === false) {
+          navigation.navigate("Signin");
+        }
+      } else {
+        setId(id);
+      }
       var currentUser = auth.currentUser
       if (currentUser) {
         setUid(currentUser.uid);
@@ -68,19 +81,20 @@ export const HomeScreen = (props: any) => {
       }
   
       // ドロップダウンリストの作成
-      const headers = {'uuid': currentUser.uid}
+      const headers = {'id': String(id)}
+      const params = {'id': id}
       const user = await axios({
         method: method.GET,
-        url: 'user/get_user_form_uid',
+        url: `/users/${id}`,
         headers: headers,
         data: null,
-        params: null,
+        params: params,
       }).then((response) => {
         var user = response.data.data
         console.log("user", user);
         return user;
       }).catch(error => {
-        console.error("error", error);
+        console.error("error here", error);
         return "error";
       });
 
@@ -115,26 +129,20 @@ export const HomeScreen = (props: any) => {
       setItemsMonth(itemsMonth);
 
       getAnalysisPeriod(year, month, today, close_day);
-      getMonthlySalesSum(currentUser.uid, user.close_day, user.pay_day, 'first');
-      getMonthlySales(currentUser.uid, user.close_day, user.pay_day, 'first');
-      recordsIndex(currentUser.uid, user.close_day, user.pay_day, 'first');
+      getAnalysisDataForHome(id, user.close_day, user.pay_day, 'first')
     })()
   }, []);
 
-  const getMonthlySalesData = (uid: string, status: string) => {
-    getAnalysisPeriod(monthlySalesYear, monthlySalesMonth, toDay, closeDay);
-    getMonthlySalesSum(uid, closeDay, payDay, status)
-    getMonthlySales(uid, closeDay, payDay, status)
-    recordsIndex(uid, closeDay, payDay, status)
+  const getMonthlySalesData = async (user_id: string, status: string) => {
+    await getAnalysisPeriod(monthlySalesYear, monthlySalesMonth, toDay, closeDay);
+    await getAnalysisDataForHome(user_id, closeDay, payDay, status)
   }
 
   /**
    * getAnalysisPeriod
    */
   const getAnalysisPeriod = (year: number, month: number, today: number, close_day: number) => {
-    console.log('getAnalysisPeriod', year, month, today, close_day)
     const days = getMonthlyAnalysisPeriod(year, month, today, close_day);
-    console.log('days', days);
     setAnalysisStartYear(days.start_year);
     setAnalysisStartMonth(days.start_month);
     setAnalysisStartDay(days.start_day);
@@ -144,14 +152,13 @@ export const HomeScreen = (props: any) => {
   }
 
   /**
-   * getMonthlySalesSum
-   * 月次総売上データの取得
+   * Home画面用分析データ取得
+   * getAnalysisDataForHome
    */
-  const getMonthlySalesSum = async (uid: string, close_day: number, pay_day: number, status: string) => {
-
-    console.log('getMonthlySalesSum')
-    // headers
-    const headers = {'uuid': uid}
+  const getAnalysisDataForHome = async (id: any, close_day: number, pay_day: number, status: string) => {
+    console.log('run getAnalysisDataForHome')
+    // header
+    const headers = {'id': id}
 
     // params
     var params: any = {}
@@ -164,11 +171,13 @@ export const HomeScreen = (props: any) => {
       var year_and_month = GetYearAndMonth(year, month, today, close_day, pay_day)
 
       params ={
+        'id': id,
         'year': year_and_month[0],
         'month': year_and_month[1]
       }
     } else if (status === 'second') {
       params ={
+        'id': id,
         'year': monthlySalesYear,
         'month': monthlySalesMonth
       }
@@ -176,150 +185,63 @@ export const HomeScreen = (props: any) => {
 
     await axios({
       method: method.GET,
-      url: '/analysis/sales_sum',
+      url: '/analysis/home',
       headers: headers,
       data: null,
       params: params,
     }).then((response) => {
-      console.log("data", response.data);
+      console.log("data analysis for home", response.data);
       // labelsの成形
-      var displayLabels: string[] = [];
-      response.data.labels.forEach((label: string) => {
+      var displayLabels_dates_sum: string[] = [];
+      response.data.data.dates.forEach((label: string) => {
         var date = new Date(label);
         const dateOnlyDate = String(date.getDate());
-        displayLabels.push(dateOnlyDate);
+        displayLabels_dates_sum.push(dateOnlyDate);
       })
       // データがからの場合の処理
-      if (displayLabels.length === 0) {
+      if (displayLabels_dates_sum.length === 0 ) {
         setMessageForMonthlySalesSum(['表示するデータがありません']);
+        setMessageForMonthlySales(['表示するデータがありません']);
         return;
       }
+      
       setMessageForMonthlySalesSum([]);
-      // データの取得
-      setMonthlySalesSumLabels(displayLabels);
-      setMonthlySalesSumData(response.data.data);
-
-      // 
-      setMonthlySalesSumLast(response.data.data.slice(-1)[0]);
+      setMessageForMonthlySales([]);
+      ///
+      /// AnalysisSalesSum
+      ///
+      setMonthlySalesSumLabels(displayLabels_dates_sum);
+      setMonthlySalesSumData(response.data.data.home_sales_sum);
+      setMonthlySalesSumLast(response.data.data.home_sales_sum.slice(-1)[0]);
+      ///
+      /// AnalysisSales
+      ///
+      setMonthlySalesLabels(displayLabels_dates_sum)
+      setMonthlySalesData(response.data.data.home_sales)
+      ///
+      /// GetRecords
+      ///
+      setRecords(response.data.data.records);
+    
     }).catch(error => {
-      var errorCode = error.response.data.info.code;
+      console.log('getAnalysisDataForHome api error', error)
+      /*
+      var errorCode: string[];
+      if (error.code === "ERR_BAD_REQUEST"){
+        errorCode = [""]
+      } else if (error.response.data.info.code === undefined ){
+        errorCode = [""]
+      } else {
+        errorCode = error.response.data.info.code;
+      }
       var message: string[] = [];
       message = errorCodeTransition(errorCode);
       setErrorMessages(message);
       setDialogTitle('月次総売上のデータ取得の失敗');
+      */
+      setMessageForMonthlySalesSum(['データの取得に失敗しました']);
+      setMessageForMonthlySales(['データの取得に失敗しました']);
       //setVisibleFailedDialog(true);
-    });
-  }
-
-  /**
-   * getMonthlySales
-   * 月次売上データの取得
-   */
-  const getMonthlySales = async (uid: string, close_day: number, pay_day: number, status: string) => {
-    // headers
-    const headers = {'uuid': uid}
-
-    // params
-    var params: any = {}
-    if (status === 'first'){
-      var day = new Date();
-      var today = day.getDay()
-      var year = day.getFullYear()
-      var month = day.getMonth() + 1
-
-      var year_and_month = GetYearAndMonth(year, month, today, close_day, pay_day)
-
-      params ={
-        'year': year_and_month[0],
-        'month': year_and_month[1]
-      }
-    } else if (status === 'second') {
-      params ={
-        'year': monthlySalesYear,
-        'month': monthlySalesMonth
-      }
-    }
-
-    await axios({
-      method: method.GET,
-      url: '/analysis/sales',
-      headers: headers,
-      data: null,
-      params: params,
-    }).then((response) => {
-      console.log("data", response.data);
-      // labelsの成形
-      var displayLabels: string[] = [];
-      response.data.labels.forEach((label: string) => {
-        var date = new Date(label);
-        const dateOnlyDate = String(date.getDate());
-        displayLabels.push(dateOnlyDate);
-      })
-      // データがからの場合の処理
-      if (displayLabels.length === 0) {
-        setMessageForMonthlySales(['表示するデータがありません']);
-        return;
-      }
-      setMessageForMonthlySales([]);
-      // データの取得
-      setMonthlySalesLabels(displayLabels)
-      setMonthlySalesData(response.data.data)
-    }).catch(error => {
-      var errorCode = error.response.data.info.code;
-      var message: string[] = [];
-      message = errorCodeTransition(errorCode);
-      setErrorMessages(message);
-      setDialogTitle('月次売上のデータ取得の失敗')
-      //setVisibleFailedDialog(true);
-    });
-  }
-
-  /**
-   * recordsIndex
-   * 対象期間の日報を取得
-   * @param uid 
-   * @param status 
-   */
-  const recordsIndex = async (uid: string, close_day: number, pay_day: number, status: string) => {
-
-    // headers
-    const headers = {'uuid': uid}
-    
-    // params
-    var params: any = {}
-    if (status === 'first'){
-      var day = new Date();
-      var today = day.getDay()
-      var year = day.getFullYear()
-      var month = day.getMonth() + 1
-
-      var year_and_month = GetYearAndMonth(year, month, today, close_day, pay_day)
-
-      params ={
-        'year': year_and_month[0],
-        'month': year_and_month[1]
-      }
-    } else if (status === 'second') {
-      params ={
-        'year': monthlySalesYear,
-        'month': monthlySalesMonth
-      }
-    }
-
-    await axios({
-      method: method.GET,
-      url: '/analysis/records',
-      headers: headers,
-      data: null,
-      params: params,
-    }).then((response) => {
-      console.log("data", response.data.data);
-      setRecords(response.data.data);
-    }).catch(error => {
-      var errorCode = error.response.data.info.code;
-      var message: string[] = [];
-      message = errorCodeTransition(errorCode);
-      //setErrorMessages(message);
     });
   }
 
@@ -359,7 +281,7 @@ export const HomeScreen = (props: any) => {
         <SmallButton
           displayText='Start Analysis'
           disabled={false}
-          onPress={() => getMonthlySalesData(uid, 'second')}
+          onPress={() => getMonthlySalesData(id, 'second')}
         />
       </View>
       <ScrollView>

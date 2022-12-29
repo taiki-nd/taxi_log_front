@@ -220,72 +220,11 @@ export const Setting = (props: any) => {
     setVisibleEditAccountDialog(true);
   }
 
-  /**
-   * updateAccount
-   */
-  const updateAccount = () => {
-    // headers
-    const headers = {'uuid': uid}
-
-    // params
-    const params = {
-      user_id: userId
-    }
-
-    // taxFlg変換
-    var isTax = false;
-    if (taxFlg === "true") {
-      isTax = true;
-    }
-
-    const jsonData ={
-      uuid: uid,
-      nickname: nickname,
-      prefecture: prefecture,
-      company: company,
-      style_flg: styleFlg,
-      pay_day: Number(payDay),
-      close_day: Number(closeDay),
-      daily_target: Number(dailyTarget),
-      monthly_target: Number(monthlyTarget),
-      is_tax: isTax,
-      open_flg: openFlg,
-      is_admin: admin,
-    }
-
-    axios({
-      method: method.PUT,
-      url: `users/${userId}`,
-      headers: headers,
-      data: jsonData,
-      params: params,
-    }).then((response) => {
-      console.log('data', response.data.data);
-      setVisibleEditAccountDialog(false);
-      setDialogTitle('アカウント更新成功')
-      setDialogMessage('アカウントの更新に成功しました。')
-      setVisibleDialog(true);
-    }).catch((error) => {
-      console.error(error)
-      var errorCode = error.response.data.info.code;
-      var message: string[] = [];
-      message = errorCodeTransition(errorCode);
-      setErrorMessages(message);
-    })
-  }
-
-  /**
-   * cancelEditAccount
-   */
-  const cancelEditAccount = () => {
-    setVisibleEditAccountDialog(false);
-  }
-
   return (
     <View style={styles.mainBody}>
-      
+
       <Text variant="titleLarge" style={styles.subTitle}>Edit Account</Text>
-      <StandardButton displayText="Edit Account" onPress={() => openEditAccountDialog()}/>
+      <StandardButton displayText="Edit Account" onPress={() => navigation.navigate('EditAccount')}/>
       <StandardSpace />
 
       <Text variant="titleLarge" style={styles.subTitle}>Signout</Text>
@@ -299,55 +238,6 @@ export const Setting = (props: any) => {
       <Provider>
         <View>
           <Portal>
-            <Dialog visible={visibleEditAccountDialog} style={styles.updateAccountDialog} onDismiss={() => cancelEditAccount()}>
-              <Dialog.Title>Edit Account</Dialog.Title>
-              <ScrollView>
-                <Dialog.Content>
-                  <DialogTextInput defaultValue={nickname} label="ニックネーム" placeholder="3〜30文字" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setNickname(text)}/>
-                  <DialogTextInput defaultValue={prefecture} label="営業区域" placeholder="東京23区武三地区" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setPrefecture(text)}/>
-                  <DialogTextInput defaultValue={company} label="所属会社" placeholder="株式会社〇〇" keyboardType="default" secureTextEntry={false} onChangeText={(text: string) => setCompany(text)}/>
-                  <StandardLabel displayText={"勤務形態"}/>
-                  <RadioButton.Group onValueChange={value => setStyleFlg(value)} value={styleFlg}>
-                    <RadioButton.Item label="隔日勤務" value="every_other_day" style={styles.radioButtonStyle} color={AccentColor}/>
-                    <RadioButton.Item label="日勤" value="day" style={styles.radioButtonStyle} color={AccentColor}/>
-                    <RadioButton.Item label="夜勤" value="night" style={styles.radioButtonStyle} color={AccentColor}/>
-                    <RadioButton.Item label="他" value="other" style={styles.radioButtonStyle} color={AccentColor}/>
-                  </RadioButton.Group>
-                  <DialogTextInput defaultValue={String(closeDay)} label="締め日(月末の場合は31)" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setCloseDay(i)}/>
-                  {
-                    closeDayMessage !== '' ? <Text style={styles.dialogWarn}>{closeDayMessage}</Text> : <View></View>
-                  }
-                  <DialogTextInput defaultValue={String(payDay)} label="給与日(月末の場合は31)" placeholder="15" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setPayDay(i)}/>
-                  <Text style={styles.mentionText}>* 月次売上関連のグラフ作成に必要なため</Text>
-                  {
-                    payDayMessage !== '' ? <Text style={styles.dialogWarn}>{payDayMessage}</Text> : <View></View>
-                  }
-                  <DialogTextInput defaultValue={String(dailyTarget)} label="目標売上（1日あたり）" placeholder="65000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailyTarget(i)}/>
-                  {
-                    dailyTargetMessage !== '' ? <Text style={styles.dialogWarn}>{dailyTargetMessage}</Text> : <View></View>
-                  }
-                  <DialogTextInput defaultValue={String(monthlyTarget)} label="目標売上（1ヶ月あたり）" placeholder="720000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setMonthlyTarget(i)}/>
-                  {
-                    monthlyTargetMessage !== '' ? <Text style={styles.dialogWarn}>{monthlyTargetMessage}</Text> : <View></View>
-                  }
-                  <StandardLabel displayText={"標準入力価格設定"}/>
-                  <RadioButton.Group onValueChange={value => setTaxFlg(value)} value={taxFlg}>
-                    <RadioButton.Item label="税込みで入力" value="true" style={styles.radioButtonStyle} color={AccentColor}/>
-                    <RadioButton.Item label="税抜きで入力" value="false" style={styles.radioButtonStyle} color={AccentColor}/>
-                  </RadioButton.Group>
-                  {errorMessages.length != 0 ? (
-                    errorMessages.map((errorMessage: string, index: number) => { 
-                      return(
-                        <Text style={styles.errorTextStyle} key={index}>
-                          {errorMessage}
-                        </Text>
-                      )})
-                  ) : null}
-                  <Button onPress={() => updateAccount()} textColor={SeaColor}>Update Account</Button>
-                  <Button onPress={() => cancelEditAccount()} textColor={TomatoColor}>cancel</Button>
-                </Dialog.Content>
-              </ScrollView>
-            </Dialog>
             <Dialog visible={visibleConfirmDeleteDialog} onDismiss={() => cancelDeleteAccount()} style={styles.dialog}>
               <Dialog.Title style={styles.text}>アカウント削除確認</Dialog.Title>
               <Dialog.Content>

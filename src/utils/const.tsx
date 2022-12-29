@@ -46,7 +46,7 @@ export const firebaseErrorTransition = (error: any) => {
  */
 export const errorCodeTransition = (codes: string[]) => {
   var errorMessage: string[] = [];
-  console.log(codes);
+  console.log("codes", codes);
   codes.forEach(code => {
     console.log(code);
     console.log(errorMessage);
