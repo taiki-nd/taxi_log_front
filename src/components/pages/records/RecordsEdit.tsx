@@ -5,7 +5,6 @@ import CalendarStrip from 'react-native-calendar-strip';
 import { StyleSheet, View, Text, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { RadioButton } from "react-native-paper";
-import { auth } from "../../../auth/firebase";
 import { AccentColor, BackColor, BasicColor, TomatoColor } from "../../../styles/common/color";
 import { errorCodeTransition, method } from "../../../utils/const";
 import { StandardButton } from "../../parts/StandardButton";

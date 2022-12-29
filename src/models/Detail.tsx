@@ -1,5 +1,3 @@
-import moment from "moment";
-
 export class Detail {
   constructor(
     public id = 0,

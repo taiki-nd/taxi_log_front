@@ -3,7 +3,7 @@ import axios from 'axios';
 import { deleteUser, reauthenticateWithCredential } from 'firebase/auth';
 import { EmailAuthProvider } from 'firebase/auth/react-native';
 import { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Text, Provider, Portal, Dialog, Paragraph, Button, RadioButton } from "react-native-paper";
 import { auth } from '../auth/firebase';
 import { DialogOneButton } from '../components/parts/DialogOneButton';
@@ -11,11 +11,10 @@ import { DialogTextInput } from '../components/parts/DialogTextInput';
 import { ExtraButton } from '../components/parts/ExtraButton';
 import { StandardSpace } from '../components/parts/Space';
 import { StandardButton } from '../components/parts/StandardButton';
-import { StandardLabel } from '../components/parts/StandardLabel';
-import { AccentColor, BackColor, BasicColor, CoverColor, SeaColor, TomatoColor } from '../styles/common/color';
+import { BackColor, BasicColor, CoverColor, SeaColor, TomatoColor } from '../styles/common/color';
 import { GetSigninUser } from '../utils/commonFunc/user/GetSigninUser';
 import { FuncSignout } from '../utils/commonFunc/user/Signout';
-import { errorCodeTransition, method } from '../utils/const';
+import { method } from '../utils/const';
 
 export const Setting = (props: any) => {
   // props

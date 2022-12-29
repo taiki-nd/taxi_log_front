@@ -4,7 +4,6 @@ import { Text } from "react-native-paper";
 import { BarChart } from 'react-native-chart-kit';
 import { BackColor, BasicColor, TomatoColor } from '../styles/common/color';
 import axios from 'axios';
-import { auth } from '../auth/firebase';
 import { errorCodeTransition, method } from '../utils/const';
 import { Dropdown } from '../components/parts/Dropdown';
 import { StandardSpace } from '../components/parts/Space';

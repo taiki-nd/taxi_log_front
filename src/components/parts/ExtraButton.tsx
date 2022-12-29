@@ -1,6 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import { AccentColor, BasicColor, TomatoColor } from '../../styles/common/color';
+import { BasicColor, TomatoColor } from '../../styles/common/color';
 
 export const ExtraButton = (props: any) => {
   const {displayText, disabled, onPress} = props;

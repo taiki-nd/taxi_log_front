@@ -11,7 +11,6 @@ import { AccentColor, BackColor, BasicColor, TomatoColor } from '../styles/commo
 import moment from 'moment';
 import axios from 'axios';
 import { errorCodeTransition, method } from '../utils/const';
-import { auth } from '../auth/firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GetSigninUser } from '../utils/commonFunc/user/GetSigninUser';
 

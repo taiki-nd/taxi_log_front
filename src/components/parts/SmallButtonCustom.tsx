@@ -1,6 +1,5 @@
 import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import { AccentColor, BasicColor } from '../../styles/common/color';
 
 export const SmallButtonCustom = (props: any) => {
   const {displayText, color, disabled, onPress} = props;
