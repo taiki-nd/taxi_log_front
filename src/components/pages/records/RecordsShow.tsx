@@ -179,6 +179,7 @@ export const RecordsShow = (props: any) => {
       var params = {
         user_id: id,
         record_id: record_id,
+        id: id,
       }
 
       axios({
@@ -225,10 +226,13 @@ export const RecordsShow = (props: any) => {
       console.log("pressed createRecord button");
 
       setDetailCreateButtonDisabled(true);
-      console.log(uid);
 
       // headers
       const headers = {'id': String(id)}
+
+      const params ={
+        id: id
+      }
 
       // taxFlg変換
       var isTax = false;
@@ -258,12 +262,12 @@ export const RecordsShow = (props: any) => {
           url: '/details',
           headers: headers,
           data: jsonData,
-          params: null,
+          params: params,
         }).then((response) => {
           console.log("data", response.data);
           // レコード詳細画面への遷移
           setVisibleCreateDetailsDialog(false);
-          getDetails(uid);
+          getDetails(id);
         }).catch(error => {
           var errorCode = error.response.data.info.code;
           var message: string[] = [];
@@ -348,6 +352,7 @@ export const RecordsShow = (props: any) => {
       // params
       var params = {
         user_id: user_id,
+        id: id
       }
 
       axios({
@@ -359,7 +364,7 @@ export const RecordsShow = (props: any) => {
       }).then((response) => {
         console.log("data", response.data);
         setVisibleEditDetailsDialog(false);
-        getDetails(uid);
+        getDetails(id);
       })
     }
 
@@ -371,7 +376,10 @@ export const RecordsShow = (props: any) => {
       const headers = {'id': String(id)}
 
       // params
-      const params = {'user_id': user_id}
+      const params = {
+        'user_id': user_id,
+        'id': id
+      }
 
       axios({
         method: method.DELETE,
