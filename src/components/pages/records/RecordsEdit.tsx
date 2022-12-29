@@ -12,6 +12,8 @@ import { StandardButton } from "../../parts/StandardButton";
 import { StandardLabel } from "../../parts/StandardLabel";
 import { StandardTextInput } from "../../parts/StandardTextInput";
 import { StandardTextLink } from "../../parts/StandardTextLink";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GetSigninUser } from "../../../utils/commonFunc/user/GetSigninUser";
 
 export const RecordsEdit = (props: any) => {
   // props
@@ -22,6 +24,7 @@ export const RecordsEdit = (props: any) => {
   var user_id = route.params.user_id;
   
   // state
+  const [id, setId] = useState('');
   const [userId, setUserId] = useState(Number);
   const [uid, setUid] = useState('');
   const [date, setDate] = useState(moment);
@@ -46,55 +49,57 @@ export const RecordsEdit = (props: any) => {
 
   // signinユーザー情報の取得
   useEffect(() => {
-    var currentUser = auth.currentUser
-    if (currentUser) {
-      setUid(currentUser.uid);
-    } else {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Signin' }]
-      });
-      return
-    }
-
-    // headers
-    const headers = {'uuid': currentUser.uid}
-
-    // params
-    const params = {
-      user_id: user_id,
-    }
-
-    axios({
-      method: method.GET,
-      url: `/records/${record_id}`,
-      headers: headers,
-      data: null,
-      params: params,
-    }).then((response) => {
-      console.log("data", response.data);
-      // データの取得
-      setUserId(response.data.data.id);
-      setDate(response.data.data.date);
-      setDay(response.data.data.day_of_week);
-      setStyleFlg(response.data.data.style_flg);
-      setStartHour(response.data.data.start_hour);
-      setRunningTime(response.data.data.running_time);
-      setRunningKm(response.data.data.running_km);
-      setOccupancyRate(response.data.data.occupancy_rate);
-      setNumberOfTime(response.data.data.number_of_time);
-      if (response.data.data.is_tax){
-        setTaxFlg('true');
+    (async () => {
+      const id = await AsyncStorage.getItem("taxi_log_user_id")
+      console.log("id レコード編集ページ初期表示", id)
+      if (id === null) {
+        const status = await GetSigninUser();
+        if (status === false) {
+          navigation.navigate("Signin");
+        }
       } else {
-        setTaxFlg('false');
+        setId(id);
       }
-      setDailySales(response.data.data.daily_sales);
-    }).catch(error => {
-      var errorCode = error.response.data.info.code;
-      var message: string[] = [];
-      message = errorCodeTransition(errorCode);
-      setErrorMessages(message);
-    });
+
+      // headers
+      const headers = {'id': String(id)}
+      // params
+      const params = {
+        user_id: user_id,
+        'id': id
+      }
+
+      axios({
+        method: method.GET,
+        url: `/records/${record_id}`,
+        headers: headers,
+        data: null,
+        params: params,
+      }).then((response) => {
+        console.log("data", response.data);
+        // データの取得
+        setUserId(response.data.data.id);
+        setDate(response.data.data.date);
+        setDay(response.data.data.day_of_week);
+        setStyleFlg(response.data.data.style_flg);
+        setStartHour(response.data.data.start_hour);
+        setRunningTime(response.data.data.running_time);
+        setRunningKm(response.data.data.running_km);
+        setOccupancyRate(response.data.data.occupancy_rate);
+        setNumberOfTime(response.data.data.number_of_time);
+        if (response.data.data.is_tax){
+          setTaxFlg('true');
+        } else {
+          setTaxFlg('false');
+        }
+        setDailySales(response.data.data.daily_sales);
+      }).catch(error => {
+        var errorCode = error.response.data.info.code;
+        var message: string[] = [];
+        message = errorCodeTransition(errorCode);
+        setErrorMessages(message);
+      });
+    })();
   }, []);
 
   // 必須項目チェックによるボタン活性化処理
@@ -160,7 +165,7 @@ export const RecordsEdit = (props: any) => {
     setButtonDisabled(true);
 
     // headers
-    const headers = {'uuid': uid}
+    const headers = {'id': id}
 
     // taxFlg変換
     var isTax = false;
@@ -185,6 +190,7 @@ export const RecordsEdit = (props: any) => {
     // params
     var params = {
       user_id: user_id,
+      id: id
     }
 
     try {
@@ -303,7 +309,7 @@ export const RecordsEdit = (props: any) => {
                   )})
                   ) : null}
               <StandardButton displayText="Update Record" disabled={buttonDisabled} onPress={updateRecord} id={userId} uid={uid} />
-              <StandardTextLink displayText="Cancel" onPress={() => moveScreen("Records")}/>
+              <StandardTextLink displayText="Cancel" onPress={() => moveScreen("Home")}/>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAwareScrollView>

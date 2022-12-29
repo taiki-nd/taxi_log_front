@@ -12,17 +12,22 @@ import moment from 'moment';
 import axios from 'axios';
 import { errorCodeTransition, method } from '../utils/const';
 import { auth } from '../auth/firebase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GetSigninUser } from '../utils/commonFunc/user/GetSigninUser';
 
 export const RecordsCreate = (props: any) => {
   // props
   const { navigation } = props;
 
   // state
+  const [id, setId] = useState('');
   const [userId, setUserId] = useState(Number);
   const [uid, setUid] = useState('');
   const [date, setDate] = useState(moment);
   const [day, setDay] = useState('');
   const [styleFlg, setStyleFlg] = useState('');
+  const [prefecture, setPrefecture] = useState('');
+  const [area, setArea] = useState('');
   const [startHour, setStartHour] = useState(Number);
   const [runningTime, setRunningTime] = useState(Number);
   const [runningKm, setRunningKm] = useState(Number);
@@ -42,41 +47,48 @@ export const RecordsCreate = (props: any) => {
 
   // signinユーザー情報の取得
   useEffect(() => {
-    var currentUser = auth.currentUser
-    if (currentUser) {
-      setUid(currentUser.uid);
-    } else {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Signin' }]
-      });
-      return
-    }
-
-    // headers
-    const headers = {'uuid': currentUser.uid}
-
-    axios({
-      method: method.GET,
-      url: 'user/get_user_form_uid',
-      headers: headers,
-      data: null,
-      params: null,
-    }).then((response) => {
-      console.log("data", response.data);
-      setUserId(response.data.data.id);
-      setStyleFlg(response.data.data.style_flg);
-      if (response.data.data.is_tax){
-        setTaxFlg('true');
+    (async () => {
+      const id = await AsyncStorage.getItem("taxi_log_user_id")
+      console.log("id レコード作成ページ初期表示", id)
+      if (id === null) {
+        const status = await GetSigninUser();
+        if (status === false) {
+          navigation.navigate("Signin");
+        }
       } else {
-        setTaxFlg('false');
+        setId(id);
       }
-    }).catch(error => {
-      var errorCode = error.response.data.info.code;
-      var message: string[] = [];
-      message = errorCodeTransition(errorCode);
-      setErrorMessages(message);
-    });
+
+      // headers
+      const headers = {'id': String(id)}
+      // params
+      const params = {'id': id}
+
+      await axios({
+        method: method.GET,
+        url: `/users/${id}`,
+        headers: headers,
+        data: null,
+        params: params,
+      }).then((response) => {
+        console.log("data", response.data);
+        setUserId(response.data.data.id);
+        setStyleFlg(response.data.data.style_flg);
+        setPrefecture(response.data.data.prefecture);
+        setArea(response.data.data.area);
+        if (response.data.data.is_tax){
+          setTaxFlg('true');
+        } else {
+          setTaxFlg('false');
+        }
+      }).catch(error => {
+        console.log("error get sigin user recordsCreate", error);
+        var errorCode = error.response.data.info.code;
+        var message: string[] = [];
+        message = errorCodeTransition(errorCode);
+        setErrorMessages(message);
+      });
+    })()
   }, []);
 
   // 必須項目チェックによるボタン活性化処理
@@ -141,10 +153,6 @@ export const RecordsCreate = (props: any) => {
     console.log("pressed createRecord button");
 
     setButtonDisabled(true);
-    console.log(uid);
-
-    // headers
-    const headers = {'uuid': uid}
 
     // taxFlg変換
     var isTax = false;
@@ -159,6 +167,8 @@ export const RecordsCreate = (props: any) => {
       date: moment(date),
       day_of_week: day,
       style_flg: styleFlg,
+      prefecture: prefecture,
+      area: area,
       start_hour: Number(startHour),
       running_time: Number(runningTime),
       running_km: Number(runningKm),
@@ -171,10 +181,11 @@ export const RecordsCreate = (props: any) => {
 
     console.log(jsonData);
 
+
+    // headers
+    const headers = {'id': String(id)}
     // params
-    var params = {
-      uuid: uid,
-    }
+    const params = {'id': id}
 
     try {
       await axios({
@@ -190,7 +201,7 @@ export const RecordsCreate = (props: any) => {
         // ユーザー登録画面への遷移
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Records' }]
+          routes: [{ name: 'Home' }]
         });
       }).catch(error => {
         var errorCode = error.response.data.info.code;
