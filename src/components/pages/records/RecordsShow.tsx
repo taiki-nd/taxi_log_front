@@ -390,7 +390,7 @@ export const RecordsShow = (props: any) => {
       }).then((response) => {
         console.log("data", response.data);
         setVisibleConfirmDeleteDialog(false);
-        getDetails(uid);
+        getDetails(id);
       }).catch((error) => {
         var errorCode = error.response.data.info.code;
         var message: string[] = [];
@@ -433,7 +433,7 @@ export const RecordsShow = (props: any) => {
       console.log("dialogOk");
       setVisibleFailedDialog(false);
       if (detailId !== 0) {
-        getDetails(uid);
+        getDetails(id);
         return
       }
       navigation.reset({
