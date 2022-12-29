@@ -69,16 +69,6 @@ export const HomeScreen = (props: any) => {
       } else {
         setId(id);
       }
-      var currentUser = auth.currentUser
-      if (currentUser) {
-        setUid(currentUser.uid);
-      } else {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Signin' }]
-        });
-        return
-      }
   
       // ドロップダウンリストの作成
       const headers = {'id': String(id)}

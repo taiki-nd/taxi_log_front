@@ -54,16 +54,6 @@ export const Analysis = (props: any) => {
       } else {
         setId(id);
       }
-      var currentUser = auth.currentUser
-      if (currentUser) {
-        setUid(currentUser.uid);
-      } else {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Signin' }]
-        });
-        return
-      }
 
       // ドロップダウンデータの取得
       var today = new Date();

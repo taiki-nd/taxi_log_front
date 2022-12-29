@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { deleteUser, reauthenticateWithCredential } from 'firebase/auth';
 import { EmailAuthProvider } from 'firebase/auth/react-native';
@@ -12,6 +13,7 @@ import { StandardSpace } from '../components/parts/Space';
 import { StandardButton } from '../components/parts/StandardButton';
 import { StandardLabel } from '../components/parts/StandardLabel';
 import { AccentColor, BackColor, BasicColor, CoverColor, SeaColor, TomatoColor } from '../styles/common/color';
+import { GetSigninUser } from '../utils/commonFunc/user/GetSigninUser';
 import { FuncSignout } from '../utils/commonFunc/user/Signout';
 import { errorCodeTransition, method } from '../utils/const';
 
@@ -21,6 +23,7 @@ export const Setting = (props: any) => {
 
   // state
   const [password, setPassword] = useState('');
+  const [id, setId] = useState('');
   const [uid, setUid] = useState('');
   const [userId, setUserId] = useState(Number);
   const [nickname, setNickname] = useState('');
@@ -100,38 +103,53 @@ export const Setting = (props: any) => {
 
     
   useEffect(() => {
-    const user = auth.currentUser;
-    const uid = user?.uid;
-    setUid(String(uid));
-    const headers = {'uuid': String(uid)}
+    (async () => {
+      const id = await AsyncStorage.getItem("taxi_log_user_id")
+      console.log("id 設定画面初期起動", id)
+      if (id === null) {
+        const status = await GetSigninUser();
+        if (status === false) {
+          navigation.navigate("Signin");
+        }
+      } else {
+        setId(id);
+      }
 
-    // user情報取得
-    const user_info = axios({
-      method: method.GET,
-      url: 'user/get_user_form_uid',
-      headers: headers,
-      data: null,
-      params: null,
-    }).then((response) => {
-      var user = response.data.data
-      console.log("user", user);
-      setUserId(user.id);
-      setNickname(user.nickname);
-      setPrefecture(user.prefecture);
-      setCompany(user.company);
-      setStyleFlg(String(user.style_flg));
-      setCloseDay(user.close_day);
-      setPayDay(user.pay_day);
-      setDailyTarget(user.daily_target);
-      setMonthlyTarget(user.monthly_target);
-      setTaxFlg(String(user.is_tax));
-      setOpenFlg(user.open_flg);
-      setAdmin(user.admin)
-      return user;
-    }).catch(error => {
-      console.error("error", error);
-      return "error";
-    });
+      const user = auth.currentUser;
+      const uid = user?.uid;
+      setUid(String(uid));
+      
+      const headers = {'id': String(id)}
+      const params = {'id': id}
+
+      // user情報取得
+      const user_info = axios({
+        method: method.GET,
+        url: `/users/${id}`,
+        headers: headers,
+        data: null,
+        params: params,
+      }).then((response) => {
+        var user = response.data.data
+        console.log("user", user);
+        setUserId(user.id);
+        setNickname(user.nickname);
+        setPrefecture(user.prefecture);
+        setCompany(user.company);
+        setStyleFlg(String(user.style_flg));
+        setCloseDay(user.close_day);
+        setPayDay(user.pay_day);
+        setDailyTarget(user.daily_target);
+        setMonthlyTarget(user.monthly_target);
+        setTaxFlg(String(user.is_tax));
+        setOpenFlg(user.open_flg);
+        setAdmin(user.admin)
+        return user;
+      }).catch(error => {
+        console.error("error", error);
+        return "error";
+      });
+    })();
   }, [])
 
   /**
