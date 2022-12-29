@@ -165,7 +165,7 @@ export const RecordsEdit = (props: any) => {
     setButtonDisabled(true);
 
     // headers
-    const headers = {'uuid': uid}
+    const headers = {'id': id}
 
     // taxFlg変換
     var isTax = false;
@@ -190,6 +190,7 @@ export const RecordsEdit = (props: any) => {
     // params
     var params = {
       user_id: user_id,
+      id: id
     }
 
     try {
@@ -308,7 +309,7 @@ export const RecordsEdit = (props: any) => {
                   )})
                   ) : null}
               <StandardButton displayText="Update Record" disabled={buttonDisabled} onPress={updateRecord} id={userId} uid={uid} />
-              <StandardTextLink displayText="Cancel" onPress={() => moveScreen("Records")}/>
+              <StandardTextLink displayText="Cancel" onPress={() => moveScreen("Home")}/>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAwareScrollView>
