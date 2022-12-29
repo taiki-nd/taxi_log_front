@@ -194,6 +194,7 @@ export const Ranking =  (props: any) => {
           <DataTable.Header style={styles.tableHeader}>
             <DataTable.Title>順位</DataTable.Title>
             <DataTable.Title>売上</DataTable.Title>
+            <DataTable.Title>営業区域</DataTable.Title>
           </DataTable.Header>
           {
             dailyRankingEveryOtherDayRecords.map((record: any, index: number) => {
@@ -202,6 +203,7 @@ export const Ranking =  (props: any) => {
                   <DataTable.Row style={styles.tableRow}>
                     <DataTable.Cell><Text style={styles.tableCell}>{index+1}位</Text></DataTable.Cell>
                     <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}円</Text></DataTable.Cell>
+                    <DataTable.Cell><Text style={styles.tableCell}>{record.prefecture}/{record.area}</Text></DataTable.Cell>
                   </DataTable.Row>
                 </View>
               )
@@ -214,6 +216,7 @@ export const Ranking =  (props: any) => {
           <DataTable.Header style={styles.tableHeader}>
             <DataTable.Title>順位</DataTable.Title>
             <DataTable.Title>売上</DataTable.Title>
+            <DataTable.Title>営業区域</DataTable.Title>
           </DataTable.Header>
           {
             dailyRankingDayRecords.map((record: any, index: number) => {
@@ -222,6 +225,7 @@ export const Ranking =  (props: any) => {
                   <DataTable.Row style={styles.tableRow}>
                     <DataTable.Cell><Text style={styles.tableCell}>{index+1}位</Text></DataTable.Cell>
                     <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}円</Text></DataTable.Cell>
+                    <DataTable.Cell><Text style={styles.tableCell}>{record.prefecture}/{record.area}</Text></DataTable.Cell>
                   </DataTable.Row>
                 </View>
               )
@@ -234,6 +238,7 @@ export const Ranking =  (props: any) => {
           <DataTable.Header style={styles.tableHeader}>
             <DataTable.Title>順位</DataTable.Title>
             <DataTable.Title>売上</DataTable.Title>
+            <DataTable.Title>営業区域</DataTable.Title>
           </DataTable.Header>
           {
             dailyRankingNightRecords.map((record: any, index: number) => {
@@ -242,6 +247,7 @@ export const Ranking =  (props: any) => {
                   <DataTable.Row style={styles.tableRow}>
                     <DataTable.Cell><Text style={styles.tableCell}>{index+1}位</Text></DataTable.Cell>
                     <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}円</Text></DataTable.Cell>
+                    <DataTable.Cell><Text style={styles.tableCell}>{record.prefecture}/{record.area}</Text></DataTable.Cell>
                   </DataTable.Row>
                 </View>
               )
@@ -257,6 +263,7 @@ export const Ranking =  (props: any) => {
           <DataTable.Header style={styles.tableHeader}>
             <DataTable.Title>順位</DataTable.Title>
             <DataTable.Title>売上</DataTable.Title>
+            <DataTable.Title>営業区域</DataTable.Title>
           </DataTable.Header>
           {
             weeklyRankingEveryOtherDayRecords.map((record: any, index: number) => {
@@ -265,6 +272,7 @@ export const Ranking =  (props: any) => {
                   <DataTable.Row style={styles.tableRow}>
                     <DataTable.Cell><Text style={styles.tableCell}>{index+1}位</Text></DataTable.Cell>
                     <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}円</Text></DataTable.Cell>
+                    <DataTable.Cell><Text style={styles.tableCell}>{record.prefecture}/{record.area}</Text></DataTable.Cell>
                   </DataTable.Row>
                 </View>
               )
@@ -277,6 +285,7 @@ export const Ranking =  (props: any) => {
           <DataTable.Header style={styles.tableHeader}>
             <DataTable.Title>順位</DataTable.Title>
             <DataTable.Title>売上</DataTable.Title>
+            <DataTable.Title>営業区域</DataTable.Title>
           </DataTable.Header>
           {
             weeklyRankingDayRecords.map((record: any, index: number) => {
@@ -285,6 +294,7 @@ export const Ranking =  (props: any) => {
                   <DataTable.Row style={styles.tableRow}>
                     <DataTable.Cell><Text style={styles.tableCell}>{index+1}位</Text></DataTable.Cell>
                     <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}円</Text></DataTable.Cell>
+                    <DataTable.Cell><Text style={styles.tableCell}>{record.prefecture}/{record.area}</Text></DataTable.Cell>
                   </DataTable.Row>
                 </View>
               )
@@ -297,6 +307,7 @@ export const Ranking =  (props: any) => {
           <DataTable.Header style={styles.tableHeader}>
             <DataTable.Title>順位</DataTable.Title>
             <DataTable.Title>売上</DataTable.Title>
+            <DataTable.Title>営業区域</DataTable.Title>
           </DataTable.Header>
           {
             weeklyRankingNightRecords.map((record: any, index: number) => {
@@ -305,6 +316,7 @@ export const Ranking =  (props: any) => {
                   <DataTable.Row style={styles.tableRow}>
                     <DataTable.Cell><Text style={styles.tableCell}>{index+1}位</Text></DataTable.Cell>
                     <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}円</Text></DataTable.Cell>
+                    <DataTable.Cell><Text style={styles.tableCell}>{record.prefecture}/{record.area}</Text></DataTable.Cell>
                   </DataTable.Row>
                 </View>
               )
@@ -320,6 +332,7 @@ export const Ranking =  (props: any) => {
           <DataTable.Header style={styles.tableHeader}>
             <DataTable.Title>順位</DataTable.Title>
             <DataTable.Title>売上</DataTable.Title>
+            <DataTable.Title>営業区域</DataTable.Title>
           </DataTable.Header>
           {
             monthlyRankingEveryOtherDayRecords.map((record: any, index: number) => {
@@ -328,6 +341,7 @@ export const Ranking =  (props: any) => {
                   <DataTable.Row style={styles.tableRow}>
                     <DataTable.Cell><Text style={styles.tableCell}>{index+1}位</Text></DataTable.Cell>
                     <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}円</Text></DataTable.Cell>
+                    <DataTable.Cell><Text style={styles.tableCell}>{record.prefecture}/{record.area}</Text></DataTable.Cell>
                   </DataTable.Row>
                 </View>
               )
@@ -340,6 +354,7 @@ export const Ranking =  (props: any) => {
           <DataTable.Header style={styles.tableHeader}>
             <DataTable.Title>順位</DataTable.Title>
             <DataTable.Title>売上</DataTable.Title>
+            <DataTable.Title>営業区域</DataTable.Title>
           </DataTable.Header>
           {
             monthlyRankingDayRecords.map((record: any, index: number) => {
@@ -348,6 +363,7 @@ export const Ranking =  (props: any) => {
                   <DataTable.Row style={styles.tableRow}>
                     <DataTable.Cell><Text style={styles.tableCell}>{index+1}位</Text></DataTable.Cell>
                     <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}円</Text></DataTable.Cell>
+                    <DataTable.Cell><Text style={styles.tableCell}>{record.prefecture}/{record.area}</Text></DataTable.Cell>
                   </DataTable.Row>
                 </View>
               )
@@ -360,6 +376,7 @@ export const Ranking =  (props: any) => {
           <DataTable.Header style={styles.tableHeader}>
             <DataTable.Title>順位</DataTable.Title>
             <DataTable.Title>売上</DataTable.Title>
+            <DataTable.Title>営業区域</DataTable.Title>
           </DataTable.Header>
           {
             monthlyRankingNightRecords.map((record: any, index: number) => {
@@ -368,6 +385,7 @@ export const Ranking =  (props: any) => {
                   <DataTable.Row style={styles.tableRow}>
                     <DataTable.Cell><Text style={styles.tableCell}>{index+1}位</Text></DataTable.Cell>
                     <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}円</Text></DataTable.Cell>
+                    <DataTable.Cell><Text style={styles.tableCell}>{record.prefecture}/{record.area}</Text></DataTable.Cell>
                   </DataTable.Row>
                 </View>
               )
