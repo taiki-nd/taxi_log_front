@@ -130,9 +130,6 @@ export const HomeScreen = (props: any) => {
 
       getAnalysisPeriod(year, month, today, close_day);
       getAnalysisDataForHome(id, user.close_day, user.pay_day, 'first')
-      //getMonthlySalesSum(currentUser.uid, user.close_day, user.pay_day, 'first');
-      //getMonthlySales(currentUser.uid, user.close_day, user.pay_day, 'first');
-      //recordsIndex(currentUser.uid, user.close_day, user.pay_day, 'first');
     })()
   }, []);
 
