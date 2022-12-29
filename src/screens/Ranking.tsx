@@ -79,6 +79,7 @@ export const Ranking =  (props: any) => {
       });
 
       setPrefecture(user.prefecture);
+      selectPrefecture(user.prefecture);
       setArea(user.area);
 
       getRankingData(id, user.prefecture, user.area, 'first')
@@ -154,7 +155,9 @@ export const Ranking =  (props: any) => {
       params: params,
     }).then((response) => {
       console.log("data", response.data);
-      setAreas(response.data.data);
+      var areaArray = ["全エリア"];
+      areaArray = areaArray.concat(response.data.data)
+      setAreas(areaArray);
       // 都道府県選択ダイアログ閉じる
       setVisiblePrefectureDialog(false);
     }).catch(error => {
