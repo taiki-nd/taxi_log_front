@@ -16,6 +16,7 @@ export const GetSigninUser = async () => {
     return false;
   }
   const headers = {'uuid': uid}
+  var api_status: boolean = false;
   await axios({
     method: method.GET,
     url: 'user/get_user_form_uid',
@@ -23,15 +24,13 @@ export const GetSigninUser = async () => {
     data: null,
     params: null,
   }).then((response) => {
-    var user: User = response.data.data
+    var user: User = response.data.data;
     console.log("user", user);
+    api_status = response.data.info.status;
     AsyncStorage.setItem("taxi_log_user_id", String(user.id));
-    return true;
   }).catch(error => {
-    console.log("error", error);
-    // user情報取得失敗
-    return false;
+    console.log("error GetSigninUser", error);
+    api_status = false;
   });
-  
-  return true;
+  return api_status;
 }
