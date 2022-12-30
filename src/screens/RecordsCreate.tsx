@@ -93,7 +93,6 @@ export const RecordsCreate = (props: any) => {
   // 必須項目チェックによるボタン活性化処理
   useEffect(() => {
     if (date !== undefined
-      && day !== ''
       && styleFlg !== ''
       && startHour !== undefined
       && runningTime !== undefined
@@ -145,6 +144,15 @@ export const RecordsCreate = (props: any) => {
   }, [numberOfTime])
 
   /**
+   * 曜日の取得
+   */
+  useEffect(() => {
+    var week_chars = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.']
+    var week_day = date.toDate().getDay();
+    setDay(week_chars[week_day])
+  }, [date])
+
+  /**
    * createRecord
    */
   const createRecord = useCallback(async (e: SyntheticEvent) => {
@@ -158,8 +166,6 @@ export const RecordsCreate = (props: any) => {
     if (taxFlg === "true") {
       isTax = true;
     }
-
-    console.log(date);
 
     // jsonData
     var jsonData = {
@@ -246,16 +252,6 @@ export const RecordsCreate = (props: any) => {
                   setDate(value);
                 }}
               />
-              <StandardLabel displayText={"曜日"}/>
-              <RadioButton.Group onValueChange={value => setDay(value)} value={day}>
-                <RadioButton.Item label="月" value="Mon." style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="火" value="Tue." style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="水" value="Wed." style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="木" value="Thu." style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="金" value="Fri." style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="土" value="Sat." style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="日" value="Sun." style={styles.radioButtonStyle} color={AccentColor}/>
-              </RadioButton.Group>
               <StandardLabel displayText={"勤務形態"}/>
               <RadioButton.Group onValueChange={value => setStyleFlg(value)} value={styleFlg}>
                 <RadioButton.Item label="隔日勤務" value="every_other_day" style={styles.radioButtonStyle} color={AccentColor}/>
