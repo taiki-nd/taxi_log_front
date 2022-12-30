@@ -25,6 +25,7 @@ export const HomeScreen = (props: any) => {
   const [closeDay, setCloseDay] = useState(0);
   const [payDay, setPayDay] = useState(0);
   const [toDay, setToDay] = useState(0);
+  const [dailyTarget, setDailyTarget] = useState(0);
   const [monthlyTarget, setMonthlyTarget] = useState(0);
   const [monthlySalesSumLast, setMonthlySalesSumLast] = useState(0);
 
@@ -86,18 +87,19 @@ export const HomeScreen = (props: any) => {
         return "error";
       });
 
-      var close_day = user.close_day
-      var pay_day = user.pay_day
+      var close_day = user.close_day;
+      var pay_day = user.pay_day;
       setCloseDay(user.close_day);
       setPayDay(user.pay_days);
 
       var day = new Date();
-      var today = day.getDay()
-      var year = day.getFullYear()
-      var month = day.getMonth() + 1
+      var today = day.getDay();
+      var year = day.getFullYear();
+      var month = day.getMonth() + 1;
       setToDay(today);
 
-      setMonthlyTarget(user.monthly_target)
+      setDailyTarget(user.daily_target);
+      setMonthlyTarget(user.monthly_target);
 
       var year_and_month = GetYearAndMonth(year, month, today, close_day, pay_day);
 
@@ -376,6 +378,8 @@ export const HomeScreen = (props: any) => {
 
         <StandardSpace/>
         <Text variant="titleMedium" style={styles.subTitle}>月次売上表</Text>
+        <Text variant="titleSmall" style={styles.subTitle}>目標売上：{dailyTarget}円</Text>
+
         {
           messageForMonthlySales.length !== 0 ? (
             messageForMonthlySales.map((message: string, index: number) => { 
@@ -388,9 +392,10 @@ export const HomeScreen = (props: any) => {
           ) : (
             <DataTable>
               <DataTable.Header style={styles.tableHeader}>
-                <DataTable.Title>Date</DataTable.Title>
-                <DataTable.Title>Sales</DataTable.Title>
-                <DataTable.Title>action</DataTable.Title>
+                <DataTable.Title>日付</DataTable.Title>
+                <DataTable.Title>売上</DataTable.Title>
+                <DataTable.Title>達成率</DataTable.Title>
+                <DataTable.Title>日報</DataTable.Title>
               </DataTable.Header>
               {
                 records.map((record: Record) => {
@@ -399,6 +404,7 @@ export const HomeScreen = (props: any) => {
                       <DataTable.Row style={styles.tableRow}>
                         <DataTable.Cell><Text style={styles.tableCell}>{DateTransition(record.date)}</Text></DataTable.Cell>
                         <DataTable.Cell><Text style={styles.tableCell}>{record.daily_sales}</Text></DataTable.Cell>
+                        <DataTable.Cell><Text style={styles.tableCell}>{Math.round((record.daily_sales/dailyTarget)*100)}%</Text></DataTable.Cell>
                         <DataTable.Cell>
                           <Icon
                             name="export"
