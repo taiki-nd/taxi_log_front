@@ -1,6 +1,6 @@
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, StyleSheet, FlatList, Alert } from 'react-native';
 import { Card, Paragraph, Title } from 'react-native-paper';
 import { auth } from '../auth/firebase';

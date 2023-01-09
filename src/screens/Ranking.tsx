@@ -42,8 +42,18 @@ export const Ranking =  (props: any) => {
       console.log("id ホーム画面初期起動", id)
       if (id === null) {
         const status = await GetSigninUser();
+        console.log("status", status);
         if (status === false) {
+          const id_after_check_server = await AsyncStorage.getItem("taxi_log_user_id")
+          if (id_after_check_server === null) {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Signup2' }]
+            });
+            return;
+          }
           navigation.navigate("Signin");
+          return;
         }
       } else {
         setId(id);

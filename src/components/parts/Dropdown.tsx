@@ -1,6 +1,5 @@
-import { View } from "react-native"
 import DropDownPicker from "react-native-dropdown-picker";
-import { AccentColor, BackColor, BasicColor } from "../../styles/common/color";
+import { AccentColor, BasicColor } from "../../styles/common/color";
 
 export const Dropdown = (props: any) => {
   // props

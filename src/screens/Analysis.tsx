@@ -4,7 +4,6 @@ import { Text } from "react-native-paper";
 import { BarChart } from 'react-native-chart-kit';
 import { BackColor, BasicColor, TomatoColor } from '../styles/common/color';
 import axios from 'axios';
-import { auth } from '../auth/firebase';
 import { errorCodeTransition, method } from '../utils/const';
 import { Dropdown } from '../components/parts/Dropdown';
 import { StandardSpace } from '../components/parts/Space';
@@ -48,8 +47,18 @@ export const Analysis = (props: any) => {
       console.log("id 解析画面初期起動", id)
       if (id === null) {
         const status = await GetSigninUser();
+        console.log("status", status);
         if (status === false) {
+          const id_after_check_server = await AsyncStorage.getItem("taxi_log_user_id")
+          if (id_after_check_server === null) {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Signup2' }]
+            });
+            return;
+          }
           navigation.navigate("Signin");
+          return;
         }
       } else {
         setId(id);

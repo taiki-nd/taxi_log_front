@@ -1,12 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { Text, DataTable, Dialog, Provider, Portal, RadioButton } from "react-native-paper";
 import Icon from 'react-native-vector-icons/AntDesign';
-import { auth } from "../../../auth/firebase";
 import { Detail } from "../../../models/Detail";
 import { AccentColor, BackColor, BasicColor, CoverColor, SeaColor, TomatoColor } from "../../../styles/common/color";
 import { DateTransition, DayTransition } from "../../../utils/commonFunc/record/DateTranstion";
