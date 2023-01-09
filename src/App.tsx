@@ -4,7 +4,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { BasicColor, DisabledColor, AccentColor, BackColor } from './styles/common/color';
 import { HomeScreen } from './screens/HomeScreen';
-import { RecordsIndex } from './screens/RecordsIndex';
 import { RecordsCreate } from './screens/RecordsCreate';
 import { Analysis } from './screens/Analysis';
 import { Setting } from './screens/Setting';

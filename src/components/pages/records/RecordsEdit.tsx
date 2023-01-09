@@ -5,7 +5,6 @@ import CalendarStrip from 'react-native-calendar-strip';
 import { StyleSheet, View, Text, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { RadioButton } from "react-native-paper";
-import { auth } from "../../../auth/firebase";
 import { AccentColor, BackColor, BasicColor, TomatoColor } from "../../../styles/common/color";
 import { errorCodeTransition, method } from "../../../utils/const";
 import { StandardButton } from "../../parts/StandardButton";
@@ -54,8 +53,18 @@ export const RecordsEdit = (props: any) => {
       console.log("id レコード編集ページ初期表示", id)
       if (id === null) {
         const status = await GetSigninUser();
+        console.log("status", status);
         if (status === false) {
+          const id_after_check_server = await AsyncStorage.getItem("taxi_log_user_id")
+          if (id_after_check_server === null) {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Signup2' }]
+            });
+            return;
+          }
           navigation.navigate("Signin");
+          return;
         }
       } else {
         setId(id);
@@ -79,7 +88,7 @@ export const RecordsEdit = (props: any) => {
         console.log("data", response.data);
         // データの取得
         setUserId(response.data.data.id);
-        setDate(response.data.data.date);
+        setDate(moment(response.data.data.date));
         setDay(response.data.data.day_of_week);
         setStyleFlg(response.data.data.style_flg);
         setStartHour(response.data.data.start_hour);
@@ -105,7 +114,6 @@ export const RecordsEdit = (props: any) => {
   // 必須項目チェックによるボタン活性化処理
   useEffect(() => {
     if (date !== undefined
-      && day !== ''
       && styleFlg !== ''
       && startHour !== undefined
       && runningTime !== undefined
@@ -155,6 +163,15 @@ export const RecordsEdit = (props: any) => {
       setNumberOfTimeMessage('乗車回数に無効な値が入力されています。0以上の整数を入力して下さい。')
     }
   }, [numberOfTime])
+
+  /**
+   * 曜日の取得
+   */
+  useEffect(() => {
+    var week_chars = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.']
+    var week_day = date.toDate().getDay();
+    setDay(week_chars[week_day])
+  }, [date])
 
   /**
    * updateRecord
@@ -260,16 +277,6 @@ export const RecordsEdit = (props: any) => {
                   setDate(value);
                 }}
               />
-              <StandardLabel displayText={"曜日"}/>
-              <RadioButton.Group onValueChange={value => setDay(value)} value={day}>
-                <RadioButton.Item label="月" value="Mon." style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="火" value="Tue." style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="水" value="Wed." style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="木" value="Thu." style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="金" value="Fri." style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="土" value="Sat." style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="日" value="Sun." style={styles.radioButtonStyle} color={AccentColor}/>
-              </RadioButton.Group>
               <StandardLabel displayText={"勤務形態"}/>
               <RadioButton.Group onValueChange={value => setStyleFlg(value)} value={styleFlg}>
                 <RadioButton.Item label="隔日勤務" value="every_other_day" style={styles.radioButtonStyle} color={AccentColor}/>

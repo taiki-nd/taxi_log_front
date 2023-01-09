@@ -48,6 +48,7 @@ export const Signup2 = (props: any) => {
 
   useEffect(() => {
     var currentUser = auth.currentUser;
+    console.log('uid', currentUser?.uid);
     console.log("メール認証開始/メール認証ステータス", currentUser?.emailVerified)
     if (currentUser !== null) {
       currentUser.reload();
@@ -57,6 +58,11 @@ export const Signup2 = (props: any) => {
           routes: [{ name: 'SignupEmail' }]
         });
       }
+    } else {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Signin' }]
+      });
     }
     setPrefectures([
       "北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県",

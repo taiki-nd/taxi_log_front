@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import { BackColor, BasicColor, CoverColor } from '../../styles/common/color';
+import { BasicColor, CoverColor } from '../../styles/common/color';
 import { TextInput } from 'react-native-paper';
 
 export const DialogTextInput = (props: any) => {

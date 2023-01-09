@@ -58,8 +58,14 @@ export const Signin = (props: any) => {
         setButtonDisabled(true);
         const user = userCredential.user;
         const uid = user.uid;
-        console.log(uid);
+        console.log('uid:', uid);
         console.log("メール認証開始/メール認証ステータス", user.emailVerified)
+        if (user === null ) {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Signin' }]
+          });
+        }
         if (!user.emailVerified) {
           navigation.reset({
             index: 0,
