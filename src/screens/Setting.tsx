@@ -254,6 +254,10 @@ export const Setting = (props: any) => {
       <StandardButton displayText="Edit Account" onPress={() => navigation.navigate('EditAccount')}/>
       <StandardSpace />
 
+      <Text variant="titleLarge" style={styles.subTitle}>Edit Email or Password</Text>
+      <StandardButton displayText="Edit Email or Password" onPress={() => navigation.navigate('EditUser')}/>
+      <StandardSpace />
+
       <Text variant="titleLarge" style={styles.subTitle}>Signout</Text>
       <StandardButton displayText={"SIGNOUT"} onPress={funcSignout}/>
       <StandardSpace />
