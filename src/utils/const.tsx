@@ -63,6 +63,9 @@ export const errorCodeTransition = (codes: string[]) => {
       case 'password_not_match':
         errorMessage.push('パスワードが一致していません。');
         break;
+      case 'invalid_email':
+        errorMessage.push('メールアドレスの形式が正しくありません。');
+        break;
       case 'body_parse_error':
         errorMessage.push('情報処理に失敗しました。しばらく時間をおいてから再度試してください。');
         break;

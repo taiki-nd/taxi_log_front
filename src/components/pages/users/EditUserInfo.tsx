@@ -1,7 +1,7 @@
 import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { Text, StyleSheet, View, TouchableWithoutFeedback, Image, Keyboard } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { BackColor } from '../../../styles/common/color';
+import { BackColor, TomatoColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
 import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
@@ -16,18 +16,42 @@ export const EditUser = (props: any) => {
   // state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [errorMessages, setErrorMessages] = useState<string[]>([]);
-  const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [errorEmailMessages, setErrorEmailMessages] = useState<string[]>([]);
+  const [errorPasswordMessages, setErrorPasswordMessages] = useState<string[]>([]);
+  const [EmailButtonDisabled, setEmailButtonDisabled] = useState(true);
+  const [PasswordButtonDisabled, setPasswordButtonDisabled] = useState(true);
 
   // 必須項目チェックによるボタン活性化処理
   useEffect(() => {
-    if (email !== '' && password !== '' && confirmPassword !== '') {
-      setButtonDisabled(false);
+    var pattern = /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]+.[A-Za-z0-9]+$/;
+    if (email !== '') {
+      if (pattern.test(email)) {
+        setErrorEmailMessages(errorCodeTransition([]))
+        setEmailButtonDisabled(false);
+      } else {
+        setErrorEmailMessages(errorCodeTransition(['invalid_email']))
+        setEmailButtonDisabled(true);
+      }
     } else {
-      setButtonDisabled(true);
+      setEmailButtonDisabled(true);
     }
-  }, [email, password, confirmPassword]);
+  }, [email]);
+
+  useEffect(() => {
+    if (password !== '' && newPassword !== '' && confirmNewPassword !== '') {
+      if (newPassword === confirmNewPassword) {
+        setErrorPasswordMessages(errorCodeTransition([]))
+        setPasswordButtonDisabled(false);
+      } else {
+        setPasswordButtonDisabled(true);
+        setErrorPasswordMessages(errorCodeTransition(['password_not_match']))
+      }
+    } else {
+      setPasswordButtonDisabled(true);
+    }
+  }, [password, newPassword, confirmNewPassword]);
 
   // signin状態の監視
   /*
@@ -47,6 +71,7 @@ export const EditUser = (props: any) => {
   /**
    * Signup処理
    */
+  /*
   const funcSignup = useCallback(async (e: SyntheticEvent) => {
     e.preventDefault();
 
@@ -82,7 +107,7 @@ export const EditUser = (props: any) => {
         });
     }
   }, [email, password, confirmPassword]);
-
+*/
   /**
    * moveScreen
    * @param screen 
@@ -100,22 +125,29 @@ export const EditUser = (props: any) => {
         <KeyboardAwareScrollView>
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View>
-              <View style={{alignItems: 'center'}}>
-                <Image source={require('../../../assets/logo.png')} style={styles.logo}></Image>
-              </View>
-              <StandardTextInput label="Email" placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false} onChangeText={(text: string) => setEmail(text)}/>
-              <StandardTextInput label="Password" placeholder="Enter password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
-              <StandardTextInput label="Password確認用" placeholder="Confirm password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setConfirmPassword(text)}/>
-              {errorMessages.length != 0 ? (
-                errorMessages.map((errorMessage: string, index: number) => { 
+              <StandardTextInput label="新しいメースアドレス" placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false} onChangeText={(text: string) => setEmail(text)}/>
+              {errorEmailMessages.length != 0 ? (
+                errorEmailMessages.map((errorMessage: string, index: number) => { 
                   return(
                     <Text style={styles.errorTextStyle} key={index}>
                       {errorMessage}
                     </Text>
                   )})
               ) : null}
-              <StandardButton displayText={'SIGNUP'} disabled={buttonDisabled} onPress={funcSignup}/>
-              <StandardTextLink displayText="Signin here" onPress={() => moveScreen("Signin")}/>
+              <StandardButton displayText={'メースアドレス変更'} disabled={EmailButtonDisabled} onPress={moveScreen}/>
+              <StandardTextInput label="現在のパスワード" placeholder="password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
+              <StandardTextInput label="新しいパスワード" placeholder="new password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setNewPassword(text)}/>
+              <StandardTextInput label="新しいパスワード確認用" placeholder="confirm new password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setConfirmNewPassword(text)}/>
+              {errorPasswordMessages.length != 0 ? (
+                errorPasswordMessages.map((errorMessage: string, index: number) => { 
+                  return(
+                    <Text style={styles.errorTextStyle} key={index}>
+                      {errorMessage}
+                    </Text>
+                  )})
+              ) : null}
+              <StandardButton displayText={'パスワード変更'} disabled={PasswordButtonDisabled} onPress={moveScreen}/>
+              <StandardTextLink displayText="cancel" onPress={() => moveScreen("Setting")}/>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAwareScrollView>
@@ -137,7 +169,7 @@ const styles = StyleSheet.create({
     height: 200,
   },
   errorTextStyle: {
-    color: 'red',
+    color: TomatoColor,
     textAlign: 'center',
     fontSize: 14,
   },
