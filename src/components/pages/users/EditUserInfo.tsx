@@ -5,7 +5,7 @@ import { BackColor, TomatoColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
 import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
-import { updateEmail, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
+import { updateEmail, reauthenticateWithCredential, EmailAuthProvider, sendEmailVerification } from "firebase/auth";
 import { auth } from '../../../auth/firebase';
 import { errorCodeTransition, firebaseErrorTransition } from '../../../utils/const';
 import { DialogOneButton } from '../../parts/DialogOneButton';
@@ -58,15 +58,15 @@ export const EditUser = (props: any) => {
       }
     }
 
-    if (password !== '') {
+    if (password === '') {
       setPasswordButtonDisabled(true);
     }
   }, [email, password, newPassword, confirmNewPassword]);
 
   /*
-   * changeEmail
+   * update
    */
-  const changeEmail = () => {
+  const update = () => {
     const user = auth.currentUser;
     if (user?.email) {
       const credential = EmailAuthProvider.credential(user.email, password);
@@ -76,6 +76,7 @@ export const EditUser = (props: any) => {
             // Email updated
             setDialogTitle('メールアドレスの更新が完了しました');
             setDialogMessage(`[${email}]に更新されました`);
+            setVisibleDialog(true);
           }).catch((error) => {
             console.error('firebase error message:', firebaseErrorTransition(error));
               setErrorPasswordMessages(firebaseErrorTransition(error));
@@ -171,7 +172,7 @@ export const EditUser = (props: any) => {
                     </Text>
                   )})
               ) : null}
-              <StandardButton displayText={'更新'} disabled={PasswordButtonDisabled} onPress={moveScreen}/>
+              <StandardButton displayText={'更新'} disabled={PasswordButtonDisabled} onPress={update}/>
               <StandardTextLink displayText="cancel" onPress={() => moveScreen("Setting")}/>
             </View>
           </TouchableWithoutFeedback>
