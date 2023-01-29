@@ -5,9 +5,10 @@ import { BackColor, TomatoColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
 import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
-import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { updateEmail, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import { auth } from '../../../auth/firebase';
 import { errorCodeTransition, firebaseErrorTransition } from '../../../utils/const';
+import { DialogOneButton } from '../../parts/DialogOneButton';
 
 export const EditUser = (props: any) => {
   // props
@@ -18,40 +19,66 @@ export const EditUser = (props: any) => {
   const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
-  const [errorEmailMessages, setErrorEmailMessages] = useState<string[]>([]);
   const [errorPasswordMessages, setErrorPasswordMessages] = useState<string[]>([]);
-  const [EmailButtonDisabled, setEmailButtonDisabled] = useState(true);
   const [PasswordButtonDisabled, setPasswordButtonDisabled] = useState(true);
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogMessage, setDialogMessage] = useState('');
+  const [visibleDialog, setVisibleDialog] = useState(false);
 
   // 必須項目チェックによるボタン活性化処理
   useEffect(() => {
     var pattern = /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]+.[A-Za-z0-9]+$/;
     if (email !== '') {
       if (pattern.test(email)) {
-        setErrorEmailMessages(errorCodeTransition([]))
-        setEmailButtonDisabled(false);
-      } else {
-        setErrorEmailMessages(errorCodeTransition(['invalid_email']))
-        setEmailButtonDisabled(true);
-      }
-    } else {
-      setEmailButtonDisabled(true);
-    }
-  }, [email]);
-
-  useEffect(() => {
-    if (password !== '' && newPassword !== '' && confirmNewPassword !== '') {
-      if (newPassword === confirmNewPassword) {
         setErrorPasswordMessages(errorCodeTransition([]))
-        setPasswordButtonDisabled(false);
+        if (password !== '') {
+          setPasswordButtonDisabled(false);
+        } else {
+          setPasswordButtonDisabled(true);
+        }
       } else {
+        setErrorPasswordMessages(errorCodeTransition(['invalid_email']))
+        setPasswordButtonDisabled(true);
+      }
+    }
+
+    if (newPassword !== '' && confirmNewPassword !== '') {
+      if (newPassword !== confirmNewPassword) {
         setPasswordButtonDisabled(true);
         setErrorPasswordMessages(errorCodeTransition(['password_not_match']))
+      } else {
+        setPasswordButtonDisabled(false);
       }
-    } else {
+    }
+
+    if (password !== '') {
       setPasswordButtonDisabled(true);
     }
-  }, [password, newPassword, confirmNewPassword]);
+  }, [email, password, newPassword, confirmNewPassword]);
+
+  /*
+   * changeEmail
+   */
+  const changeEmail = () => {
+    const user = auth.currentUser;
+    if (user?.email) {
+      const credential = EmailAuthProvider.credential(user.email, password);
+      reauthenticateWithCredential(user, credential).then(() => {
+        if (user !== null){
+          updateEmail(user, email).then(() => {
+            // Email updated
+            setDialogTitle('メールアドレスの更新が完了しました');
+            setDialogMessage(`[${email}]に更新されました`);
+          }).catch((error) => {
+            console.error('firebase error message:', firebaseErrorTransition(error));
+              setErrorPasswordMessages(firebaseErrorTransition(error));
+              // ボタンの活性化
+              setPasswordButtonDisabled(false);
+          });
+        }
+      });
+    }
+  }
 
   // signin状態の監視
   /*
@@ -126,15 +153,6 @@ export const EditUser = (props: any) => {
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View>
               <StandardTextInput label="新しいメースアドレス" placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false} onChangeText={(text: string) => setEmail(text)}/>
-              {errorEmailMessages.length != 0 ? (
-                errorEmailMessages.map((errorMessage: string, index: number) => { 
-                  return(
-                    <Text style={styles.errorTextStyle} key={index}>
-                      {errorMessage}
-                    </Text>
-                  )})
-              ) : null}
-              <StandardButton displayText={'メースアドレス変更'} disabled={EmailButtonDisabled} onPress={moveScreen}/>
               <StandardTextInput label="現在のパスワード" placeholder="password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
               <StandardTextInput label="新しいパスワード" placeholder="new password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setNewPassword(text)}/>
               <StandardTextInput label="新しいパスワード確認用" placeholder="confirm new password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setConfirmNewPassword(text)}/>
@@ -146,12 +164,20 @@ export const EditUser = (props: any) => {
                     </Text>
                   )})
               ) : null}
-              <StandardButton displayText={'パスワード変更'} disabled={PasswordButtonDisabled} onPress={moveScreen}/>
+              <StandardButton displayText={'更新'} disabled={PasswordButtonDisabled} onPress={moveScreen}/>
               <StandardTextLink displayText="cancel" onPress={() => moveScreen("Setting")}/>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAwareScrollView>
       </View>
+      <DialogOneButton
+        title={dialogTitle}
+        description={dialogMessage}
+        displayButton1="OK"
+        visible={visibleDialog}
+        funcButton1={() => setVisibleDialog(false)}
+        onDismiss={() => setVisibleDialog(false)}
+      />
     </View>
   );
 }
