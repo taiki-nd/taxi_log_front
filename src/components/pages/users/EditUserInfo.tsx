@@ -28,8 +28,11 @@ export const EditUser = (props: any) => {
   // 必須項目チェックによるボタン活性化処理
   useEffect(() => {
     var pattern = /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]+.[A-Za-z0-9]+$/;
+    var errArray: string[] = []
     if (email !== '') {
       if (pattern.test(email)) {
+        var index = errArray.indexOf('invalid_email');
+        errArray.splice(index, 1);
         setErrorPasswordMessages(errorCodeTransition([]))
         if (password !== '') {
           setPasswordButtonDisabled(false);
@@ -37,7 +40,8 @@ export const EditUser = (props: any) => {
           setPasswordButtonDisabled(true);
         }
       } else {
-        setErrorPasswordMessages(errorCodeTransition(['invalid_email']))
+        errArray.push('invalid_email')
+        setErrorPasswordMessages(errorCodeTransition(errArray))
         setPasswordButtonDisabled(true);
       }
     }
@@ -45,8 +49,11 @@ export const EditUser = (props: any) => {
     if (newPassword !== '' && confirmNewPassword !== '') {
       if (newPassword !== confirmNewPassword) {
         setPasswordButtonDisabled(true);
-        setErrorPasswordMessages(errorCodeTransition(['password_not_match']))
+        errArray.push('password_not_match')
+        setErrorPasswordMessages(errorCodeTransition(errArray))
       } else {
+        var index = errArray.indexOf('password_not_match');
+        errArray.splice(index, 1);
         setPasswordButtonDisabled(false);
       }
     }
