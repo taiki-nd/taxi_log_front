@@ -498,8 +498,9 @@ export const RecordsShow = (props: any) => {
     }).catch((error) => {
       var errorCode = error.response.data.info.code;
       var message: string[] = [];
+      setDialogTitle('日報削除に失敗しました。')
       message = errorCodeTransition(errorCode);
-      setVisibleConfirmDeleteDialog(false);
+      setVisibleConfirmDeleteRecordDialog(false);
       setVisibleFailedDialog(true);
       setErrorMessages(message);
     })

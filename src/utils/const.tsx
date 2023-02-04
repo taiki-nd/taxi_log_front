@@ -122,7 +122,7 @@ export const errorCodeTransition = (codes: string[]) => {
         errorMessage.push('売上に無効な値が入力されています。0以上の整数を入力して下さい。');
         break;
       default:
-        errorMessage.push('システムエラーが発生しました。');
+        errorMessage.push('システムエラーが発生しました。運営に問い合わせてください。');
         break;
     }
   });
