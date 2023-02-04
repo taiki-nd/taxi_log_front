@@ -5,7 +5,7 @@ import { BackColor, TomatoColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
 import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
-import { updateEmail, reauthenticateWithCredential, EmailAuthProvider, sendEmailVerification } from "firebase/auth";
+import { updateEmail, reauthenticateWithCredential, EmailAuthProvider, sendEmailVerification, updatePassword } from "firebase/auth";
 import { auth } from '../../../auth/firebase';
 import { errorCodeTransition, firebaseErrorTransition } from '../../../utils/const';
 import { DialogOneButton } from '../../parts/DialogOneButton';
@@ -67,22 +67,38 @@ export const EditUser = (props: any) => {
    * update
    */
   const update = () => {
+    console.log('update')
     const user = auth.currentUser;
     if (user?.email) {
       const credential = EmailAuthProvider.credential(user.email, password);
       reauthenticateWithCredential(user, credential).then(() => {
         if (user !== null){
-          updateEmail(user, email).then(() => {
-            // Email updated
-            setDialogTitle('メールアドレスの更新が完了しました');
-            setDialogMessage(`[${email}]に更新されました`);
-            setVisibleDialog(true);
-          }).catch((error) => {
-            console.error('firebase error message:', firebaseErrorTransition(error));
+          // メールアドレスの更新
+          if (email !== '') {
+            updateEmail(user, email).then(() => {
+              // Email updated
+              setDialogTitle('メールアドレスの更新が完了しました');
+              setDialogMessage(`[${email}]に更新されました`);
+              setVisibleDialog(true);
+            }).catch((error) => {
+              console.error('firebase error message:', firebaseErrorTransition(error));
+                setErrorPasswordMessages(firebaseErrorTransition(error));
+                // ボタンの活性化
+                setPasswordButtonDisabled(false);
+            });
+          }
+          // passwordの更新
+          if (newPassword !== '' && confirmNewPassword !== '') {
+            console.log('パスワード更新処理')
+            updatePassword(user, newPassword).then(() =>{
+              setDialogTitle('パスワードの更新が完了しました');
+              setDialogMessage('更新したパスワードはお忘れにならないようにご注意ください');
+              setVisibleDialog(true);
+            }).catch((error) =>{
+              console.log(error)
               setErrorPasswordMessages(firebaseErrorTransition(error));
-              // ボタンの活性化
-              setPasswordButtonDisabled(false);
-          });
+            });
+          }
         }
       });
     }
@@ -161,7 +177,7 @@ export const EditUser = (props: any) => {
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View>
               <StandardTextInput label="新しいメースアドレス" placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false} onChangeText={(text: string) => setEmail(text)}/>
-              <StandardTextInput label="現在のパスワード" placeholder="password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
+              <StandardTextInput label="現在のパスワード (必須)" placeholder="password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
               <StandardTextInput label="新しいパスワード" placeholder="new password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setNewPassword(text)}/>
               <StandardTextInput label="新しいパスワード確認用" placeholder="confirm new password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setConfirmNewPassword(text)}/>
               {errorPasswordMessages.length != 0 ? (
