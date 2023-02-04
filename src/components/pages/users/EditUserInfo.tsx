@@ -1,12 +1,12 @@
 import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View, TouchableWithoutFeedback, Image, Keyboard } from 'react-native';
-import { Text, Provider, Portal, Dialog, Paragraph, Button, RadioButton } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { BackColor, BasicColor, TomatoColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
 import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
-import { updateEmail, reauthenticateWithCredential, EmailAuthProvider, sendEmailVerification, updatePassword } from "firebase/auth";
+import { updateEmail, reauthenticateWithCredential, EmailAuthProvider, sendEmailVerification, updatePassword, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from '../../../auth/firebase';
 import { errorCodeTransition, firebaseErrorTransition } from '../../../utils/const';
 import { DialogOneButton } from '../../parts/DialogOneButton';
@@ -75,7 +75,6 @@ export const EditUser = (props: any) => {
    * update
    */
   const update = () => {
-    console.log('update')
     const user = auth.currentUser;
     if (user?.email) {
       const credential = EmailAuthProvider.credential(user.email, password);
@@ -95,20 +94,35 @@ export const EditUser = (props: any) => {
                 setPasswordButtonDisabled(false);
             });
           }
-          // passwordの更新
-          if (newPassword !== '' && confirmNewPassword !== '') {
-            console.log('パスワード更新処理')
-            updatePassword(user, newPassword).then(() =>{
-              setDialogTitle('パスワードの更新が完了しました');
-              setDialogMessage('更新したパスワードはお忘れにならないようにご注意ください');
-              setVisibleDialog(true);
-            }).catch((error) =>{
-              console.log(error)
-              setErrorMessagesPassword(firebaseErrorTransition(error));
-            });
-          }
         }
       });
+    }
+  }
+
+  /**
+   * updatePassword
+   */
+  const updatePassword = () => {
+    const user = auth.currentUser;
+    if (user?.email) {
+      const credential = EmailAuthProvider.credential(user.email, password);
+      reauthenticateWithCredential(user, credential).then(() => {
+        if (user.email !== null){
+          // passwordの更新
+          sendPasswordResetEmail(auth, user.email).then(() => {
+            setDialogTitle('パスワードリセットメールを送信しました。');
+            setDialogMessage(`[${user.email}]にパスワードリセットメールを送信しました。メールをご確認のうえ、パスワードの更新手続きを行なってください。`);
+            setVisibleDialog(true);
+          })
+        }
+      }).catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage)
+        setDialogTitle('パスワードリセットメールの送信に失敗しました。');
+        setDialogMessage(`[${user.email}]にパスワードリセットメールを送信を試みましたが失敗しました。再ログイン、もしくはメールアドレスの変更を実施してください。`);
+        setVisibleDialog(true);
+      })
     }
   }
 
@@ -165,7 +179,7 @@ export const EditUser = (props: any) => {
                     </Text>
                   )})
               ) : null}
-              <StandardButton displayText={'更新'} disabled={PasswordButtonDisabled} onPress={update}/>
+              <StandardButton displayText={'更新'} disabled={PasswordButtonDisabled} onPress={updatePassword}/>
 
               <StandardTextLink displayText="cancel" onPress={() => moveScreen("Setting")}/>
             </View>
