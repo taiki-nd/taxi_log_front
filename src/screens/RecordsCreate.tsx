@@ -47,7 +47,7 @@ export const RecordsCreate = (props: any) => {
   // signinユーザー情報の取得
   useEffect(() => {
     (async () => {
-      const id = await AsyncStorage.getItem("taxi_log_user_id")
+      var id = await AsyncStorage.getItem("taxi_log_user_id")
       console.log("id レコード作成ページ初期表示", id)
       if (id === null) {
         const status = await GetSigninUser();
@@ -65,7 +65,10 @@ export const RecordsCreate = (props: any) => {
           return;
         }
       } else {
-        setId(id);
+        id = await AsyncStorage.getItem("taxi_log_user_id")
+        if (id !== null) {
+          setId(id);
+        }
       }
 
       // headers
