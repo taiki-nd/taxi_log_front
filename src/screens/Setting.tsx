@@ -103,7 +103,7 @@ export const Setting = (props: any) => {
 
   useEffect(() => {
     (async () => {
-      const id = await AsyncStorage.getItem("taxi_log_user_id")
+      var id = await AsyncStorage.getItem("taxi_log_user_id")
       console.log("id 設定画面初期起動", id)
       if (id === null) {
         const status = await GetSigninUser();
@@ -121,7 +121,10 @@ export const Setting = (props: any) => {
           return;
         }
       } else {
-        setId(id);
+        id = await AsyncStorage.getItem("taxi_log_user_id")
+        if (id !== null) {
+          setId(id);
+        }
       }
 
       const user = auth.currentUser;
@@ -194,7 +197,10 @@ export const Setting = (props: any) => {
     const uid = user?.uid;
     var credential
 
-    const headers = { 'uuid': String(uid) }
+    const headers = {
+      'uuid': String(uid),
+      'id': userId,
+    }
 
     if (user?.email) {
       credential = EmailAuthProvider.credential(user.email, password);
