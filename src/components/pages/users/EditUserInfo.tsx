@@ -1,7 +1,8 @@
 import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
-import { Text, StyleSheet, View, TouchableWithoutFeedback, Image, Keyboard } from 'react-native';
+import { StyleSheet, View, TouchableWithoutFeedback, Image, Keyboard } from 'react-native';
+import { Text, Provider, Portal, Dialog, Paragraph, Button, RadioButton } from "react-native-paper";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { BackColor, TomatoColor } from '../../../styles/common/color';
+import { BackColor, BasicColor, TomatoColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
 import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
@@ -9,6 +10,7 @@ import { updateEmail, reauthenticateWithCredential, EmailAuthProvider, sendEmail
 import { auth } from '../../../auth/firebase';
 import { errorCodeTransition, firebaseErrorTransition } from '../../../utils/const';
 import { DialogOneButton } from '../../parts/DialogOneButton';
+import { StandardSpace } from '../../parts/Space';
 
 export const EditUser = (props: any) => {
   // props
@@ -103,62 +105,7 @@ export const EditUser = (props: any) => {
       });
     }
   }
-
-  // signin状態の監視
-  /*
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user: any) => {
-      if (user) {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Home' }]
-        });
-      }
-    });
-    return unsubscribe;
-  }, []);
-  */
-
-  /**
-   * Signup処理
-   */
-  /*
-  const funcSignup = useCallback(async (e: SyntheticEvent) => {
-    e.preventDefault();
-
-    // ボタンの非活性化
-    setButtonDisabled(true);
-
-    // passwordの確認
-    if (password !== confirmPassword) {
-      console.error("password not match");
-      var errorCode: string[] = [];
-      errorCode.push('password_not_match')
-      setErrorMessages(errorCodeTransition(errorCode));
-    } else {
-      // firebaseへのuser登録
-      await createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          // ボタンの活性化
-          setButtonDisabled(true);
-          const user = userCredential.user;
-          const uid = user.uid;
-          console.log("uid", uid);
-          // メール認証画面への遷移
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'SignupEmail' }]
-          });
-        })
-        .catch((error) => {
-          console.error('firebase error message:', firebaseErrorTransition(error));
-          setErrorMessages(firebaseErrorTransition(error));
-          // ボタンの活性化
-          setButtonDisabled(false);
-        });
-    }
-  }, [email, password, confirmPassword]);
-*/
+  
   /**
    * moveScreen
    * @param screen 
@@ -176,8 +123,14 @@ export const EditUser = (props: any) => {
         <KeyboardAwareScrollView>
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View>
-              <StandardTextInput label="新しいメースアドレス" placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false} onChangeText={(text: string) => setEmail(text)}/>
+              <Text variant="titleLarge" style={styles.subTitle}> Enter Password</Text>
               <StandardTextInput label="現在のパスワード (必須)" placeholder="password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
+              <StandardSpace />
+              <Text variant="titleLarge" style={styles.subTitle}>Edit Email</Text>
+              <StandardTextInput label="新しいメースアドレス" placeholder="abc@abc.com" keyboardType="email-address" secureTextEntry={false} onChangeText={(text: string) => setEmail(text)}/>
+              <StandardButton displayText={'更新'} disabled={PasswordButtonDisabled} onPress={update}/>
+              <StandardSpace />
+              <Text variant="titleLarge" style={styles.subTitle}>Edit Password</Text>
               <StandardTextInput label="新しいパスワード" placeholder="new password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setNewPassword(text)}/>
               <StandardTextInput label="新しいパスワード確認用" placeholder="confirm new password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setConfirmNewPassword(text)}/>
               {errorPasswordMessages.length != 0 ? (
@@ -208,6 +161,7 @@ export const EditUser = (props: any) => {
 
 const styles = StyleSheet.create({
   mainBody: {
+    padding: '3%',
     flex: 1,
     justifyContent: 'center',
     backgroundColor: BackColor,
@@ -222,5 +176,10 @@ const styles = StyleSheet.create({
     color: TomatoColor,
     textAlign: 'center',
     fontSize: 14,
+  },
+  subTitle: {
+    color: BasicColor,
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
   },
 });
