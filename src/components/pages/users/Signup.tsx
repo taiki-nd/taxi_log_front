@@ -1,7 +1,7 @@
 import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { Text, StyleSheet, View, TouchableWithoutFeedback, Image, Keyboard } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { BackColor } from '../../../styles/common/color';
+import { BackColor, TomatoColor } from '../../../styles/common/color';
 import { StandardButton } from '../../parts/StandardButton';
 import { StandardTextInput } from '../../parts/StandardTextInput';
 import { StandardTextLink } from '../../parts/StandardTextLink';
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     height: 200,
   },
   errorTextStyle: {
-    color: 'red',
+    color: TomatoColor,
     textAlign: 'center',
     fontSize: 14,
   },

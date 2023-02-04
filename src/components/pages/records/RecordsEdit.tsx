@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
     marginRight: 35,
   },
   errorTextStyle: {
-    color: 'red',
+    color: TomatoColor,
     textAlign: 'center',
     fontSize: 14,
   },
