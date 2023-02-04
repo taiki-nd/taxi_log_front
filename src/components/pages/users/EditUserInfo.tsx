@@ -46,22 +46,7 @@ export const EditUser = (props: any) => {
         setErrorMessagesEmail(errorCodeTransition([]));
         setEmailButtonDisabled(true);
       }
-
-      if (newPassword !== '' && confirmNewPassword !== '') {
-        console.log('newPassword !==  && confirmNewPassword !== ')
-        if (newPassword === confirmNewPassword) {
-          console.log('newPassword === confirmNewPassword')
-          setPasswordButtonDisabled(false);
-          setErrorMessagesNewPassword(errorCodeTransition([]));
-        } else {
-          console.log('newPassword === confirmNewPassword else')
-          setErrorMessagesNewPassword(errorCodeTransition(['password_not_match']));
-          setPasswordButtonDisabled(true);
-        }
-      } else {
-        setErrorMessagesNewPassword(errorCodeTransition([]));
-        setPasswordButtonDisabled(true);
-      }
+      setPasswordButtonDisabled(false);
     } else {
       setErrorMessagesEmail(errorCodeTransition([]));
       setErrorMessagesNewPassword(errorCodeTransition([]));
@@ -75,6 +60,7 @@ export const EditUser = (props: any) => {
    * update
    */
   const update = () => {
+    setEmailButtonDisabled(false);
     const user = auth.currentUser;
     if (user?.email) {
       const credential = EmailAuthProvider.credential(user.email, password);
@@ -84,14 +70,24 @@ export const EditUser = (props: any) => {
           if (email !== '') {
             updateEmail(user, email).then(() => {
               // Email updated
-              setDialogTitle('メールアドレスの更新が完了しました');
-              setDialogMessage(`[${email}]に更新されました`);
-              setVisibleDialog(true);
+              sendEmailVerification(user).then(() => {
+                setDialogTitle('メールアドレス認証メールを送信しました');
+                setDialogMessage(`[${email}]にメールアドレス認証用メールを送信しました。メールをご確認の上、新しいメールアドレスを認証してください。`);
+                setVisibleDialog(true);
+                setEmail('');
+                setPassword('');
+                setNewPassword('');
+                setConfirmNewPassword('');
+              }).catch((error) => {
+                setDialogTitle('メールアドレス認証メールを送信に失敗しました');
+                setDialogMessage(`[${email}]にメールアドレス認証用メールを送信しましたが失敗しました。正しいメールアドレスかご確認の上再度実施してください。`);
+                setVisibleDialog(true);
+              })
             }).catch((error) => {
               console.error('firebase error message:', firebaseErrorTransition(error));
-                setErrorMessagesPassword(firebaseErrorTransition(error));
-                // ボタンの活性化
-                setPasswordButtonDisabled(false);
+              setDialogTitle('メールアドレス認証メールを送信に失敗しました');
+              setDialogMessage(`[${email}]にメールアドレス認証用メールを送信しましたが失敗しました。正しいメールアドレスかご確認の上再度実施してください。`);
+              setVisibleDialog(true);
             });
           }
         }
@@ -169,17 +165,7 @@ export const EditUser = (props: any) => {
 
               <StandardSpace />
               <Text variant="titleLarge" style={styles.subTitle}>Edit Password</Text>
-              <StandardTextInput label="新しいパスワード" placeholder="new password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setNewPassword(text)}/>
-              <StandardTextInput label="新しいパスワード確認用" placeholder="confirm new password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setConfirmNewPassword(text)}/>
-              {errorMessagesNewPassword.length != 0 ? (
-                errorMessagesNewPassword.map((errorMessage: string, index: number) => { 
-                  return(
-                    <Text style={styles.errorTextStyle} key={index}>
-                      {errorMessage}
-                    </Text>
-                  )})
-              ) : null}
-              <StandardButton displayText={'更新'} disabled={PasswordButtonDisabled} onPress={updatePassword}/>
+              <StandardButton displayText={'パスワード更新用メールを送信'} disabled={PasswordButtonDisabled} onPress={updatePassword}/>
 
               <StandardTextLink displayText="cancel" onPress={() => moveScreen("Setting")}/>
             </View>
