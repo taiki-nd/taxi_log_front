@@ -9,6 +9,9 @@ import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from '../../../auth/firebase';
 import { firebaseErrorTransition, method } from '../../../utils/const';
 import axios from 'axios';
+import { DialogOneButton } from '../../parts/DialogOneButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GetSigninUser } from '../../../utils/commonFunc/user/GetSigninUser';
 
 export const Signin = (props: any) => {
   // props
@@ -19,6 +22,7 @@ export const Signin = (props: any) => {
   const [password, setPassword] = useState('');
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [visibleFailedDialog, setVisibleFailedDialog] = useState(false);
 
   // 必須項目チェックによるボタン活性化処理
   useEffect(() => {
@@ -30,17 +34,29 @@ export const Signin = (props: any) => {
   }, [email, password]);
 
   // signin状態の監視
+  /*
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user: any) => {
-      if (user) {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Home' }]
-        });
+    (async () => {
+      const id = await AsyncStorage.getItem("taxi_log_user_id")
+      if (id === null) {
+        const status = await GetSigninUser();
+        console.log("status", status);
+        if (status === false) {
+          const id_after_check_server = await AsyncStorage.getItem("taxi_log_user_id")
+          if (id_after_check_server === null) {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Signup2' }]
+            });
+            return;
+          }
+          navigation.navigate("Signin");
+          return;
+        }
       }
-    });
-    return unsubscribe;
+    })()
   }, []);
+  */
 
   /**
    * Signin処理
@@ -67,10 +83,7 @@ export const Signin = (props: any) => {
           });
         }
         if (!user.emailVerified) {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'SignupEmail' }]
-          });
+          setVisibleFailedDialog(true);
           return;
         }
         // userの登録情報の確認
@@ -151,6 +164,14 @@ export const Signin = (props: any) => {
           </TouchableWithoutFeedback>
         </KeyboardAwareScrollView>
       </View>
+      <DialogOneButton
+        visible={visibleFailedDialog}
+        title='ログイン不可'
+        description={`メールアドレス(${email})の認証がされていません。メールアドレスの認証後、再度ログインしてください。`}
+        displayButton1='OK'
+        funcButton1={() => setVisibleFailedDialog(false)}
+        onDismiss={() => setVisibleFailedDialog(false)}
+      />
     </View>
   );
 }

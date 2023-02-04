@@ -30,6 +30,7 @@ export const Signup = (props: any) => {
   }, [email, password, confirmPassword]);
 
   // signin状態の監視
+  /*
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user: any) => {
       if (user) {
@@ -41,6 +42,7 @@ export const Signup = (props: any) => {
     });
     return unsubscribe;
   }, []);
+  */
 
   /**
    * Signup処理
