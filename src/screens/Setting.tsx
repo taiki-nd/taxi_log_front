@@ -50,60 +50,60 @@ export const Setting = (props: any) => {
 
   var int_pattern = /^([1-9]\d*|0)$/
 
-    // 必須項目チェックによるボタン活性化処理
-    useEffect(() => {
-      if (nickname !== ''
-        && prefecture !== ''
-        && company !== ''
-        && styleFlg !== ''
-        && closeDay !== 0
-        && payDay !== 0) {
-        setButtonDisabled(false);
-      } else {
-        setButtonDisabled(true);
-      }
-    }, [nickname, prefecture, company, styleFlg, closeDay, payDay]);
+  // 必須項目チェックによるボタン活性化処理
+  useEffect(() => {
+    if (nickname !== ''
+      && prefecture !== ''
+      && company !== ''
+      && styleFlg !== ''
+      && closeDay !== 0
+      && payDay !== 0) {
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
+    }
+  }, [nickname, prefecture, company, styleFlg, closeDay, payDay]);
 
-    /**
-     * 小数入力時の対応
-     */
-    useEffect(() => {
-      if (int_pattern.test(String(closeDay))) {
-        setCloseDayMessage('')
-      } else {
-        setCloseDayMessage('締め日に無効な値が入力されています。1〜31の整数を入力して下さい。')
-      
-      }
-    }, [closeDay])
+  /**
+   * 小数入力時の対応
+   */
+  useEffect(() => {
+    if (int_pattern.test(String(closeDay))) {
+      setCloseDayMessage('')
+    } else {
+      setCloseDayMessage('締め日に無効な値が入力されています。1〜31の整数を入力して下さい。')
 
-    useEffect(() => {
-      if (int_pattern.test(String(payDay))) {
-        setPayDayMessage('')
-      } else {
-        setPayDayMessage('給与日に無効な値が入力されています。1〜31の整数を入力して下さい。')
-      }
-    }, [payDay])
+    }
+  }, [closeDay])
 
-    useEffect(() => {
-      if (int_pattern.test(String(dailyTarget))) {
-        setDailyTargetMessage('')
-      } else {
-        setDailyTargetMessage('日額売上目標に無効な値が入力されています。0以上の整数を入力して下さい。')
-      }
-    }, [dailyTarget])
+  useEffect(() => {
+    if (int_pattern.test(String(payDay))) {
+      setPayDayMessage('')
+    } else {
+      setPayDayMessage('給与日に無効な値が入力されています。1〜31の整数を入力して下さい。')
+    }
+  }, [payDay])
 
-    useEffect(() => {
-      if (int_pattern.test(String(monthlyTarget))) {
-        setMonthlyTargetMessage('')
-      } else {
-        setMonthlyTargetMessage('月額売上目標に無効な値が入力されています。0以上の整数を入力して下さい。')
-      }
-    }, [monthlyTarget])
+  useEffect(() => {
+    if (int_pattern.test(String(dailyTarget))) {
+      setDailyTargetMessage('')
+    } else {
+      setDailyTargetMessage('日額売上目標に無効な値が入力されています。0以上の整数を入力して下さい。')
+    }
+  }, [dailyTarget])
 
-    
+  useEffect(() => {
+    if (int_pattern.test(String(monthlyTarget))) {
+      setMonthlyTargetMessage('')
+    } else {
+      setMonthlyTargetMessage('月額売上目標に無効な値が入力されています。0以上の整数を入力して下さい。')
+    }
+  }, [monthlyTarget])
+
+
   useEffect(() => {
     (async () => {
-      const id = await AsyncStorage.getItem("taxi_log_user_id")
+      var id = await AsyncStorage.getItem("taxi_log_user_id")
       console.log("id 設定画面初期起動", id)
       if (id === null) {
         const status = await GetSigninUser();
@@ -121,15 +121,18 @@ export const Setting = (props: any) => {
           return;
         }
       } else {
-        setId(id);
+        id = await AsyncStorage.getItem("taxi_log_user_id")
+        if (id !== null) {
+          setId(id);
+        }
       }
 
       const user = auth.currentUser;
       const uid = user?.uid;
       setUid(String(uid));
-      
-      const headers = {'id': String(id)}
-      const params = {'id': id}
+
+      const headers = { 'id': String(id) }
+      const params = { 'id': id }
 
       // user情報取得
       const user_info = axios({
@@ -193,8 +196,11 @@ export const Setting = (props: any) => {
     const user = auth.currentUser;
     const uid = user?.uid;
     var credential
-      
-    const headers = {'uuid': String(uid)}
+
+    const headers = {
+      'uuid': String(uid),
+      'id': userId,
+    }
 
     if (user?.email) {
       credential = EmailAuthProvider.credential(user.email, password);
@@ -232,12 +238,12 @@ export const Setting = (props: any) => {
         // ...
       });
 
-      
+
     } else {
       // todo
       // サインイン処理を再度実行させる
     }
-    
+
   }
 
   /**
@@ -251,16 +257,20 @@ export const Setting = (props: any) => {
     <View style={styles.mainBody}>
 
       <Text variant="titleLarge" style={styles.subTitle}>Edit Account</Text>
-      <StandardButton displayText="Edit Account" onPress={() => navigation.navigate('EditAccount')}/>
+      <StandardButton displayText="Edit Account" onPress={() => navigation.navigate('EditAccount')} />
+      <StandardSpace />
+
+      <Text variant="titleLarge" style={styles.subTitle}>Edit Email or Password</Text>
+      <StandardButton displayText="Edit Email or Password" onPress={() => navigation.navigate('EditUser')} />
       <StandardSpace />
 
       <Text variant="titleLarge" style={styles.subTitle}>Signout</Text>
-      <StandardButton displayText={"SIGNOUT"} onPress={funcSignout}/>
+      <StandardButton displayText={"SIGNOUT"} onPress={funcSignout} />
       <StandardSpace />
 
       <Text variant="titleLarge" style={styles.subTitleExtra}>Delete Account</Text>
       <Text>一度アカウントを削除するとデータの復元はできません。</Text>
-      <ExtraButton displayText={"Delete Account"} onPress={() => deleteAccountConfirm()}/>
+      <ExtraButton displayText={"Delete Account"} onPress={() => deleteAccountConfirm()} />
 
       <Provider>
         <View>
@@ -269,7 +279,7 @@ export const Setting = (props: any) => {
               <Dialog.Title style={styles.text}>アカウント削除確認</Dialog.Title>
               <Dialog.Content>
                 <Paragraph style={styles.text}>アカウント削除により作成したデータは全て削除され、復元はできません。削除しますか？</Paragraph>
-                <DialogTextInput label="Password" placeholder="Enter password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)}/>
+                <DialogTextInput label="Password" placeholder="Enter password" keyboardType="default" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)} />
               </Dialog.Content>
               <Dialog.Actions>
                 <Button onPress={() => cancelDeleteAccount()} textColor={SeaColor}>キャンセル</Button>
@@ -309,7 +319,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textDecorationLine: 'underline',
   },
-  text :{
+  text: {
     color: BasicColor,
   },
   dialog: {
@@ -323,7 +333,7 @@ const styles = StyleSheet.create({
     marginLeft: 35,
     marginRight: 35,
   },
-  mentionText:{
+  mentionText: {
     marginLeft: 70,
     fontSize: 10,
     color: TomatoColor

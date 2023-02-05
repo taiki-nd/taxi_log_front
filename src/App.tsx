@@ -17,6 +17,7 @@ import { RecordsEdit } from './components/pages/records/RecordsEdit';
 import { RecordsShow } from './components/pages/records/RecordsShow';
 import { Ranking } from './screens/Ranking';
 import { EditAccount } from './components/pages/users/ EditAccount';
+import { EditUser } from './components/pages/users/EditUserInfo';
 
 axios.defaults.baseURL = server.baseUrl;
 
@@ -41,7 +42,7 @@ export default function App() {
           name="Home"
           component={HomeScreen}
           options={{
-            unmountOnBlur:true,
+            unmountOnBlur: true,
             title: 'HOME',
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
@@ -56,6 +57,7 @@ export default function App() {
           name="Add"
           component={RecordsCreate}
           options={{
+            unmountOnBlur: true,
             title: "Add Record",
             headerStyle: {
               backgroundColor: BackColor,
@@ -97,7 +99,7 @@ export default function App() {
           name="Ranking"
           component={Ranking}
           options={{
-            unmountOnBlur:true,
+            unmountOnBlur: true,
             title: "Ranking",
             headerStyle: {
               backgroundColor: BackColor,
@@ -117,6 +119,7 @@ export default function App() {
           name="Analysis"
           component={Analysis}
           options={{
+            unmountOnBlur: true,
             title: "Analysis",
             headerStyle: {
               backgroundColor: BackColor,
@@ -136,6 +139,7 @@ export default function App() {
           name="Setting"
           component={Setting}
           options={{
+            unmountOnBlur: true,
             title: "Setting",
             headerStyle: {
               backgroundColor: BackColor,
@@ -157,7 +161,29 @@ export default function App() {
           name="Signup"
           component={Signup}
           options={{
+            unmountOnBlur: true,
             title: "Signup",
+            headerStyle: {
+              backgroundColor: BackColor,
+            },
+            headerTitleStyle: {
+              color: BasicColor,
+            },
+            tabBarButton: () => null,
+            tabBarStyle: {
+              display: 'none',
+            }
+          }}
+        />
+        {/*
+        // EditUser
+        */}
+        <Tab.Screen
+          name="EditUser"
+          component={EditUser}
+          options={{
+            unmountOnBlur: true,
+            title: "EditUser",
             headerStyle: {
               backgroundColor: BackColor,
             },
@@ -197,6 +223,7 @@ export default function App() {
           name="Signup2"
           component={Signup2}
           options={{
+            unmountOnBlur: true,
             title: "Create Account",
             headerStyle: {
               backgroundColor: BackColor,
@@ -217,6 +244,7 @@ export default function App() {
           name="Signin"
           component={Signin}
           options={{
+            unmountOnBlur: true,
             title: "Signin",
             headerStyle: {
               backgroundColor: BackColor,
@@ -258,6 +286,7 @@ export default function App() {
           name="RecordsEdit"
           component={RecordsEdit}
           options={{
+            unmountOnBlur: true,
             title: "Recordの編集",
             headerStyle: {
               backgroundColor: BackColor,
@@ -278,7 +307,7 @@ export default function App() {
           name="RecordsShow"
           component={RecordsShow}
           options={{
-            unmountOnBlur:true,
+            unmountOnBlur: true,
             headerShown: false,
             tabBarButton: () => null,
           }}

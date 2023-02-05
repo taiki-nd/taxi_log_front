@@ -63,6 +63,12 @@ export const errorCodeTransition = (codes: string[]) => {
       case 'password_not_match':
         errorMessage.push('パスワードが一致していません。');
         break;
+      case 'password_null_error':
+        errorMessage.push('現在のパスワードを入力してください');
+        break;
+      case 'invalid_email':
+        errorMessage.push('メールアドレスの形式が正しくありません。');
+        break;
       case 'body_parse_error':
         errorMessage.push('情報処理に失敗しました。しばらく時間をおいてから再度試してください。');
         break;
@@ -116,7 +122,7 @@ export const errorCodeTransition = (codes: string[]) => {
         errorMessage.push('売上に無効な値が入力されています。0以上の整数を入力して下さい。');
         break;
       default:
-        errorMessage.push('システムエラーが発生しました。');
+        errorMessage.push('システムエラーが発生しました。運営に問い合わせてください。');
         break;
     }
   });
@@ -138,4 +144,11 @@ export const method = {
   POST: 'post',
   PUT: 'put',
   DELETE: 'delete',
+}
+
+/**
+ * number
+ */
+export const number ={
+  TAX_RATE: 1.1
 }
