@@ -38,8 +38,8 @@ export const Ranking =  (props: any) => {
 
   useEffect(() => {
     (async () => {
-      const id = await AsyncStorage.getItem("taxi_log_user_id")
-      console.log("id ホーム画面初期起動", id)
+      var id = await AsyncStorage.getItem("taxi_log_user_id")
+      console.log("id ランキング画面初期起動", id)
       if (id === null) {
         const status = await GetSigninUser();
         console.log("status", status);
@@ -56,7 +56,10 @@ export const Ranking =  (props: any) => {
           return;
         }
       } else {
-        setId(id);
+        id = await AsyncStorage.getItem("taxi_log_user_id")
+        if (id !== null) {
+          setId(id);
+        }
       }
       setPrefectures([
         "全エリア","北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県",

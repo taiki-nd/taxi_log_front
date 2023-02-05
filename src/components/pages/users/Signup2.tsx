@@ -25,7 +25,6 @@ export const Signup2 = (props: any) => {
   const [payDay, setPayDay] = useState(Number);
   const [dailyTarget, setDailyTarget] = useState(Number);
   const [monthlyTarget, setMonthlyTarget] = useState(Number);
-  const [taxFlg, setTaxFlg] = useState('false');
   const [openFlg, setOpenFlg] = useState('close');
   const [admin, setAdmin] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
@@ -181,12 +180,6 @@ export const Signup2 = (props: any) => {
     // ボタンの非活性化
     setButtonDisabled(true);
 
-    // taxFlg変換
-    var isTax = false;
-    if (taxFlg === "true") {
-      isTax = true;
-    }
-
     //UsersCreate
     try {
       // get uid
@@ -207,7 +200,6 @@ export const Signup2 = (props: any) => {
         close_day: Number(closeDay),
         daily_target: Number(dailyTarget),
         monthly_target: Number(monthlyTarget),
-        is_tax: isTax,
         open_flg: openFlg,
         is_admin: admin,
       }
@@ -239,7 +231,7 @@ export const Signup2 = (props: any) => {
     } catch (ex: any) {
       console.error("ex", ex);
     }
-  }, [nickname, prefecture, area, company, styleFlg, closeDay, dailyTarget, monthlyTarget, taxFlg]);
+  }, [nickname, prefecture, area, company, styleFlg, closeDay, dailyTarget, monthlyTarget]);
 
   /**
    * moveScreen
@@ -291,11 +283,6 @@ export const Signup2 = (props: any) => {
               {
                 monthlyTargetMessage !== '' ? <Text style={styles.dialogWarn}>{monthlyTargetMessage}</Text> : <View></View>
               }
-              <StandardLabel displayText={"標準入力価格設定"}/>
-              <RadioButton.Group onValueChange={value => setTaxFlg(value)} value={taxFlg}>
-                <RadioButton.Item label="税込みで入力" value="true" style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="税抜きで入力" value="false" style={styles.radioButtonStyle} color={AccentColor}/>
-              </RadioButton.Group>
               {errorMessages.length != 0 ? (
                 errorMessages.map((errorMessage: string, index: number) => { 
                   return(

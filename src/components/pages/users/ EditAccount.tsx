@@ -30,7 +30,6 @@ export const EditAccount = (props: any) => {
   const [payDay, setPayDay] = useState(Number);
   const [dailyTarget, setDailyTarget] = useState(Number);
   const [monthlyTarget, setMonthlyTarget] = useState(Number);
-  const [taxFlg, setTaxFlg] = useState('false');
   const [openFlg, setOpenFlg] = useState('close');
   const [admin, setAdmin] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
@@ -111,7 +110,6 @@ export const EditAccount = (props: any) => {
         setPayDay(user.pay_day);
         setDailyTarget(user.daily_target);
         setMonthlyTarget(user.monthly_target);
-        setTaxFlg(String(user.is_tax));
         setOpenFlg(user.open_flg);
         setAdmin(user.admin)
         return user;
@@ -228,12 +226,6 @@ export const EditAccount = (props: any) => {
     // ボタンの非活性化
     setButtonDisabled(true);
 
-    // taxFlg変換
-    var isTax = false;
-    if (taxFlg === "true") {
-      isTax = true;
-    }
-
     //UsersCreate
     try {
       // get uid
@@ -245,12 +237,6 @@ export const EditAccount = (props: any) => {
       // params
       const params = {
         user_id: userId
-      }
-
-      // taxFlg変換
-      var isTax = false;
-      if (taxFlg === "true") {
-        isTax = true;
       }
 
       // jsonDataの作成
@@ -265,7 +251,6 @@ export const EditAccount = (props: any) => {
         close_day: Number(closeDay),
         daily_target: Number(dailyTarget),
         monthly_target: Number(monthlyTarget),
-        is_tax: isTax,
         open_flg: openFlg,
         is_admin: admin,
       }
@@ -297,7 +282,7 @@ export const EditAccount = (props: any) => {
     } catch (ex: any) {
       console.error("ex", ex);
     }
-  }, [nickname, prefecture, area, company, styleFlg, closeDay, dailyTarget, monthlyTarget, taxFlg]);
+  }, [nickname, prefecture, area, company, styleFlg, closeDay, dailyTarget, monthlyTarget]);
 
   return (
     <View style={styles.mainBody}>
@@ -338,11 +323,6 @@ export const EditAccount = (props: any) => {
               {
                 monthlyTargetMessage !== '' ? <Text style={styles.dialogWarn}>{monthlyTargetMessage}</Text> : <View></View>
               }
-              <StandardLabel displayText={"標準入力価格設定"}/>
-              <RadioButton.Group onValueChange={value => setTaxFlg(value)} value={taxFlg}>
-                <RadioButton.Item label="税込みで入力" value="true" style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="税抜きで入力" value="false" style={styles.radioButtonStyle} color={AccentColor}/>
-              </RadioButton.Group>
               {errorMessages.length != 0 ? (
                 errorMessages.map((errorMessage: string, index: number) => { 
                   return(

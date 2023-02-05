@@ -58,7 +58,7 @@ export const HomeScreen = (props: any) => {
 
   useEffect(() => {
     (async () => {
-      const id = await AsyncStorage.getItem("taxi_log_user_id")
+      var id = await AsyncStorage.getItem("taxi_log_user_id")
       console.log("id ホーム画面初期起動", id)
       if (id === null) {
         const status = await GetSigninUser();
@@ -75,9 +75,12 @@ export const HomeScreen = (props: any) => {
           navigation.navigate("Signin");
           return;
         }
-      } else {
-        setId(id);
-      }
+      } 
+
+      // idの再取得
+      id = await AsyncStorage.getItem("taxi_log_user_id")
+
+      console.log("id", id)
   
       // ドロップダウンリストの作成
       const headers = {'id': String(id)}
