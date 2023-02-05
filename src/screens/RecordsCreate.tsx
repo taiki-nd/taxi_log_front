@@ -3,14 +3,14 @@ import { Text, StyleSheet, View, TouchableWithoutFeedback, Keyboard } from 'reac
 import CalendarStrip from 'react-native-calendar-strip';
 import { RadioButton } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { StandardTextInput } from '../components/parts/StandardTextInput';
+import { StandardTextInput, StandardTextInputNonEditable } from '../components/parts/StandardTextInput';
 import { StandardLabel } from '../components/parts/StandardLabel';
 import { StandardButton } from '../components/parts/StandardButton';
 import { StandardTextLink } from '../components/parts/StandardTextLink';
 import { AccentColor, BackColor, BasicColor, TomatoColor } from '../styles/common/color';
 import moment from 'moment';
 import axios from 'axios';
-import { errorCodeTransition, method } from '../utils/const';
+import { errorCodeTransition, method, number } from '../utils/const';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GetSigninUser } from '../utils/commonFunc/user/GetSigninUser';
 
@@ -32,8 +32,8 @@ export const RecordsCreate = (props: any) => {
   const [runningKm, setRunningKm] = useState(Number);
   const [occupancyRate, setOccupancyRate] = useState(Number);
   const [numberOfTime, setNumberOfTime] = useState(Number);
-  const [taxFlg, setTaxFlg] = useState('');
   const [dailySales, setDailySales] = useState(Number);
+  const [dailySalesWithTax, setDailySalesWithTax] = useState(Number); 
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
@@ -88,11 +88,6 @@ export const RecordsCreate = (props: any) => {
         setStyleFlg(response.data.data.style_flg);
         setPrefecture(response.data.data.prefecture);
         setArea(response.data.data.area);
-        if (response.data.data.is_tax){
-          setTaxFlg('true');
-        } else {
-          setTaxFlg('false');
-        }
       }).catch(error => {
         console.log("error get sigin user recordsCreate", error);
         var errorCode = error.response.data.info.code;
@@ -103,6 +98,11 @@ export const RecordsCreate = (props: any) => {
     })()
   }, []);
 
+  // 税込価格の自動入力
+  useEffect(() => {
+    setDailySalesWithTax(Math.round(dailySales*number.TAX_RATE))
+  }, [dailySales])
+
   // 必須項目チェックによるボタン活性化処理
   useEffect(() => {
     if (date !== undefined
@@ -112,13 +112,12 @@ export const RecordsCreate = (props: any) => {
       && occupancyRate !== undefined
       && runningKm !== 0
       && numberOfTime !== undefined
-      && dailySales !== 0
-      && taxFlg !== ''){
+      && dailySales !== 0){
       setButtonDisabled(false);
     } else {
       setButtonDisabled(true);
     }
-  }, [date, day, styleFlg, startHour, runningTime, runningKm ,occupancyRate, numberOfTime, dailySales, taxFlg]);
+  }, [date, day, styleFlg, startHour, runningTime, runningKm ,occupancyRate, numberOfTime, dailySales]);
 
   /**
    * 小数入力時の対応
@@ -174,12 +173,6 @@ export const RecordsCreate = (props: any) => {
 
     setButtonDisabled(true);
 
-    // taxFlg変換
-    var isTax = false;
-    if (taxFlg === "true") {
-      isTax = true;
-    }
-
     // jsonData
     var jsonData = {
       date: moment(date),
@@ -192,8 +185,8 @@ export const RecordsCreate = (props: any) => {
       running_km: Number(runningKm),
       occupancy_rate: Number(occupancyRate),
       number_of_time: Number(numberOfTime),
-      is_tax: isTax,
       daily_sales: Number(dailySales),
+      daily_sales_with_tax: Number(dailySalesWithTax),
       user_id: Number(userId)
     }
 
@@ -233,7 +226,7 @@ export const RecordsCreate = (props: any) => {
     } catch (ex: any) {
 
     }
-  }, [userId, uid, date, day, styleFlg, startHour, runningTime, runningKm ,occupancyRate, numberOfTime, dailySales, taxFlg]);
+  }, [userId, uid, date, day, styleFlg, startHour, runningTime, runningKm ,occupancyRate, numberOfTime, dailySales, dailySalesWithTax]);
 
   /**
    * moveScreen
@@ -289,12 +282,10 @@ export const RecordsCreate = (props: any) => {
               {
                 numberOfTimeMessage !== '' ? <Text style={styles.dialogWarn}>{numberOfTimeMessage}</Text> : <View></View>
               }
-              <StandardTextInput label="売上" placeholder="58000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => setDailySales(i)}/>
-              <StandardLabel displayText={"標準入力価格設定"}/>
-              <RadioButton.Group onValueChange={value => setTaxFlg(value)} value={taxFlg}>
-                <RadioButton.Item label="税込みで入力" value="true" style={styles.radioButtonStyle} color={AccentColor}/>
-                <RadioButton.Item label="税抜きで入力" value="false" style={styles.radioButtonStyle} color={AccentColor}/>
-              </RadioButton.Group>
+              <StandardTextInput label="税抜き売上" placeholder="58000" keyboardType="default" secureTextEntry={false} onChangeText={(i: number) => {
+                setDailySales(i)
+              }}/>
+              <StandardTextInputNonEditable label="税込み売上(自動入力)" placeholder="自動入力されます" defaultValue={String(dailySalesWithTax)} keyboardType="default" secureTextEntry={false} />
               {errorMessages.length != 0 ? (
                 errorMessages.map((errorMessage: string, index: number) => { 
                   return(

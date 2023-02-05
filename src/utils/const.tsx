@@ -145,3 +145,10 @@ export const method = {
   PUT: 'put',
   DELETE: 'delete',
 }
+
+/**
+ * number
+ */
+export const number ={
+  TAX_RATE: 1.1
+}
