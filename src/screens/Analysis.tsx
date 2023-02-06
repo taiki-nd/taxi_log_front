@@ -185,10 +185,10 @@ export const Analysis = (props: any) => {
           placeholder='月'
           width='18%'
           open={openFinishMonth}
-          value={startMonth}
+          value={finishMonth}
           items={itemsMonth}
           setOpen={setOpenFinishMonth}
-          setValue={setStartMonth}
+          setValue={setFinishMonth}
           setItems={setItemsMonth}
         />
       </View>
