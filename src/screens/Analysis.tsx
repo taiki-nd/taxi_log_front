@@ -222,6 +222,14 @@ export const Analysis = (props: any) => {
       </View>
       <ScrollView>
         <StandardSpace />
+        <View style={styles.flex}>
+          <SmallButton
+            displayText='Start Analysis'
+            disabled={false}
+            onPress={() => getAnalysisData(id, 'second')}
+          />
+        </View>
+        <StandardSpace />
         <DataTable>
           <DataTable.Header style={styles.tableHeader}>
             <DataTable.Title>平均売上</DataTable.Title>
@@ -258,15 +266,6 @@ export const Analysis = (props: any) => {
             <DataTable.Cell><Text style={styles.tableCell}>{periodDistanceUnitSales}円</Text></DataTable.Cell>
           </DataTable.Row>
         </DataTable>
-        <StandardSpace />
-
-        <View style={styles.flex}>
-          <SmallButton
-            displayText='Start Analysis'
-            disabled={false}
-            onPress={() => getAnalysisData(id, 'second')}
-          />
-        </View>
         <StandardSpace />
 
         <Text variant="titleMedium" style={styles.subTitle}>曜日別平均売上</Text>
