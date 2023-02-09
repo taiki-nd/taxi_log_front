@@ -126,15 +126,62 @@ export const Ranking =  (props: any) => {
       params: params,
     }).then((response) => {
       console.log("data", response.data.data);
-      setDailyRankingEveryOtherDayRecords(response.data.data.daily_ranking_every_other_day_records);
-      setDailyRankingDayRecords(response.data.data.daily_ranking_day_records);
-      setDailyRankingNightRecords(response.data.data.daily_ranking_night_records);
-      setWeeklyRankingEveryOtherDayRecords(response.data.data.weekly_ranking_every_other_day_records);
-      setWeeklyRankingDayRecords(response.data.data.weekly_ranking_day_records);
-      setWeeklyRankingNightRecords(response.data.data.weekly_ranking_night_records);
-      setMonthlyRankingEveryOtherDayRecords(response.data.data.monthly_ranking_every_other_day_records);
-      setMonthlyRankingDayRecords(response.data.data.monthly_ranking_day_records);
-      setMonthlyRankingNightRecords(response.data.data.monthly_ranking_night_records);
+      var resp = response.data.data
+      if (resp.daily_ranking_every_other_day_records === null){
+        setDailyRankingEveryOtherDayRecords([])
+      } else {
+        setDailyRankingEveryOtherDayRecords(resp.daily_ranking_every_other_day_records);
+      }
+
+      if (resp.daily_ranking_day_records === null){
+        setDailyRankingDayRecords([])
+      } else {
+        setDailyRankingDayRecords(resp.daily_ranking_day_records);
+      }
+
+      if (resp.daily_ranking_night_records === null){
+        setDailyRankingNightRecords([])
+      } else {
+        setDailyRankingNightRecords(resp.daily_ranking_night_records);
+      }
+
+      if (resp.weekly_ranking_every_other_day_records === null){
+        setWeeklyRankingEveryOtherDayRecords([])
+      } else {
+        setWeeklyRankingEveryOtherDayRecords(resp.weekly_ranking_every_other_day_records);
+      }
+
+      if (resp.weekly_ranking_day_records === null){
+        setWeeklyRankingDayRecords([])
+      } else {
+        setWeeklyRankingDayRecords(resp.weekly_ranking_day_records);
+      }
+
+      if (resp.weekly_ranking_night_records === null){
+        setWeeklyRankingNightRecords([])
+      } else {
+        setWeeklyRankingNightRecords(resp.weekly_ranking_night_records);
+      }
+
+      if (resp.monthly_ranking_every_other_day_records === null) {
+        setMonthlyRankingEveryOtherDayRecords([])
+      } else {
+        setMonthlyRankingEveryOtherDayRecords(resp.monthly_ranking_every_other_day_records)
+      }
+      
+      if (resp.monthly_ranking_day_records === null){
+        setMonthlyRankingDayRecords([])
+      } else {
+        setMonthlyRankingDayRecords(resp.monthly_ranking_day_records);
+      }
+
+      if (resp.monthly_ranking_night_records === null){
+        setMonthlyRankingNightRecords([])
+      } else {
+        setMonthlyRankingNightRecords(resp.monthly_ranking_night_records);
+      }
+      
+      
     }).catch((error) => {
       console.error(error);
     });

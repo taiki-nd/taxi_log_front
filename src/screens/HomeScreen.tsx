@@ -14,6 +14,7 @@ import { DateTransition } from '../utils/commonFunc/record/DateTranstion';
 import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GetSigninUser } from '../utils/commonFunc/user/GetSigninUser';
+import { DataTableRow } from 'react-native-paper/lib/typescript/components/DataTable/DataTableRow';
 
 export const HomeScreen = (props: any) => {
   // props
@@ -29,12 +30,8 @@ export const HomeScreen = (props: any) => {
   const [monthlyTarget, setMonthlyTarget] = useState(0);
   const [monthlySalesSumLast, setMonthlySalesSumLast] = useState(0);
 
-  const [analysisStartYear, setAnalysisStartYear] = useState(0);
-  const [analysisStartMonth, setAnalysisStartMonth] = useState(0);
-  const [analysisStartDay, setAnalysisStartDay] = useState(0);
-  const [analysisFinishYear, setAnalysisFinishYear] = useState(0);
-  const [analysisFinishMonth, setAnalysisFinishMonth] = useState(0);
-  const [analysisFinishDay, setAnalysisFinishDay] = useState(0);
+  const [startPeriod, setStartPeriod] = useState("")
+  const [finishPeriod, setFinishPeriod] = useState("")
 
   const [monthlySalesYear, setMonthlySalesYear] = useState(0);
   const [monthlySalesMonth, setMonthlySalesMonth] = useState(0);
@@ -81,6 +78,10 @@ export const HomeScreen = (props: any) => {
       id = await AsyncStorage.getItem("taxi_log_user_id")
 
       console.log("id", id)
+
+      if (id !== null){
+        setId(id)
+      }
   
       // ドロップダウンリストの作成
       const headers = {'id': String(id)}
@@ -116,6 +117,7 @@ export const HomeScreen = (props: any) => {
 
       var year_and_month = GetYearAndMonth(year, month, today, close_day, pay_day);
 
+      //　表示される値
       setMonthlySalesYear(year_and_month[0]);
       setMonthlySalesMonth(year_and_month[1]);
   
@@ -131,27 +133,13 @@ export const HomeScreen = (props: any) => {
       }
       setItemsMonth(itemsMonth);
 
-      getAnalysisPeriod(year, month, today, close_day);
       getAnalysisDataForHome(id, user.close_day, user.pay_day, 'first')
+
     })()
   }, []);
 
   const getMonthlySalesData = async (user_id: string, status: string) => {
-    await getAnalysisPeriod(monthlySalesYear, monthlySalesMonth, toDay, closeDay);
     await getAnalysisDataForHome(user_id, closeDay, payDay, status)
-  }
-
-  /**
-   * getAnalysisPeriod
-   */
-  const getAnalysisPeriod = (year: number, month: number, today: number, close_day: number) => {
-    const days = getMonthlyAnalysisPeriod(year, month, today, close_day);
-    setAnalysisStartYear(days.start_year);
-    setAnalysisStartMonth(days.start_month);
-    setAnalysisStartDay(days.start_day);
-    setAnalysisFinishYear(days.finish_year);
-    setAnalysisFinishMonth(days.finish_month);
-    setAnalysisFinishDay(days.finish_day);
   }
 
   /**
@@ -201,6 +189,12 @@ export const HomeScreen = (props: any) => {
         const dateOnlyDate = String(date.getDate());
         displayLabels_dates_sum.push(dateOnlyDate);
       })
+      // 解析期間の取得
+      var sales_period_start = response.data.data.period.sales_period_start
+      var sales_period_finish = response.data.data.period.sales_period_finish
+      setStartPeriod(DateTransition(sales_period_start))
+      setFinishPeriod(DateTransition(sales_period_finish))
+
       // データがからの場合の処理
       if (displayLabels_dates_sum.length === 0 ) {
         setMessageForMonthlySalesSum(['表示するデータがありません']);
@@ -228,20 +222,6 @@ export const HomeScreen = (props: any) => {
     
     }).catch(error => {
       console.log('getAnalysisDataForHome api error', error)
-      /*
-      var errorCode: string[];
-      if (error.code === "ERR_BAD_REQUEST"){
-        errorCode = [""]
-      } else if (error.response.data.info.code === undefined ){
-        errorCode = [""]
-      } else {
-        errorCode = error.response.data.info.code;
-      }
-      var message: string[] = [];
-      message = errorCodeTransition(errorCode);
-      setErrorMessages(message);
-      setDialogTitle('月次総売上のデータ取得の失敗');
-      */
       setMessageForMonthlySalesSum(['データの取得に失敗しました']);
       setMessageForMonthlySales(['データの取得に失敗しました']);
       //setVisibleFailedDialog(true);
@@ -291,7 +271,7 @@ export const HomeScreen = (props: any) => {
         <StandardSpace/>
         <View>
           <Text style={styles.standardTextStyle}>解析期間</Text>
-          <Text style={styles.standardTextStyle}>{`${analysisStartYear}/${analysisStartMonth}/${analysisStartDay} -> ${analysisFinishYear}/${analysisFinishMonth}/${analysisFinishDay}`}</Text>
+          <Text style={styles.standardTextStyle}>{`${startPeriod} -> ${finishPeriod}`}</Text>
         </View>
         <StandardSpace/>
         <Text variant="titleMedium" style={styles.subTitle}>月次総売上</Text>   
