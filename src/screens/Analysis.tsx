@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions, ScrollView } from 'react-native';
-import { Text } from "react-native-paper";
+import { DataTable, Text } from "react-native-paper";
 import { BarChart } from 'react-native-chart-kit';
-import { BackColor, BasicColor, TomatoColor } from '../styles/common/color';
+import { AccentColor, BackColor, BasicColor, TomatoColor } from '../styles/common/color';
 import axios from 'axios';
 import { errorCodeTransition, method } from '../utils/const';
 import { Dropdown } from '../components/parts/Dropdown';
@@ -27,6 +27,13 @@ export const Analysis = (props: any) => {
   const [averageSales, setAverageSales] = useState<number[]>([0, 0, 0]);
   const [averageOccupancyRate, setAverageOccupancyRate] = useState<number[]>([0, 0, 0]);
   const [dayLabel, setDayLabel] = useState<string[]>(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]);
+  const [dailyAverageSales, setDailyAverageSales] = useState(0)
+  const [dailyAverageOccupancyRate, setDailyAverageOccupancyRate] = useState(0)
+  const [maxOccupancyRate, setMaxOccupancyRate] = useState(0)
+  const [maxSales, setMaxSales] = useState(0)
+  const [periodCustomerUnitSales, setPeriodCustomerUnitSales] = useState(0)
+  const [periodDistanceUnitSales, setPeriodDistanceUnitSales] = useState(0)
+  const [periodTimeUnitSales, serPeriodTimeUnitSales] = useState(0)
 
   const [dialogTitle, setDialogTitle] = useState('');
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
@@ -138,6 +145,27 @@ export const Analysis = (props: any) => {
       } else {
         setAverageOccupancyRate(response.data.average_occupancy_rate_per_day)
       }
+      if (response.data.period_data.dailyAverageSales) {
+        setDailyAverageSales(response.data.period_data.dailyAverageSales)
+      }
+      if (response.data.period_data.dailyAverageOccupancyRate) {
+        setDailyAverageOccupancyRate(response.data.period_data.dailyAverageOccupancyRate)
+      }
+      if (response.data.period_data.maxOccupancyRate) {
+        setMaxOccupancyRate(response.data.period_data.maxOccupancyRate)
+      }
+      if (response.data.period_data.maxSales) {
+        setMaxSales(response.data.period_data.maxSales)
+      }
+      if (response.data.period_data.periodCustomerUnitSales) {
+        setPeriodCustomerUnitSales(response.data.period_data.periodCustomerUnitSales)
+      }
+      if (response.data.period_data.periodDistanceUnitSales) {
+        setPeriodDistanceUnitSales(response.data.period_data.periodDistanceUnitSales)
+      }
+      if (response.data.period_data.periodTimeUnitSales) {
+        serPeriodTimeUnitSales(response.data.period_data.periodTimeUnitSales)
+      }
     }).catch(error => {
       var errorCode = error.response.data.info.code;
       var message: string[] = [];
@@ -201,6 +229,43 @@ export const Analysis = (props: any) => {
             onPress={() => getAnalysisData(id, 'second')}
           />
         </View>
+        <StandardSpace />
+        <DataTable>
+          <DataTable.Header style={styles.tableHeader}>
+            <DataTable.Title>平均売上</DataTable.Title>
+            <DataTable.Title>最高売上</DataTable.Title>
+          </DataTable.Header>
+          <DataTable.Row style={styles.tableRow}>
+            <DataTable.Cell><Text style={styles.tableCell}>{dailyAverageSales}円</Text></DataTable.Cell>
+            <DataTable.Cell><Text style={styles.tableCell}>{maxSales}円</Text></DataTable.Cell>
+          </DataTable.Row>
+        </DataTable>
+        <StandardSpace />
+
+        <DataTable>
+          <DataTable.Header style={styles.tableHeader}>
+            <DataTable.Title>平均実車率</DataTable.Title>
+            <DataTable.Title>最高実車率</DataTable.Title>
+          </DataTable.Header>
+          <DataTable.Row style={styles.tableRow}>
+            <DataTable.Cell><Text style={styles.tableCell}>{dailyAverageOccupancyRate}%</Text></DataTable.Cell>
+            <DataTable.Cell><Text style={styles.tableCell}>{maxOccupancyRate}%</Text></DataTable.Cell>
+          </DataTable.Row>
+        </DataTable>
+        <StandardSpace />
+
+        <DataTable>
+          <DataTable.Header style={styles.tableHeader}>
+            <DataTable.Title>時間単価</DataTable.Title>
+            <DataTable.Title>客単価</DataTable.Title>
+            <DataTable.Title>距離単価</DataTable.Title>
+          </DataTable.Header>
+          <DataTable.Row style={styles.tableRow}>
+            <DataTable.Cell><Text style={styles.tableCell}>{periodTimeUnitSales}円</Text></DataTable.Cell>
+            <DataTable.Cell><Text style={styles.tableCell}>{periodCustomerUnitSales}円</Text></DataTable.Cell>
+            <DataTable.Cell><Text style={styles.tableCell}>{periodDistanceUnitSales}円</Text></DataTable.Cell>
+          </DataTable.Row>
+        </DataTable>
         <StandardSpace />
 
         <Text variant="titleMedium" style={styles.subTitle}>曜日別平均売上</Text>
@@ -310,5 +375,16 @@ const styles = StyleSheet.create({
   messageTextStyle: {
     color: TomatoColor,
     fontSize: 14,
+  },
+  tableHeader: {
+    borderBottomColor: AccentColor,
+    borderBottomWidth: 0.5,
+  },
+  tableRow: {
+    borderBottomColor: AccentColor,
+    borderBottomWidth: 0,
+  },
+  tableCell: {
+    fontSize: 12,
   }
 });
